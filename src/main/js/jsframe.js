@@ -34,7 +34,7 @@ if (typeof org.riversun === 'undefined') {
 
 org.riversun.JSFrame =
     (function () {
-        'use strict';
+        //'use strict';
 
         var DEF = {};
 
@@ -90,9 +90,9 @@ org.riversun.JSFrame =
             this.titleBarBorderBottomDefault = '1px solid rgba(0,0,0,0.2)';
             this.titleBarBorderBottomFocused = null;
 
-            this.frameBorderRadius = '5px';
+            this.frameBorderRadius = '6px';
 
-            this.frameBorderWidthDefault = '2px';
+            this.frameBorderWidthDefault = '1px';
             this.frameBorderWidthFocused = this.frameBorderWidthDefault;
 
             this.frameBorderColorDefault = 'rgba(1, 1, 1, 0.2)';
@@ -269,14 +269,15 @@ org.riversun.JSFrame =
             me.parentCanvas = null;
             me.htmlElement = null;
 
+
             //initialize
-            me.htmlElement = document.createElement(DEF.HTML_ELEMENT);
-            me.htmlElement.id = DEF.HTML_ELEMENT_ID_PREFIX + beanId;
+            me.htmlElement = document.createElement(DEF.CBEAN.HTML_ELEMENT);
+            me.htmlElement.id = DEF.CBEAN.HTML_ELEMENT_ID_PREFIX + beanId;
             me.htmlElement.style.position = 'absolute';
-            me.htmlElement.style.left = left;
-            me.htmlElement.style.top = top;
-            me.htmlElement.style.width = width;
-            me.htmlElement.style.height = height;
+            me.htmlElement.style.left = parseInt(left) + 'px';
+            me.htmlElement.style.top = parseInt(top) + 'px';
+            me.htmlElement.style.width = parseInt(width) + 'px';
+            me.htmlElement.style.height = parseInt(height) + 'px';
 
             //Zindex may become 'undefined' in some cases.
             if (zindex != null) {
@@ -432,10 +433,11 @@ org.riversun.JSFrame =
 
             me.canvasElement.id = me.id;
             me.canvasElement.style.position = 'absolute';
-            me.canvasElement.style.left = left;
-            me.canvasElement.style.top = top;
-            me.canvasElement.style.width = width;
-            me.canvasElement.style.height = height;
+            me.canvasElement.style.left = parseInt(left) + 'px'
+            me.canvasElement.style.top = parseInt(top) + 'px'
+            me.canvasElement.style.width = parseInt(width) + 'px';
+            me.canvasElement.style.height = parseInt(height) + 'px';
+            me.canvasElement.style.backgroundColor ='transparent'
             me.canvasElement.style.borderStyle = 'none';
             me.canvasElement.style.borderWidth = '0px';
 
@@ -493,8 +495,8 @@ org.riversun.JSFrame =
                 else {
                     deltaX = (parseInt(newObjLeftPx) - parseInt(oldObjLeftPx));
                     deltaY = (parseInt(newObjTopPx) - parseInt(oldObjTopPx));
-                    me.currentObject.style.left = parseInt(me.currentObject.style.left) + deltaX * me.currentObject.argX + 'px';
-                    me.currentObject.style.top = parseInt(me.currentObject.style.top) + deltaY * me.currentObject.argY + 'px';
+                    me.currentObject.style.left = (parseInt(me.currentObject.style.left) + deltaX * me.currentObject.argX) + 'px';
+                    me.currentObject.style.top = (parseInt(me.currentObject.style.top) + deltaY * me.currentObject.argY) + 'px';
                 }
 
                 me.eventData.deltaX = deltaX;
@@ -701,10 +703,10 @@ org.riversun.JSFrame =
             //url of icon image
             appIcon.src = '';
             appIcon.style.position = 'absolute';
-            appIcon.style.left = 2;
-            appIcon.style.top = 2;
-            appIcon.style.width = 16;
-            appIcon.style.height = 16;
+            appIcon.style.left = '2px';
+            appIcon.style.top = '2px';
+            appIcon.style.width = '16px';
+            appIcon.style.height = '16px';
             appIcon.style.visibility = 'hidden';
 
 
@@ -719,7 +721,9 @@ org.riversun.JSFrame =
                 me.titleBar.style.position = 'absolute';
                 me.titleBar.style.top = '0px';
                 me.titleBar.style.left = '0px';
-                me.titleBar.style.width = w_width - me.titleAdjustWidth;
+                me.titleBar.style.width = (w_width - me.titleAdjustWidth) + 'px';
+                me.titleBar.style.userSelect = 'none';
+
 
                 if (me.titleBarHeight) {
 
@@ -767,13 +771,13 @@ org.riversun.JSFrame =
                 titleBarTextSpan.id = me.id + '_titleBarText';
                 if (me.titleBarCaptionLeftMargin != null) {
                     titleBarTextSpan.style.position = 'absolute';
-                    titleBarTextSpan.style.left = me.titleBarCaptionLeftMargin;
+                    titleBarTextSpan.style.left = parseInt(me.titleBarCaptionLeftMargin) + 'px';
                 } else {
                     titleBarTextSpan.style.position = 'absolute';
-                    titleBarTextSpan.style.left = 0;
-                    titleBarTextSpan.style.right = 0;
+                    titleBarTextSpan.style.left = '0px';
+                    titleBarTextSpan.style.right = '0px';
                 }
-                titleBarTextSpan.style.top = 0;
+                titleBarTextSpan.style.top = '0px';
                 titleBarTextSpan.appendChild(titleBarText);
                 me.titleBar.appendChild(titleBarTextSpan);
 
@@ -934,8 +938,8 @@ org.riversun.JSFrame =
 
             me.htmlElement.style.borderWidth = me.exBorderWidth + 'px';
 
-            me.htmlElement.style.width = parseInt(me.htmlElement.style.width) - caribVal;
-            me.htmlElement.style.height = parseInt(me.htmlElement.style.height) - caribVal + 1;
+            me.htmlElement.style.width = (parseInt(me.htmlElement.style.width) - caribVal) + 'px';
+            me.htmlElement.style.height = (parseInt(me.htmlElement.style.height) - caribVal + 1) + 'px';
             me.htmlElement.typeName = 'cwindow';
             me.htmlElement.overflow = 'auto';
 
@@ -1018,19 +1022,19 @@ org.riversun.JSFrame =
             var tmpWidth = parseInt(me.htmlElement.style.width);
             var tmpHeight = parseInt(me.htmlElement.style.height);
 
-            me.htmlElement.style.left = tmpLeft + deltaLeft + 'px';
-            me.htmlElement.style.top = tmpTop + deltaTop + 'px';
+            me.htmlElement.style.left = parseInt(tmpLeft + deltaLeft) + 'px';
+            me.htmlElement.style.top = parseInt(tmpTop + deltaTop) + 'px';
 
-            me.htmlElement.style.width = tmpWidth + deltaWidth + 'px';
-            me.htmlElement.style.height = tmpHeight + deltaHeight + 'px';
+            me.htmlElement.style.width = parseInt(tmpWidth + deltaWidth) + 'px';
+            me.htmlElement.style.height = parseInt(tmpHeight + deltaHeight) + 'px';
 
             var tmpCanvasWidth = parseInt(me.canvas.canvasElement.style.width);
             var tmpCanvasHeight = parseInt(me.canvas.canvasElement.style.height);
 
             //Since canvasElement is a (0, 0) relative coordinate with respect to the parent element,
             // so it is not necessary to change left and top.
-            me.canvas.canvasElement.style.width = tmpCanvasWidth + deltaWidth + 'px';
-            me.canvas.canvasElement.style.height = tmpCanvasHeight + deltaHeight + 'px';
+            me.canvas.canvasElement.style.width = ( tmpCanvasWidth + deltaWidth) + 'px';
+            me.canvas.canvasElement.style.height = ( tmpCanvasHeight + deltaHeight) + 'px';
 
             if (me.showTitleBar) {
 
@@ -1040,7 +1044,7 @@ org.riversun.JSFrame =
                 //Therefore, if you adjust with the titleAdjustWidth as
                 // the initial value, the other will stretch relative.
                 //You do not think you can use ifDelta
-                me.titleBar.style.width = tmpCanvasWidth + deltaWidth + 'px';
+                me.titleBar.style.width = (tmpCanvasWidth + deltaWidth) + 'px';
 
             } else {
 
@@ -1054,20 +1058,20 @@ org.riversun.JSFrame =
                 if (tmpBean.htmlElement.typeName == 'cmarkerwindow') {
                     if (tmpBean.htmlElement.usage == 'RD') {
                         //Move the size change lower right(RD) marker according to the amount of movement.
-                        tmpBean.htmlElement.style.left = parseInt(tmpBean.htmlElement.style.left) + deltaWidth + 'px';
-                        tmpBean.htmlElement.style.top = parseInt(tmpBean.htmlElement.style.top) + deltaHeight + 'px';
+                        tmpBean.htmlElement.style.left = (parseInt(tmpBean.htmlElement.style.left) + deltaWidth) + 'px';
+                        tmpBean.htmlElement.style.top = (parseInt(tmpBean.htmlElement.style.top) + deltaHeight) + 'px';
                     }
                     else if (tmpBean.htmlElement.usage == 'DD') {
                         //Move the size change lower marker according to the movement amount.
                         // Do not move left.Only the width wil increase or decrease.
-                        tmpBean.htmlElement.style.width = parseInt(tmpBean.htmlElement.style.width) + deltaWidth + 'px';
-                        tmpBean.htmlElement.style.top = parseInt(tmpBean.htmlElement.style.top) + deltaHeight + 'px';
+                        tmpBean.htmlElement.style.width = (parseInt(tmpBean.htmlElement.style.width) + deltaWidth) + 'px';
+                        tmpBean.htmlElement.style.top = (parseInt(tmpBean.htmlElement.style.top) + deltaHeight) + 'px';
                     }
                     else if (tmpBean.htmlElement.usage == 'RR') {
                         //Move the size change right marker according to the movement amount
                         //Do not move top,Only the height will increase or decrease.
-                        tmpBean.htmlElement.style.left = parseInt(tmpBean.htmlElement.style.left) + deltaWidth + 'px';
-                        tmpBean.htmlElement.style.height = parseInt(tmpBean.htmlElement.style.height) + deltaHeight + 'px';
+                        tmpBean.htmlElement.style.left = (parseInt(tmpBean.htmlElement.style.left) + deltaWidth) + 'px';
+                        tmpBean.htmlElement.style.height = (parseInt(tmpBean.htmlElement.style.height) + deltaHeight) + 'px';
                     }
 
                 }
@@ -1289,8 +1293,8 @@ org.riversun.JSFrame =
             var me = this;
 
 
-            this.minFrameWidth = 64;
-            this.minWindowHeight = 26;
+            this.minFrameWidth = 128;
+            this.minWindowHeight = 32;
 
             /**
              * If this value is true, the focus will move when tapping the iframe area,
@@ -1396,8 +1400,8 @@ org.riversun.JSFrame =
                 //me.transparence.style.backgroundImage = 'url(img/img_baron_tp.gif)';
 
                 me.transparence.style.position = 'absolute';
-                me.transparence.style.left = 0;
-                me.transparence.style.top = 0;
+                me.transparence.style.left = '0px';
+                me.transparence.style.top = '0px';
 
                 //Transparent screen is 0px when creating window
                 me.transparence.style.width = '0px';
@@ -1479,8 +1483,8 @@ org.riversun.JSFrame =
 
             if (me.htmlElement.typeName == 'cifwindow') {
                 if (me.overrayTransparentScreenEnabled) {
-                    me.transparence.style.width = me.iframe.width;
-                    me.transparence.style.height = me.iframe.height;
+                    me.transparence.style.width = parseInt(me.iframe.width) + 'px';
+                    me.transparence.style.height = parseInt(me.iframe.height) + 'px';
                 }
             }
 
@@ -1616,8 +1620,8 @@ org.riversun.JSFrame =
                     //The window which is not the at the front expands the screen so that it can respond to clicks.
 
                     if (refCIfFrame.overrayTransparentScreenEnabled) {
-                        refCIfFrame.transparence.style.width = refCIfFrame.iframe.width;
-                        refCIfFrame.transparence.style.height = refCIfFrame.iframe.height;
+                        refCIfFrame.transparence.style.width = parseInt(refCIfFrame.iframe.width) + 'px';
+                        refCIfFrame.transparence.style.height = parseInt(refCIfFrame.iframe.height) + 'px';
                     }
                 }
             }
@@ -1657,7 +1661,7 @@ org.riversun.JSFrame =
             //Important logic to handle the minimum of Window well
             if (byUser && (tmpWidth + deltaWidth < refCIfFrame.minFrameWidth & deltaWidth < 0)) {
                 //Minimum adjustment of width
-                refCIfFrame.htmlElement.style.width = tmpWidth;
+                refCIfFrame.htmlElement.style.width = tmpWidth + 'px';
                 deltaWidth = 0;
             }
 
@@ -1666,10 +1670,10 @@ org.riversun.JSFrame =
                 refCIfFrame.htmlElement.style.height = tmpHeight;
                 deltaHeight = 0;
             }
-            refCIfFrame.htmlElement.style.left = tmpLeft + deltaLeft + 'px';
-            refCIfFrame.htmlElement.style.top = tmpTop + deltaTop + 'px';
-            refCIfFrame.htmlElement.style.width = tmpWidth + deltaWidth + 'px';
-            refCIfFrame.htmlElement.style.height = tmpHeight + deltaHeight + 'px';
+            refCIfFrame.htmlElement.style.left = ( tmpLeft + deltaLeft) + 'px';
+            refCIfFrame.htmlElement.style.top = ( tmpTop + deltaTop) + 'px';
+            refCIfFrame.htmlElement.style.width = (tmpWidth + deltaWidth) + 'px';
+            refCIfFrame.htmlElement.style.height = (tmpHeight + deltaHeight) + 'px';
 
 
             var tmpCanvasWidth = parseInt(refCIfFrame.canvas.canvasElement.style.width);
@@ -1677,25 +1681,25 @@ org.riversun.JSFrame =
 
             //Since canvasElement is a (0, 0) relative coordinate with respect
             // to the parent element, it is not necessary to change left and top.
-            refCIfFrame.canvas.canvasElement.style.width = tmpCanvasWidth + deltaWidth + 'px';
-            refCIfFrame.canvas.canvasElement.style.height = tmpCanvasHeight + deltaHeight + 'px';
+            refCIfFrame.canvas.canvasElement.style.width = (tmpCanvasWidth + deltaWidth) + 'px';
+            refCIfFrame.canvas.canvasElement.style.height = (tmpCanvasHeight + deltaHeight) + 'px';
 
             //Change the size of the title bar. TitleAdjustWidth etc.
             // The reason why you do not have to use titleAdjustWidth is
             // because these scaling are done with differences (deltaX, deltaY).
             //Therefore, if you adjust with the titleAdjustWidth
             // as the initial value, the other will stretch relative.
-            refCIfFrame.titleBar.style.width = tmpCanvasWidth - refCIfFrame.ifDelta + deltaWidth + 0 + 'px';
+            refCIfFrame.titleBar.style.width = (tmpCanvasWidth - refCIfFrame.ifDelta + deltaWidth + 0) + 'px';
 
             //Image resizing for iframe that is the child element of canvas
-            refCIfFrame.iframe.width = tmpCanvasWidth - refCIfFrame.ifDelta + deltaWidth + 0 + 'px';
-            refCIfFrame.iframe.height = tmpCanvasHeight - refCIfFrame.ifDelta + deltaHeight + refCIfFrame.frameHeightAdjust + 'px';
+            refCIfFrame.iframe.width = (tmpCanvasWidth - refCIfFrame.ifDelta + deltaWidth + 0 ) + 'px';
+            refCIfFrame.iframe.height = (tmpCanvasHeight - refCIfFrame.ifDelta + deltaHeight + refCIfFrame.frameHeightAdjust) + 'px';
 
 
             if (refCIfFrame.overrayTransparentScreenEnabled || refCIfFrame.overrayTransparentScreenOnResize) {
                 //Deploy a transparent screen.
-                refCIfFrame.transparence.style.width = refCIfFrame.iframe.width;
-                refCIfFrame.transparence.style.height = refCIfFrame.iframe.height;
+                refCIfFrame.transparence.style.width = parseInt(refCIfFrame.iframe.width) + 'px';
+                refCIfFrame.transparence.style.height = parseInt(refCIfFrame.iframe.height) + 'px';
             }
 
             //move frameComponent(like closeButton) corresponding to moving window edge for resize
@@ -1712,16 +1716,16 @@ org.riversun.JSFrame =
                 if (tmpBean.htmlElement.typeName == 'cmarkerwindow') {
 
                     if (tmpBean.htmlElement.usage == 'RD') {
-                        tmpBean.htmlElement.style.left = parseInt(tmpBean.htmlElement.style.left) + deltaWidth + 'px';
-                        tmpBean.htmlElement.style.top = parseInt(tmpBean.htmlElement.style.top) + deltaHeight + 'px';
+                        tmpBean.htmlElement.style.left = (parseInt(tmpBean.htmlElement.style.left) + deltaWidth) + 'px';
+                        tmpBean.htmlElement.style.top = (parseInt(tmpBean.htmlElement.style.top) + deltaHeight) + 'px';
                     }
                     else if (tmpBean.htmlElement.usage == 'DD') {
-                        tmpBean.htmlElement.style.width = parseInt(tmpBean.htmlElement.style.width) + deltaWidth + 'px';
-                        tmpBean.htmlElement.style.top = parseInt(tmpBean.htmlElement.style.top) + deltaHeight + 'px';
+                        tmpBean.htmlElement.style.width = (parseInt(tmpBean.htmlElement.style.width) + deltaWidth ) + 'px';
+                        tmpBean.htmlElement.style.top = (parseInt(tmpBean.htmlElement.style.top) + deltaHeight) + 'px';
                     }
                     else if (tmpBean.htmlElement.usage == 'RR') {
-                        tmpBean.htmlElement.style.left = parseInt(tmpBean.htmlElement.style.left) + deltaWidth + 'px';
-                        tmpBean.htmlElement.style.height = parseInt(tmpBean.htmlElement.style.height) + deltaHeight + 'px';
+                        tmpBean.htmlElement.style.left = (parseInt(tmpBean.htmlElement.style.left) + deltaWidth ) + 'px';
+                        tmpBean.htmlElement.style.height = (parseInt(tmpBean.htmlElement.style.height) + deltaHeight) + 'px';
                     }
                 }
             }
@@ -1753,7 +1757,7 @@ org.riversun.JSFrame =
             // because these scaling are done with differences (deltaX, deltaY).
             //Therefore, if you adjust with the titleAdjustWidth
             // as the initial value, the other will stretch relative.
-            refCIfFrame.titleBar.style.width = width - refCIfFrame.ifDelta + 'px';
+            refCIfFrame.titleBar.style.width = (width - refCIfFrame.ifDelta) + 'px';
 
             //Image resizing for iframe that is the child element of canvas
             refCIfFrame.iframe.width = width - refCIfFrame.ifDelta + 'px';
@@ -1762,8 +1766,8 @@ org.riversun.JSFrame =
 
             if (refCIfFrame.overrayTransparentScreenEnabled || refCIfFrame.overrayTransparentScreenOnResize) {
                 //Deploy a transparent screen.
-                refCIfFrame.transparence.style.width = refCIfFrame.iframe.width;
-                refCIfFrame.transparence.style.height = refCIfFrame.iframe.height;
+                refCIfFrame.transparence.style.width = parseInt(refCIfFrame.iframe.width) + 'px';
+                refCIfFrame.transparence.style.height = parseInt(refCIfFrame.iframe.height) + 'px';
             }
 
             //move frameComponent(like closeButton) corresponding to moving window edge for resize
@@ -2264,6 +2268,7 @@ org.riversun.JSFrame =
 
             var frame = me.frame;
             var eleStyle = me.htmlElement.style;
+            eleStyle.userSelect='none';
 
             var x = me.x;
             var y = me.y;
