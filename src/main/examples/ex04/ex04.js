@@ -72,7 +72,7 @@ function handleRestoreWindow(e) {
 var frame01 = jsFrame.createFrame(20, 40, 320, 240, getOriginalStyle_ex04_win10_style(jsFrame.createFrameAppearance()));
 
 frame01.setTitle("My Window 1").getFrameView().innerHTML =
-    '<div style="padding:5px;font-size:10px;color:dimgray;">Win10 Style<br/>Click Maximize button to maximize me.</div>';
+    '<div style="padding:5px;font-size:10px;color:dimgray;">Win64 Style<br/>Click Maximize button to maximize me.</div>';
 frame01.show();
 
 frame01.getFrameComponentElement('maximizeButton').onclick = handleMaximizeWindow;
@@ -81,7 +81,7 @@ frame01.getFrameComponentElement('restoreButton').onclick = handleRestoreWindow;
 var frame02 = jsFrame.createFrame(360, 40, 320, 240, getOriginalStyle_ex04_win10_style(jsFrame.createFrameAppearance()));
 
 frame02.setTitle("My Window 2").getFrameView().innerHTML =
-    '<div style="padding:5px;font-size:10px;color:dimgray;">Win10 Style<br/>Click Maximize button to maximize me.</div>';
+    '<div style="padding:5px;font-size:10px;color:dimgray;">Win64 Style<br/>Click Maximize button to maximize me.</div>';
 frame02.show();
 
 frame02.getFrameComponentElement('maximizeButton').onclick = handleMaximizeWindow;

@@ -24,7 +24,7 @@
  */
 var jsFrame = new org.riversun.JSFrame();
 
-//frame1(for normal content)
+//frame1
 
 //create appearance(kind of frame design)
 var frmStyle1 = jsFrame.createFrameAppearance();
@@ -45,7 +45,7 @@ viewOfFrm01.innerHTML = '<div style="padding:10px;font-size:12px;color:darkgray"
 frame01.show();
 
 
-//frame2 (for iframe content)
+//frame2
 var frmStyle2 = jsFrame.createFrameAppearance();
 
 
