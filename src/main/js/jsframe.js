@@ -143,8 +143,10 @@ org.riversun.JSFrame =
                     btnAppearance.backgroundColorDefault = 'transparent';
                     btnAppearance.caption = crossMark1;
 
-                    btnAppearance.captionColorDefault = 'white';
-                    btnAppearance.captionColorPressed = 'gray';
+                    btnAppearance.captionColorDefault = 'gray';
+                    btnAppearance.captionColorFocused = 'gray';
+                    btnAppearance.captionColorHovered = 'silver';
+                    btnAppearance.captionColorPressed = 'black';
 
                     btnAppearance.borderWidth = 0;
                     btnAppearance.borderColorDefault = '#aaaaaa';
@@ -437,7 +439,7 @@ org.riversun.JSFrame =
             me.canvasElement.style.top = parseInt(top) + 'px'
             me.canvasElement.style.width = parseInt(width) + 'px';
             me.canvasElement.style.height = parseInt(height) + 'px';
-            me.canvasElement.style.backgroundColor ='transparent'
+            me.canvasElement.style.backgroundColor = 'transparent'
             me.canvasElement.style.borderStyle = 'none';
             me.canvasElement.style.borderWidth = '0px';
 
@@ -974,6 +976,7 @@ org.riversun.JSFrame =
             if (classNameForFocused) {
                 me.titleBarClassNameFocused = classNameForFocused;
             }
+            return me;
         };
         /**
          * Add frameComponent(Wrapped DOM element like 'div' to display above the frame) to frame
@@ -984,6 +987,7 @@ org.riversun.JSFrame =
 
             me.frameComponentMap[frameComponent.id] = frameComponent;
             me.canvas.canvasElement.appendChild(frameComponent.htmlElement);
+            return me;
         };
 
         /**
@@ -2268,7 +2272,7 @@ org.riversun.JSFrame =
 
             var frame = me.frame;
             var eleStyle = me.htmlElement.style;
-            eleStyle.userSelect='none';
+            eleStyle.userSelect = 'none';
 
             var x = me.x;
             var y = me.y;
