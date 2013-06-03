@@ -31,7 +31,9 @@ var viewOfFrm01 = frame01.getFrameView();
 viewOfFrm01.innerHTML = '<div style="padding:10px;font-size:12px;color:darkgray;">Hello world!</div>';
 
 //show window
-frame01.show();```
+frame01.show();
+```
+
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex00/index.html  
 [![ex00](https://riversun.github.io/jsframe/capture/ex00.png)][1]
@@ -44,6 +46,7 @@ All examples are included in the project. You can modify,customize example after
 ```
 git clone https://github.com/riversun/JSFrame.js.git
 ```
+
 ## Example:OS X style
 
 **DEMO**  
