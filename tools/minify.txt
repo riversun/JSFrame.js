@@ -1,0 +1,2 @@
+/*! jsframe.js v1.0.0 | (c) Tom Misawa at github.com/riversun/JSFrame.js MIT License */
+java -jar yuicompressor-2.4.8.jar jsframe-1.0.0.js -o jsframe-1.0.0.min.js
