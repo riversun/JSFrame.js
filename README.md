@@ -1,7 +1,7 @@
 # Overview
 
 ###  What is '**JsFrame.js**' like?
-It is an independent lightweight multi-window library.
+It is an independent lightweight multi-window library for javascript.
 - Create various popup windows.
 - Styling the appearance flexibly.
 
