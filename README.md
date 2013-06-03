@@ -85,7 +85,7 @@ https://riversun.github.io/jsframe/examples/ex02/index.html
 #### JSFrame is a frame builder and management class.
 
 |Methods|Details|
-|--|--|
+|---|---|
 |**CIfFrame** createFrame(left, top, width, height, **CFrameAppearance**)|create **CIFFrame** instance.CIfFrame is a kind of 'window' called frame.|
 |**CFrameAppearance** createFrameAppearance()|create **CFrameAppearance** instance.<br>**CFrameAppearance** is a class for frame appearance.You can modify frame's looking as you like.|
 
@@ -93,7 +93,7 @@ https://riversun.github.io/jsframe/examples/ex02/index.html
 #### CIfFrame is like a window.It's draggable and movable.You can design it.
 
 |Methods|Details|
-|--|--|
+|---|---|
 |CIfFrame setTitle(str)|Set caption in the title bar|  
 |CIfFrame setResizable(boolean)|Set whether the window can be resized|  
 |CIfFrame setMovable(boolean)|Set whether the window can be moved|
@@ -109,12 +109,12 @@ https://riversun.github.io/jsframe/examples/ex02/index.html
 #### CFrameAppearance is a class for frame appearance.You can modify frame's looking as you like.
 
 |Methods|Details|
-|--|--|
+|---|---|
 |CFrameAppearance setUseIFrame(boolean)|If 'true' ,You can set CIfFrame 'IFrame mode' and you can use CIfFrame#setUrl method for opening specified url.|
 |void onInitialize()|Since this callback method is called at frame initialization,Initialization processing such as adding frameComponent should be written here.|
 
 |Members|Details|
-|--|--|
+|---|---|
 |showTitleBar|true or false|
 |showCloseButton|true or false<br>|
 |titleBarCaptionFontSize|ex)'12px'|
