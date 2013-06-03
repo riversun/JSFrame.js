@@ -5,6 +5,7 @@ It is an independent lightweight multi-window library for javascript.
 - Create various popup windows.
 - Styling the appearance flexibly.
 
+[Click to open DEMO](https://riversun.github.io/jsframe/examples/ex03/index.html)
 [![ex00](https://riversun.github.io/jsframe/capture/ex03.png)][1]
 [1]: https://riversun.github.io/jsframe/examples/ex03/index.html
 
@@ -50,6 +51,21 @@ All examples are included in the project. You can modify,customize example after
 git clone https://github.com/riversun/JSFrame.js.git
 ```
 
+
+### Example:Basic
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex01/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex01.png)][1]
+[1]: https://riversun.github.io/jsframe/examples/ex01/index.html
+
+### Example:Window with Iframe contents
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex02/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex02.png)][1]
+[1]: https://riversun.github.io/jsframe/examples/ex02/index.html
+
 ## Example:OS X style
 
 **DEMO**  
@@ -66,20 +82,6 @@ https://riversun.github.io/jsframe/examples/ex04/index.html
 [![ex00](https://riversun.github.io/jsframe/capture/ex04.png)][1]
 [1]: https://riversun.github.io/jsframe/examples/ex04/index.html
 
-### Example:Basic
-**DEMO**  
-https://riversun.github.io/jsframe/examples/ex01/index.html  
-
-[![ex00](https://riversun.github.io/jsframe/capture/ex01.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex01/index.html
-
-### Example:Window with Iframe contents
-**DEMO**  
-https://riversun.github.io/jsframe/examples/ex02/index.html  
-
-[![ex00](https://riversun.github.io/jsframe/capture/ex02.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex02/index.html
-
 # Classese and Methods/Members
 ### org.riversun.JSFrame class
 #### JSFrame is a frame builder and management class.
@@ -88,6 +90,8 @@ https://riversun.github.io/jsframe/examples/ex02/index.html
 |---|---|
 |**CIfFrame** createFrame(left, top, width, height, **CFrameAppearance**)|create **CIFFrame** instance.CIfFrame is a kind of 'window' called frame.|
 |**CFrameAppearance** createFrameAppearance()|create **CFrameAppearance** instance.<br>**CFrameAppearance** is a class for frame appearance.You can modify frame's looking as you like.|
+
+<hr>
 
 ### CIfFrame class
 #### CIfFrame is like a window.It's draggable and movable.You can design it.
@@ -104,6 +108,9 @@ https://riversun.github.io/jsframe/examples/ex02/index.html
 |CIfFrame requestFocus()|Requests that this frame gets the focus.<br>Focus and the window comes to the forefront|
 |CIfFrame setSize(width,height)|set size of frame|
 |CIfFrame setPosition(x,y,anchor)|anchor is optional.<br>Default anchor is 'LEFT_TOP'<br>You can set followings for anchor.<br>'LEFT_TOP',<br>'CENTER_TOP',<br>'RIGHT_TOP',<br>'LEFT_CENTER',<br>'CENTER_CENTER',<br>'RIGHT_CENTER',<br>'LEFT_BOTTOM',<br>'CENTER_BOTTOM',<br>'RIGHT_BOTTOM'|
+
+<hr>
+
 
 ### CFrameAppearance class
 #### CFrameAppearance is a class for frame appearance.You can modify frame's looking as you like.
@@ -135,5 +142,8 @@ https://riversun.github.io/jsframe/examples/ex02/index.html
 |frameBorderStyle|Border line style<br>ex)solid|
 |frameBoxShadow|Shadow style of the frame<br>ex) '5px 5px 10px  rgba(0, 0, 0, 0.3)'|
 |frameBackgroundColor|Background color of the frame<br>ex)'white'|
+
+<hr>
+
 
 ### All assets moved from mysvn
