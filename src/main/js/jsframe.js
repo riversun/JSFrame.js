@@ -1,5 +1,5 @@
 /**
- * JSFrame ver.1.0.0 - A javascript floating window library
+ * JSFrame ver.1.0.1 - A javascript floating window library
  *
  * Copyright 2007- Tom Misawa, riversun.org@gmail.com
  * Copyright 2007- web2driver.com
@@ -2686,6 +2686,15 @@ org.riversun.JSFrame =
             return me;
 
         };
+
+        /**
+         * Get CIFrame object
+         * @returns {*}
+         */
+        CSimpleLayoutAnimator.prototype.get = function () {
+            var me = this;
+            return me.targetFrame;
+        };
         /**
          * Set animation duration time millis
          * @param durationMillis
@@ -2821,7 +2830,8 @@ org.riversun.JSFrame =
         };
 
 
-        CSimpleLayoutAnimator.prototype.start = function () {
+        CSimpleLayoutAnimator.prototype.start = function (waitMillis) {
+
 
             var me = this;
 
@@ -2831,7 +2841,9 @@ org.riversun.JSFrame =
             var fromX = me._pinX;
             var fromY = me._pinY;
 
+
             return new Promise(function (resolve, reject) {
+
 
                 var numOfSteps = me.fps * (me.durationMillis / 1000);
 
@@ -2846,65 +2858,82 @@ org.riversun.JSFrame =
 
                 var idx = 0;
 
-                var timer = new CTimer();
 
-                timer.setIntervalMillis(unitMillis);
+                function loop() {
+                    var timer = new CTimer();
 
-                timer.setCallback(function (timer) {
+                    timer.setIntervalMillis(unitMillis);
 
-                    if (idx == numOfSteps) {
+                    timer.setCallback(function (timer) {
 
-                        var _width = me._toWidth;
-                        var _height = me._toHeight;
+                        if (idx == numOfSteps) {
+
+                            var _width = me._toWidth;
+                            var _height = me._toHeight;
+
+                            var _x = fromX + deltaX * idx;
+                            var _y = fromY + deltaY * idx;
+
+                            if (me.pinnedAnimationEnabled) {
+                                //me.targetFrame._setPositionInternally(me._pinX, me._pinY, me._pinAnchor, _width, _height);
+
+                                me.targetFrame._setPositionInternally(_x, _y, me._pinAnchor, _width, _height);
+                            }
+
+                            me.targetFrame.resizeDirect(_width, _height);
+
+                            me._crrWidth = _width;
+                            me._crrHeight = _height;
+
+                            me._pinX = _x;
+                            me._pinY = _y;
+                        }
+
+                        if (idx == (numOfSteps + 1)) {
+                            //Stop timer after last draw update.
+                            timer.stopTimer();
+                            resolve(me);
+                            return;
+                        }
+
+
+                        var _width = fromWidth + deltaWidth * idx;
+                        var _height = fromHeight + deltaHeight * idx;
 
                         var _x = fromX + deltaX * idx;
                         var _y = fromY + deltaY * idx;
 
                         if (me.pinnedAnimationEnabled) {
                             //me.targetFrame._setPositionInternally(me._pinX, me._pinY, me._pinAnchor, _width, _height);
-
                             me.targetFrame._setPositionInternally(_x, _y, me._pinAnchor, _width, _height);
                         }
 
                         me.targetFrame.resizeDirect(_width, _height);
 
-                        me._crrWidth = _width;
-                        me._crrHeight = _height;
+                        if (idx == 0) {
+                            me.targetFrame.show();
+                        }
 
-                        me._pinX = _x;
-                        me._pinY = _y;
-                    }
-
-                    if (idx == (numOfSteps + 1)) {
-                        //Stop timer after last draw update.
-                        timer.stopTimer();
-                        resolve(me);
-                        return;
-                    }
+                        idx++;
+                    });
 
 
-                    var _width = fromWidth + deltaWidth * idx;
-                    var _height = fromHeight + deltaHeight * idx;
+                    timer.startTimer();
+                }
 
-                    var _x = fromX + deltaX * idx;
-                    var _y = fromY + deltaY * idx;
+                if (waitMillis) {
 
-                    if (me.pinnedAnimationEnabled) {
-                        //me.targetFrame._setPositionInternally(me._pinX, me._pinY, me._pinAnchor, _width, _height);
-                        me.targetFrame._setPositionInternally(_x, _y, me._pinAnchor, _width, _height);
-                    }
+                    var waiter = new CTimer();
+                    waiter.setIntervalMillis(waitMillis);
+                    waiter.setCallback(function (_timer) {
+                        _timer.stopTimer();
 
-                    me.targetFrame.resizeDirect(_width, _height);
-
-                    if (idx == 0) {
-                        me.targetFrame.show();
-                    }
-
-                    idx++;
-                });
-
-
-                timer.startTimer();
+                        loop();
+                    });
+                    waiter.startTimer();
+                } else {
+                    loop();
+                }
 
 
             });
