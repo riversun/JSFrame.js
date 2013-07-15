@@ -55,14 +55,14 @@ git clone https://github.com/riversun/JSFrame.js.git
 ```
 
 
-### Example:Basic
+## Example:Basic
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex01/index.html  
 
 [![ex00](https://riversun.github.io/jsframe/capture/ex01.png)][1]
 [1]: https://riversun.github.io/jsframe/examples/ex01/index.html
 
-### Example:Window with Iframe contents
+## Example:Window with Iframe contents
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex02/index.html  
 
@@ -84,6 +84,23 @@ https://riversun.github.io/jsframe/examples/ex04/index.html
 
 [![ex00](https://riversun.github.io/jsframe/capture/ex04.png)][1]
 [1]: https://riversun.github.io/jsframe/examples/ex04/index.html
+
+
+## Example:Various styles
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex05/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex05.png)][1]
+[1]: https://riversun.github.io/jsframe/examples/ex05/index.html
+
+
+## Example:Animations #1
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex06/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex06.png)][1]
+[1]: https://riversun.github.io/jsframe/examples/ex06/index.html
+
 
 # Classese and Methods/Members
 ### org.riversun.JSFrame class
