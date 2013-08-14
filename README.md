@@ -42,8 +42,7 @@ frame01.show();
 
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex00/index.html  
-[![ex00](https://riversun.github.io/jsframe/capture/ex00.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex00/index.html
+[![ex00](https://riversun.github.io/jsframe/capture/ex00.png)](https://riversun.github.io/jsframe/examples/ex00/index.html)
 
 
 # Examples
@@ -58,47 +57,41 @@ git clone https://github.com/riversun/JSFrame.js.git
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex01/index.html  
 
-[![ex00](https://riversun.github.io/jsframe/capture/ex01.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex01/index.html
+[![ex00](https://riversun.github.io/jsframe/capture/ex01.png)](https://riversun.github.io/jsframe/examples/ex01/index.html)
 
 ## Example:Window with Iframe contents
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex02/index.html  
 
-[![ex00](https://riversun.github.io/jsframe/capture/ex02.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex02/index.html
+[![ex00](https://riversun.github.io/jsframe/capture/ex02.png)](https://riversun.github.io/jsframe/examples/ex02/index.html)
 
 ## Example:OS X style
 
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex03/index.html  
 
-[![ex00](https://riversun.github.io/jsframe/capture/ex03.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex03/index.html
+[![ex00](https://riversun.github.io/jsframe/capture/ex03.png)](https://riversun.github.io/jsframe/examples/ex03/index.html)
 
 ## Example:Win style
 
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex04/index.html  
 
-[![ex00](https://riversun.github.io/jsframe/capture/ex04.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex04/index.html
+[![ex00](https://riversun.github.io/jsframe/capture/ex04.png)](https://riversun.github.io/jsframe/examples/ex04/index.html)
 
 
 ## Example:Various styles
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex05/index.html  
 
-[![ex00](https://riversun.github.io/jsframe/capture/ex05.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex05/index.html
+[![ex00](https://riversun.github.io/jsframe/capture/ex05.png)](https://riversun.github.io/jsframe/examples/ex05/index.html)
 
 
 ## Example:Animations #1
 **DEMO**  
 https://riversun.github.io/jsframe/examples/ex06/index.html  
 
-[![ex00](https://riversun.github.io/jsframe/capture/ex06.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex06/index.html
+[![ex00](https://riversun.github.io/jsframe/capture/ex06.png)](https://riversun.github.io/jsframe/examples/ex06/index.html)
 
 
 # Classese and Methods/Members
