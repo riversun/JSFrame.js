@@ -8,8 +8,7 @@ It is an independent lightweight multi-window library for javascript.
 
 [Click to open DEMO](https://riversun.github.io/jsframe/examples/ex03/index.html)  
 
-[![ex00](https://riversun.github.io/jsframe/capture/ex03.png)][1]
-[1]: https://riversun.github.io/jsframe/examples/ex03/index.html
+[![ex00](https://riversun.github.io/jsframe/capture/ex03.png)](https://riversun.github.io/jsframe/examples/ex03/index.html)
 
 
 It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
