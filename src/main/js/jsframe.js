@@ -1341,8 +1341,8 @@ org.riversun.JSFrame =
             me.resizable = true;
 
 
-            me.onousemoveOnIframe = null;
-            me.onouseupOnIframe = null;
+            me.onMouseMoveOnIframe = null;
+            me.onMouseUpOnIframe = null;
 
             me._hasFocus = false;
             me._hasFocusTime = 0;
@@ -1855,8 +1855,11 @@ org.riversun.JSFrame =
                         eventFromIframe.initMouseEvent('mousemove', true, false, window, e.detail, e.screenX, e.screenY, (e.pageX + frameLeft), (e.pageY + frameTop),
                             e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, null);
 
-                        if (me.onousemoveOnIframe) {
-                            me.onousemoveOnIframe(eventFromIframe);
+                        //smooth dragging during iframe mode
+                        me.parentCanvas.windowMouseMove(eventFromIframe);
+
+                        if (me.onMouseMoveOnIframe) {
+                            me.onMouseMoveOnIframe(eventFromIframe);
                         }
                     };
 
@@ -1869,8 +1872,11 @@ org.riversun.JSFrame =
                         eventFromIframe.initMouseEvent('mouseup', true, false, window, e.detail, e.screenX, e.screenY, (e.pageX + frameLeft), (e.pageY + frameTop),
                             e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, null);
 
-                        if (me.onouseupOnIframe) {
-                            me.onouseupOnIframe(eventFromIframe);
+                        //smooth dragging during iframe mode
+                        me.parentCanvas.windowMouseUp(eventFromIframe);
+
+                        if (me.onMouseUpOnIframe) {
+                            me.onMouseUpOnIframe(eventFromIframe);
                         }
 
                     };
