@@ -138,7 +138,7 @@ jsFrame.createAnimator().set(createFrame01())
         return animatorObj.toHeight(frmHeight).start();
     })
     .then(function (animatorObj) {
-        animatorObj.get().getFrameView().innerHTML = "<b>Move after resizing:<br>Expanding from the (center,center) of the frame.</b>"
+        animatorObj.get().getFrameView().innerHTML = "<b>Move after resizing:<br>Expanding from the (center,center) of the frame.</b>";
         return animatorObj
             .setDuration(500)
             .toX(frmWidth / 2 + (3 * (frmWidth + marginWidth)) + offsetX).start();
@@ -157,7 +157,7 @@ jsFrame.createAnimator().set(createFrame01())
         return animatorObj.toHeight(frmHeight).start();
     })
     .then(function (animatorObj) {
-        animatorObj.get().getFrameView().innerHTML = "<b>Move after resizing:<br>Expanding from the (center,center) of the frame.</b>"
+        animatorObj.get().getFrameView().innerHTML = "<b>Move after resizing:<br>Expanding from the (center,center) of the frame.</b>";
         return animatorObj
             .setDuration(400)
             .toX(frmWidth / 2 + (2 * (frmWidth + marginWidth)) + offsetX).start();
@@ -175,7 +175,7 @@ jsFrame.createAnimator().set(createFrame01())
         return animatorObj.toHeight(frmHeight).start();
     })
     .then(function (animatorObj) {
-        animatorObj.get().getFrameView().innerHTML = "<b>Move after resizing:<br>Expanding from the (center,center) of the frame.</b>"
+        animatorObj.get().getFrameView().innerHTML = "<b>Move after resizing:<br>Expanding from the (center,center) of the frame.</b>";
         return animatorObj
             .setDuration(300)
             .toX(frmWidth / 2 + (1 * (frmWidth + marginWidth)) + offsetX).start();
