@@ -435,11 +435,11 @@ org.riversun.JSFrame =
 
             me.canvasElement.id = me.id;
             me.canvasElement.style.position = 'absolute';
-            me.canvasElement.style.left = parseInt(left) + 'px'
-            me.canvasElement.style.top = parseInt(top) + 'px'
+            me.canvasElement.style.left = parseInt(left) + 'px';
+            me.canvasElement.style.top = parseInt(top) + 'px';
             me.canvasElement.style.width = parseInt(width) + 'px';
             me.canvasElement.style.height = parseInt(height) + 'px';
-            me.canvasElement.style.backgroundColor = 'transparent'
+            me.canvasElement.style.backgroundColor = 'transparent';
             me.canvasElement.style.borderStyle = 'none';
             me.canvasElement.style.borderWidth = '0px';
 
@@ -754,13 +754,6 @@ org.riversun.JSFrame =
                 //me.titleBar.style.boxShadow = '0 1px 0 rgba(255,255,255,0.5)';
 
 
-                //TODO deprecation
-//                if (parseInt(appearance.frameBorderRadius) > 0) {
-//                    me.titleBar.style.borderTopLeftRadius = appearance.getFrameInnerBorderRadius();
-//                    me.titleBar.style.borderTopRightRadius = appearance.getFrameInnerBorderRadius();
-//                }
-
-
                 //Set not to display overflow character string
                 me.titleBar.style.overflow = 'hidden';
 
@@ -902,7 +895,7 @@ org.riversun.JSFrame =
                 me.htmlElement.style.cursor = 'default';
             };
 
-            //TODO:Refactor
+
             me.removeMarkers2 = function () {
                 me.canvas.removeBean(markerRD.id);
                 me.canvas.removeBean(markerDD.id);
