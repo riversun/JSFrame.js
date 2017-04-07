@@ -1,3 +1,9 @@
+/**
+ * JSFrame Examples
+ *
+ * Copyright 2007-2017 Tom Misawa, riversun.org@gmail.com
+ * Copyright 2007-2017 web2driver.com*/
+
 .ex03title_yosemite_style_default {
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #f5f5f5, color-stop(1.0, #f8f7f2)));
     background: -webkit-linear-gradient(top, #f5f5f5, #f8f7f2);
