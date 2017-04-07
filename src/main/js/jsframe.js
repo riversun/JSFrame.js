@@ -1,8 +1,8 @@
 /**
- * JSFrame ver.1.0.2 - A javascript floating window library
+ * JSFrame ver.1.1.0 - A javascript floating window library
  *
- * Copyright 2007- Tom Misawa, riversun.org@gmail.com
- * Copyright 2007- web2driver.com
+ * Copyright 2007-2017 Tom Misawa, riversun.org@gmail.com
+ * Copyright 2007-2017 web2driver.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in the
