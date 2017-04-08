@@ -24,21 +24,21 @@
  */
 
 var org;
-if (typeof org === 'undefined') {
+if (org === undefined) {
     org = {};
 }
 
-if (typeof org.riversun === 'undefined') {
+if (org.riversun === undefined) {
     org.riversun = {};
 }
 
 org.riversun.JSFrame =
     (function () {
-        //'use strict';
+        'use strict';
 
-        var DEF = {};
+        var DEF = {},
+            CALIGN = {};
 
-        var CALIGN = {};
         CALIGN.LEFT_TOP = 'LEFT_TOP';
         CALIGN.HCENTER_TOP = 'CENTER_TOP';
         CALIGN.RIGHT_TOP = 'RIGHT_TOP';
@@ -105,7 +105,7 @@ org.riversun.JSFrame =
             this._partsBuilder = null;
 
 
-            this.frameComponents = new Array();
+            this.frameComponents = [];
 
             this.frameHeightAdjust = 1;
 
@@ -115,10 +115,9 @@ org.riversun.JSFrame =
                     return;
                 }
                 if (hasFocus) {
-                    return (parseInt(ref.frameBorderRadius) - parseInt(ref.frameBorderWidthFocused)) + 'px';
-                } else {
-                    return (parseInt(ref.frameBorderRadius) - parseInt(ref.frameBorderWidthDefault)) + 'px';
+                    return (parseInt(ref.frameBorderRadius, 10) - parseInt(ref.frameBorderWidthFocused, 10)) + 'px';
                 }
+                return (parseInt(ref.frameBorderRadius, 10) - parseInt(ref.frameBorderWidthDefault, 10)) + 'px';
             };
 
 
@@ -126,11 +125,10 @@ org.riversun.JSFrame =
 
                 //Add close button if needed
                 if (me.showCloseButton) {
-                    var partsBuilder = me.getPartsBuilder();
-
-                    const crossMark0 = '\u274c';
-                    const crossMark1 = '\u2716';
-                    const crossMark2 = '\u274e';
+                    var partsBuilder = me.getPartsBuilder(),
+                        crossMark0 = '\u274c',
+                        crossMark1 = '\u2716',
+                        crossMark2 = '\u274e';
 
 
                     var btnAppearance = partsBuilder.buildTextButtonAppearance();
@@ -167,7 +165,7 @@ org.riversun.JSFrame =
 
         CFrameAppearance.prototype.getPartsBuilder = function () {
             var me = this;
-            if (me._partsBuilder == null) {
+            if (me._partsBuilder === null) {
                 me._partsBuilder = new CDomPartsBuilder();
             }
             return me._partsBuilder;
@@ -276,13 +274,13 @@ org.riversun.JSFrame =
             me.htmlElement = document.createElement(DEF.CBEAN.HTML_ELEMENT);
             me.htmlElement.id = DEF.CBEAN.HTML_ELEMENT_ID_PREFIX + beanId;
             me.htmlElement.style.position = 'absolute';
-            me.htmlElement.style.left = parseInt(left) + 'px';
-            me.htmlElement.style.top = parseInt(top) + 'px';
-            me.htmlElement.style.width = parseInt(width) + 'px';
-            me.htmlElement.style.height = parseInt(height) + 'px';
+            me.htmlElement.style.left = parseInt(left, 10) + 'px';
+            me.htmlElement.style.top = parseInt(top, 10) + 'px';
+            me.htmlElement.style.width = parseInt(width, 10) + 'px';
+            me.htmlElement.style.height = parseInt(height, 10) + 'px';
 
             //Zindex may become 'undefined' in some cases.
-            if (zindex != null) {
+            if (zindex !== null) {
                 me.htmlElement.style.zIndex = zindex;
             }
             me.htmlElement.style.borderColor = '#000000';
@@ -360,8 +358,8 @@ org.riversun.JSFrame =
                 return false;
             }
 
-            refHtmlElement.parentCanvas.offsetX = e.pageX - parseInt(refHtmlElement.parentCanvas.currentObject.style.left);
-            refHtmlElement.parentCanvas.offsetY = e.pageY - parseInt(refHtmlElement.parentCanvas.currentObject.style.top);
+            refHtmlElement.parentCanvas.offsetX = e.pageX - parseInt(refHtmlElement.parentCanvas.currentObject.style.left, 10);
+            refHtmlElement.parentCanvas.offsetY = e.pageY - parseInt(refHtmlElement.parentCanvas.currentObject.style.top, 10);
 
 
             return false;
@@ -476,14 +474,14 @@ org.riversun.JSFrame =
                 //When the mouse cursor goes out of range,
                 //the addition in the X direction and Y direction (delta X, delta Y) is set to zero.
                 //this.left=Cavas's left side edge, this.top=Canvas's top side edge.
-                var tmpLeft = parseInt(newObjLeftPx);
-                var tmpTop = parseInt(newObjTopPx);
+                var tmpLeft = parseInt(newObjLeftPx, 10);
+                var tmpTop = parseInt(newObjTopPx, 10);
 
-                var tmpRight = tmpLeft + parseInt(me.currentObject.style.width);
-                var tmpBottom = tmpTop + parseInt(me.currentObject.style.height);
+                var tmpRight = tmpLeft + parseInt(me.currentObject.style.width, 10);
+                var tmpBottom = tmpTop + parseInt(me.currentObject.style.height, 10);
 
-                var styleWidth = parseInt(me.canvasElement.style.width);
-                var styleHeight = parseInt(me.canvasElement.style.height);
+                var styleWidth = parseInt(me.canvasElement.style.width, 10);
+                var styleHeight = parseInt(me.canvasElement.style.height, 10);
 
                 var deltaX = 0;
                 var deltaY = 0;
@@ -495,8 +493,8 @@ org.riversun.JSFrame =
                     deltaY = 0;
                 }
                 else {
-                    deltaX = (parseInt(newObjLeftPx) - parseInt(oldObjLeftPx));
-                    deltaY = (parseInt(newObjTopPx) - parseInt(oldObjTopPx));
+                    deltaX = (parseInt(newObjLeftPx, 10) - parseInt(oldObjLeftPx, 10));
+                    deltaY = (parseInt(newObjTopPx, 10) - parseInt(oldObjTopPx, 10));
                     me.currentObject.style.left = (parseInt(me.currentObject.style.left) + deltaX * me.currentObject.argX) + 'px';
                     me.currentObject.style.top = (parseInt(me.currentObject.style.top) + deltaY * me.currentObject.argY) + 'px';
                 }
@@ -525,7 +523,7 @@ org.riversun.JSFrame =
 
             var me = this;
 
-            var tmpBeanArray = new Array();
+            var tmpBeanArray = [];
 
             var beanList = me.beanList;
 
@@ -554,7 +552,7 @@ org.riversun.JSFrame =
 
             //sort by index
             objectArray.sort(function (b, a) {
-                return -parseInt(b.htmlElement.style.zIndex) + parseInt(a.htmlElement.style.zIndex);
+                return -parseInt(b.htmlElement.style.zIndex, 10) + parseInt(a.htmlElement.style.zIndex, 10);
             });
 
             //Redefine number of the index
@@ -736,7 +734,7 @@ org.riversun.JSFrame =
                     }
 
 
-                    me.titleBar.style.height = (parseInt(me.titleBarHeight) + 0) + 'px';
+                    me.titleBar.style.height = (parseInt(me.titleBarHeight, 10) + 0) + 'px';
                 }
 
                 me.titleBar.style.backgroundColor = me.titleBarColorDefault;
@@ -766,7 +764,7 @@ org.riversun.JSFrame =
                 titleBarTextSpan.id = me.id + '_titleBarText';
                 if (me.titleBarCaptionLeftMargin != null) {
                     titleBarTextSpan.style.position = 'absolute';
-                    titleBarTextSpan.style.left = parseInt(me.titleBarCaptionLeftMargin) + 'px';
+                    titleBarTextSpan.style.left = parseInt(me.titleBarCaptionLeftMargin, 10) + 'px';
                 } else {
                     titleBarTextSpan.style.position = 'absolute';
                     titleBarTextSpan.style.left = '0px';
@@ -787,8 +785,8 @@ org.riversun.JSFrame =
             //Set Canvas throughout the window
 
             //parseInt(me.titleBar.style.height);//me.titleBarHeight);
-            var canvasMoreHeight = parseInt(me.titleBarHeight) - titleBarAdjust;
-            var canvasMoreSpacing = parseInt(me.titleAdjustWidth);
+            var canvasMoreHeight = parseInt(me.titleBarHeight, 10) - titleBarAdjust;
+            var canvasMoreSpacing = parseInt(me.titleAdjustWidth, 10);
 
             if (me.showTitleBar) {
 
@@ -821,8 +819,8 @@ org.riversun.JSFrame =
             me.canvas.canvasElement.parentCFrame = me;
 
 
-            var tmpCanvasWidth = parseInt(me.canvas.canvasElement.style.width);
-            var tmpCanvasHeight = parseInt(me.canvas.canvasElement.style.height);
+            var tmpCanvasWidth = parseInt(me.canvas.canvasElement.style.width, 10);
+            var tmpCanvasHeight = parseInt(me.canvas.canvasElement.style.height, 10);
 
             var markerWidth = 16;
             var markerHeight = 16;
@@ -933,8 +931,8 @@ org.riversun.JSFrame =
 
             me.htmlElement.style.borderWidth = me.exBorderWidth + 'px';
 
-            me.htmlElement.style.width = (parseInt(me.htmlElement.style.width) - caribVal) + 'px';
-            me.htmlElement.style.height = (parseInt(me.htmlElement.style.height) - caribVal + 1) + 'px';
+            me.htmlElement.style.width = (parseInt(me.htmlElement.style.width, 10) - caribVal) + 'px';
+            me.htmlElement.style.height = (parseInt(me.htmlElement.style.height, 10) - caribVal + 1) + 'px';
             me.htmlElement.typeName = 'cwindow';
             me.htmlElement.overflow = 'auto';
 
@@ -948,11 +946,11 @@ org.riversun.JSFrame =
             }
 
             //TODO deprecation(because CIfFrame is extended this operation)
-            if (parseInt(appearance.frameBorderWidthDefault) > 0) {
+            if (parseInt(appearance.frameBorderWidthDefault, 10) > 0) {
                 me.htmlElement.style.borderWidth = appearance.frameBorderWidthDefault;
                 me.htmlElement.style.borderColor = appearance.frameBorderColorDefault;
             }
-            if (parseInt(appearance.frameBorderRadius) > 0) {
+            if (parseInt(appearance.frameBorderRadius, 10) > 0) {
                 me.htmlElement.style.borderRadius = appearance.frameBorderRadius;
             }
 
@@ -1014,19 +1012,19 @@ org.riversun.JSFrame =
         CFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeight) {
             var me = this;
 
-            var tmpLeft = parseInt(me.htmlElement.style.left);
-            var tmpTop = parseInt(me.htmlElement.style.top);
-            var tmpWidth = parseInt(me.htmlElement.style.width);
-            var tmpHeight = parseInt(me.htmlElement.style.height);
+            var tmpLeft = parseInt(me.htmlElement.style.left, 10);
+            var tmpTop = parseInt(me.htmlElement.style.top, 10);
+            var tmpWidth = parseInt(me.htmlElement.style.width, 10);
+            var tmpHeight = parseInt(me.htmlElement.style.height, 10);
 
-            me.htmlElement.style.left = parseInt(tmpLeft + deltaLeft) + 'px';
-            me.htmlElement.style.top = parseInt(tmpTop + deltaTop) + 'px';
+            me.htmlElement.style.left = parseInt(tmpLeft + deltaLeft, 10) + 'px';
+            me.htmlElement.style.top = parseInt(tmpTop + deltaTop, 10) + 'px';
 
-            me.htmlElement.style.width = parseInt(tmpWidth + deltaWidth) + 'px';
-            me.htmlElement.style.height = parseInt(tmpHeight + deltaHeight) + 'px';
+            me.htmlElement.style.width = parseInt(tmpWidth + deltaWidth, 10) + 'px';
+            me.htmlElement.style.height = parseInt(tmpHeight + deltaHeight, 10) + 'px';
 
-            var tmpCanvasWidth = parseInt(me.canvas.canvasElement.style.width);
-            var tmpCanvasHeight = parseInt(me.canvas.canvasElement.style.height);
+            var tmpCanvasWidth = parseInt(me.canvas.canvasElement.style.width, 10);
+            var tmpCanvasHeight = parseInt(me.canvas.canvasElement.style.height, 10);
 
             //Since canvasElement is a (0, 0) relative coordinate with respect to the parent element,
             // so it is not necessary to change left and top.
@@ -1055,20 +1053,20 @@ org.riversun.JSFrame =
                 if (tmpBean.htmlElement.typeName == 'cmarkerwindow') {
                     if (tmpBean.htmlElement.usage == 'RD') {
                         //Move the size change lower right(RD) marker according to the amount of movement.
-                        tmpBean.htmlElement.style.left = (parseInt(tmpBean.htmlElement.style.left) + deltaWidth) + 'px';
-                        tmpBean.htmlElement.style.top = (parseInt(tmpBean.htmlElement.style.top) + deltaHeight) + 'px';
+                        tmpBean.htmlElement.style.left = (parseInt(tmpBean.htmlElement.style.left, 10) + deltaWidth) + 'px';
+                        tmpBean.htmlElement.style.top = (parseInt(tmpBean.htmlElement.style.top, 10) + deltaHeight) + 'px';
                     }
                     else if (tmpBean.htmlElement.usage == 'DD') {
                         //Move the size change lower marker according to the movement amount.
                         // Do not move left.Only the width wil increase or decrease.
-                        tmpBean.htmlElement.style.width = (parseInt(tmpBean.htmlElement.style.width) + deltaWidth) + 'px';
-                        tmpBean.htmlElement.style.top = (parseInt(tmpBean.htmlElement.style.top) + deltaHeight) + 'px';
+                        tmpBean.htmlElement.style.width = (parseInt(tmpBean.htmlElement.style.width, 10) + deltaWidth) + 'px';
+                        tmpBean.htmlElement.style.top = (parseInt(tmpBean.htmlElement.style.top, 10) + deltaHeight) + 'px';
                     }
                     else if (tmpBean.htmlElement.usage == 'RR') {
                         //Move the size change right marker according to the movement amount
                         //Do not move top,Only the height will increase or decrease.
-                        tmpBean.htmlElement.style.left = (parseInt(tmpBean.htmlElement.style.left) + deltaWidth) + 'px';
-                        tmpBean.htmlElement.style.height = (parseInt(tmpBean.htmlElement.style.height) + deltaHeight) + 'px';
+                        tmpBean.htmlElement.style.left = (parseInt(tmpBean.htmlElement.style.left, 10) + deltaWidth) + 'px';
+                        tmpBean.htmlElement.style.height = (parseInt(tmpBean.htmlElement.style.height, 10) + deltaHeight) + 'px';
                     }
 
                 }
@@ -1192,61 +1190,61 @@ org.riversun.JSFrame =
             var y;
             var anchor = me.anchor;
             if (!anchor || CALIGN.LEFT_TOP == anchor) {
-                x = parseInt(me.htmlElement.style.left);
-                y = parseInt(me.htmlElement.style.top);
+                x = parseInt(me.htmlElement.style.left, 10);
+                y = parseInt(me.htmlElement.style.top, 10);
             }
             else if (CALIGN.HCENTER_TOP == anchor) {
-                x = parseInt(me.htmlElement.style.left) + frameWidth / 2;
-                y = parseInt(me.htmlElement.style.top);
+                x = parseInt(me.htmlElement.style.left, 10) + frameWidth / 2;
+                y = parseInt(me.htmlElement.style.top, 10);
             }
             else if (CALIGN.RIGHT_TOP == anchor) {
-                x = parseInt(me.htmlElement.style.left) + frameWidth;
-                y = parseInt(me.htmlElement.style.top);
+                x = parseInt(me.htmlElement.style.left, 10) + frameWidth;
+                y = parseInt(me.htmlElement.style.top, 10);
             }
             else if (CALIGN.LEFT_VCENTER == anchor) {
-                x = parseInt(me.htmlElement.style.left);
-                y = parseInt(me.htmlElement.style.top) + frameHeight / 2;
+                x = parseInt(me.htmlElement.style.left, 10);
+                y = parseInt(me.htmlElement.style.top, 10) + frameHeight / 2;
             }
             else if (CALIGN.HCENTER_VCENTER == anchor) {
-                x = parseInt(me.htmlElement.style.left) + frameWidth / 2;
-                y = parseInt(me.htmlElement.style.top) + frameHeight / 2;
+                x = parseInt(me.htmlElement.style.left, 10) + frameWidth / 2;
+                y = parseInt(me.htmlElement.style.top, 10) + frameHeight / 2;
             }
             else if (CALIGN.RIGHT_VCENTER == anchor) {
-                x = parseInt(me.htmlElement.style.left) + frameWidth;
-                y = parseInt(me.htmlElement.style.top) + frameHeight / 2;
+                x = parseInt(me.htmlElement.style.left, 10) + frameWidth;
+                y = parseInt(me.htmlElement.style.top, 10) + frameHeight / 2;
             }
             else if (CALIGN.LEFT_BOTTOM == anchor) {
-                x = parseInt(me.htmlElement.style.left);
-                y = parseInt(me.htmlElement.style.top) + frameHeight;
+                x = parseInt(me.htmlElement.style.left, 10);
+                y = parseInt(me.htmlElement.style.top, 10) + frameHeight;
             }
             else if (CALIGN.HCENTER_BOTTOM == anchor) {
-                x = parseInt(me.htmlElement.style.left) + frameWidth / 2;
-                y = parseInt(me.htmlElement.style.top) + frameHeight;
+                x = parseInt(me.htmlElement.style.left, 10) + frameWidth / 2;
+                y = parseInt(me.htmlElement.style.top, 10) + frameHeight;
             }
             else if (CALIGN.RIGHT_BOTTOM == anchor) {
-                x = parseInt(me.htmlElement.style.left) + frameWidth;
-                y = parseInt(me.htmlElement.style.top) + frameHeight;
+                x = parseInt(me.htmlElement.style.left, 10) + frameWidth;
+                y = parseInt(me.htmlElement.style.top, 10) + frameHeight;
             }
             return {x: x, y: y, anchor: anchor};
         };
 
         CFrame.prototype.getLeft = function () {
             var me = this;
-            return parseInt(me.htmlElement.style.left);
+            return parseInt(me.htmlElement.style.left, 10);
         };
 
 
         CFrame.prototype.getTop = function () {
             var me = this;
-            return parseInt(me.htmlElement.style.top);
+            return parseInt(me.htmlElement.style.top, 10);
         };
         CFrame.prototype.getWidth = function () {
             var me = this;
-            return parseInt(me.htmlElement.style.width);
+            return parseInt(me.htmlElement.style.width, 10);
         };
         CFrame.prototype.getHeight = function () {
             var me = this;
-            return parseInt(me.htmlElement.style.height);
+            return parseInt(me.htmlElement.style.height, 10);
         };
 
         CFrame.prototype.setSize = function (width, height) {
@@ -1427,7 +1425,7 @@ org.riversun.JSFrame =
         CIfFrame.prototype.adjustFrameBorderRadius = function () {
             var me = this;
 
-            if (parseInt(me.frameBorderRadius) > 0) {
+            if (parseInt(me.frameBorderRadius, 10) > 0) {
 
                 var innerBorderRadius = me.getFrameInnerBorderRadius(me, me._hasFocus);
 
@@ -1480,8 +1478,8 @@ org.riversun.JSFrame =
 
             if (me.htmlElement.typeName == 'cifwindow') {
                 if (me.overrayTransparentScreenEnabled) {
-                    me.transparence.style.width = parseInt(me.iframe.width) + 'px';
-                    me.transparence.style.height = parseInt(me.iframe.height) + 'px';
+                    me.transparence.style.width = parseInt(me.iframe.width, 10) + 'px';
+                    me.transparence.style.height = parseInt(me.iframe.height, 10) + 'px';
                 }
             }
 
@@ -1650,10 +1648,10 @@ org.riversun.JSFrame =
 
 
             //Resize processing should be overridden directly rather than adopting a decorator pattern because it has better performance.
-            var tmpLeft = parseInt(refCIfFrame.htmlElement.style.left);
-            var tmpTop = parseInt(refCIfFrame.htmlElement.style.top);
-            var tmpWidth = parseInt(refCIfFrame.htmlElement.style.width);
-            var tmpHeight = parseInt(refCIfFrame.htmlElement.style.height);
+            var tmpLeft = parseInt(refCIfFrame.htmlElement.style.left, 10);
+            var tmpTop = parseInt(refCIfFrame.htmlElement.style.top, 10);
+            var tmpWidth = parseInt(refCIfFrame.htmlElement.style.width, 10);
+            var tmpHeight = parseInt(refCIfFrame.htmlElement.style.height, 10);
 
             //Important logic to handle the minimum of Window well
             if (byUser && (tmpWidth + deltaWidth < refCIfFrame.minFrameWidth & deltaWidth < 0)) {
@@ -1673,8 +1671,8 @@ org.riversun.JSFrame =
             refCIfFrame.htmlElement.style.height = (tmpHeight + deltaHeight) + 'px';
 
 
-            var tmpCanvasWidth = parseInt(refCIfFrame.canvas.canvasElement.style.width);
-            var tmpCanvasHeight = parseInt(refCIfFrame.canvas.canvasElement.style.height);
+            var tmpCanvasWidth = parseInt(refCIfFrame.canvas.canvasElement.style.width, 10);
+            var tmpCanvasHeight = parseInt(refCIfFrame.canvas.canvasElement.style.height, 10);
 
             //Since canvasElement is a (0, 0) relative coordinate with respect
             // to the parent element, it is not necessary to change left and top.
