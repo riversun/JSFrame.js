@@ -1,5 +1,5 @@
 /**
- * JSFrame ver.1.1.0 - A javascript floating window library
+ * JSFrame ver.1.2.0 - A javascript floating window library
  *
  * Copyright 2007-2017 Tom Misawa, riversun.org@gmail.com
  * Copyright 2007-2017 web2driver.com
@@ -1347,11 +1347,6 @@ org.riversun.JSFrame =
 
             me.dframe = document.createElement('div');
 
-            if (appearance.useFrame) {
-                me.dframe.style.overflow = 'hidden';
-                me.dframe.style.height = '100%';
-                me.canvas.canvasElement.appendChild(me.dframe);
-            }
 
             me.iframe = document.createElement('iframe');
 
@@ -1379,13 +1374,44 @@ org.riversun.JSFrame =
 
             me.adjustFrameBorderRadius();
 
-            if (appearance.useIframe) {
-                //Add iframe to the canvas
-                me.canvas.canvasElement.appendChild(me.iframe);
-            } else {
+            me.useIframe = false;
 
-            }
 
+
+            me.canvas.canvasElement.appendChild(me.iframe);
+
+            me.canvas.canvasElement.appendChild(me.dframe);
+
+
+            this.setUseIframe = function (useIframe) {
+                me.useIframe = useIframe;
+                me.iframe.style.visibility = 'hidden';
+                me.iframe.style.position = 'absolute';
+                me.iframe.style.left = '0px';
+                me.iframe.style.top = '0px';
+                me.iframe.style.width = '100%';
+                me.iframe.style.height = '100%';
+
+                me.dframe.style.visibility = 'hidden';
+                me.dframe.style.position = 'absolute';
+                me.dframe.style.left = '0px';
+                me.dframe.style.top = '0px';
+                me.dframe.style.width = '100%';
+                me.dframe.style.height = '100%';
+
+
+                if (useIframe) {
+                    me.iframe.style.visibility = 'visible';
+                    me.dframe.style.visibility = 'hidden';
+                } else {
+
+
+                    me.iframe.style.visibility = 'hidden';
+                    me.dframe.style.visibility = 'visible';
+                }
+            };
+
+            me.setUseIframe(appearance.useIframe);
 
             //If it is IE, set the canvasElement of the canvas which is the parent of the iframe to transparent.
 
@@ -1421,6 +1447,37 @@ org.riversun.JSFrame =
             var me = this;
             return  me.dframe;
         };
+
+
+        CIfFrame.prototype.setHTML = function (html) {
+            var me = this;
+            me.dframe.innerHTML = html;
+        };
+
+        /**
+         * find DOM Element in the frame by querySelector<br>
+         *  Examples<br>
+         *      frame.$("#my_id_name");
+         *      frame.$(".my_class_name");
+         *      frame.$("div>img");
+         *      frame.$("input[type='submit]");
+         * @param q
+         * @returns {Node}
+         */
+        CIfFrame.prototype.$ = function (q) {
+            var me = this;
+
+            if (me.useIframe) {
+                var docInIframe = me.iframe.contentWindow.document;
+                return docInIframe.querySelector(q);
+
+            } else {
+
+                return me.dframe.querySelector(q);
+
+            }
+        };
+
 
         CIfFrame.prototype.adjustFrameBorderRadius = function () {
             var me = this;
@@ -1821,6 +1878,8 @@ org.riversun.JSFrame =
                 }
             }
 
+            me.parentCanvas.pullUp(me.id);
+
         };
 
         /**
@@ -1834,7 +1893,16 @@ org.riversun.JSFrame =
             return new Promise(function (resolve, reject) {
 
 
+                if (url) {
+                    me.setUseIframe(true);
+                } else {
+                    me.setUseIframe(false);
+                    resolve();
+                }
+
+
                 me.iframe.src = url;
+
                 me.iframe.onload = function () {
 
                     //mouse move
