@@ -21,23 +21,27 @@ It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
 
 **SCRIPT**
 ```js
-var jsFrame = new org.riversun.JSFrame();
+            var jsFrame = new org.riversun.JSFrame();
 
-var frmStyle1 = jsFrame.createFrameAppearance();//create appearance(kind of frame design)
+            var frame01 = jsFrame.createFrame(20, 40, 320, 220)//create frame (left,top,width,height)
+                    .setTitle("Example")//window title
+                    .setResizable(true)//if true,you can resize the window
+                    .setMovable(true)//if true,you can drag and move the window
+                    .setTitleBarClassName('style_default', 'style_focused');//set titlebar style
 
-var frame01 = jsFrame.createFrame(20, 40, 320, 220, frmStyle1)//create frame (left,top,width,height)
-        .setTitle("Example")//window title
-        .setResizable(true)//if true,you can resize the window
-        .setMovable(true)//if true,you can drag and move the window
-        .setTitleBarClassName('style_default', 'style_focused');//set titlebar style
+            var innerHTML='<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Example</div>';
 
-var viewOfFrm01 = frame01.getFrameView();
+            //set content
+            frame01.setHTML(innerHTML);
 
-//set content
-viewOfFrm01.innerHTML = '<div style="padding:10px;font-size:12px;color:darkgray;">Hello world!</div>';
+            //show window
+            frame01.show();
 
-//show window
-frame01.show();
+            //get inner element by queryselector and change it.
+            frame01.$("#my_element").innerHTML='Hello World!';
+
+            //if you want to close frame using code,uncomment following line.
+            //frame01.closeFrame();
 ```
 
 **DEMO**  
