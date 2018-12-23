@@ -13,6 +13,11 @@ It is an independent lightweight multi-window library for javascript.
 
 It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
 
+# install
+
+```
+npm i jsframe.js
+```
 
 # Quick Start
 ## Show Popup Window
