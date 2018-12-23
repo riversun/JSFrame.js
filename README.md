@@ -21,7 +21,7 @@ It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
 
 **SCRIPT**
 ```js
-            var jsFrame = new org.riversun.JSFrame();
+            var jsFrame = new JSFrame();
 
             var frame01 = jsFrame.createFrame(20, 40, 320, 220)//create frame (left,top,width,height)
                     .setTitle("Example")//window title
