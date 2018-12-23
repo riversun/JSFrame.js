@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--
+  JSFrame Examples
+
+  Copyright 2007-2017 Tom Misawa, riversun.org@gmail.com
+  Copyright 2007-2017 web2driver.com
+ -->
+    <title>JsFrame.js example</title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+
+    <script src="../../js/jsframe.js" type="text/javascript"></script>
+    <style type="text/css">
+        .style_default {
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #f5f5f5, color-stop(1.0, #f8f7f2)));
+            background: -webkit-linear-gradient(top, #f5f5f5, #f8f7f2);
+            background: -moz-linear-gradient(top, #f5f5f5, #f8f7f2);
+            background: linear-gradient(top, #f5f5f5, #f8f7f2);
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+        }
+
+        .style_focused {
+            /* (c)2015 Johannes Jakob
+               Made with <3 in Germany */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #ebebeb, color-stop(1.0, #d5d5d5)));
+            background: -webkit-linear-gradient(top, #ebebeb, #d5d5d5);
+            background: -moz-linear-gradient(top, #ebebeb, #d5d5d5);
+            background: linear-gradient(top, #ebebeb, #d5d5d5);
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+        }
+    </style>
+    <script>
+        function start() {
+            var jsFrame = new JSFrame();
+
+            var frame01 = jsFrame.createFrame(20, 40, 320, 220)//create frame (left,top,width,height)
+                    .setTitle("Example")//window title
+                    .setResizable(true)//if true,you can resize the window
+                    .setMovable(true)//if true,you can drag and move the window
+                    .setTitleBarClassName('style_default', 'style_focused');//set titlebar style
+
+            var innerHTML='<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Example</div>';
+
+            //set content
+            frame01.setHTML(innerHTML);
+
+            //show window
+            frame01.show();
+
+            //get inner element by queryselector and change it.
+            frame01.$("#my_element").innerHTML='Hello World!';
+
+            //if you want to close frame using code,uncomment following line.
+            //frame01.closeFrame();
+
+        }
+    </script>
+
+</head>
+<body onload="start()">
+<div style="color:#666666">
+    <a href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : Quick start
+</div>
+</body>
+</html>

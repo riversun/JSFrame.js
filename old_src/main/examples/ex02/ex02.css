@@ -1,0 +1,25 @@
+/**
+ * JSFrame Examples
+ *
+ * Copyright 2007-2017 Tom Misawa, riversun.org@gmail.com
+ * Copyright 2007-2017 web2driver.com*/
+
+/* original style for default state */
+.ex02title {
+    /* by http://www.colorzilla.com/gradient-editor/ */
+    background: -moz-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    color: black;
+    font-size: 12px;
+}
+
+/* original style for focused state */
+.ex02title_focused {
+    /* by http://www.colorzilla.com/gradient-editor/ */
+    background: -moz-linear-gradient(top, #feccb1 0%, #f17432 50%, #ea5507 51%, #fb955e 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #feccb1 0%, #f17432 50%, #ea5507 51%, #fb955e 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #feccb1 0%, #f17432 50%, #ea5507 51%, #fb955e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    color: white;
+    font-size: 12px;
+}

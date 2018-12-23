@@ -1,0 +1,23 @@
+/**
+ * JSFrame Examples
+ *
+ * Copyright 2007-2017 Tom Misawa, riversun.org@gmail.com
+ * Copyright 2007-2017 web2driver.com*/
+
+/* CSS class name for JSFrame */
+
+/* style for default(frame not focused) */
+.jsFrame\.titlebar {
+    background: -moz-linear-gradient(top, #333333, #999999 50%, #aaaaaa 50%, #eeeeee);
+    background: -webkit-gradient(linear, left top, left bottom, from(#aaaaaa), color-stop(0.5, #999999), color-stop(0.5, #666666), to(#333333));
+    color: white;
+    font-size: 12px;
+}
+
+/* style for focused */
+.jsFrame\.titlebar\.focused {
+    background: -moz-linear-gradient(top, #BFD9E5, #63B0CF 50%, #0080B3 50%, #09C);
+    background: -webkit-gradient(linear, left top, left bottom, from(#BFD9E5), color-stop(0.5, #63B0CF), color-stop(0.5, #0080B3), to(#09C));
+    color: white;
+    font-size: 12px;
+}

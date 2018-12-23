@@ -1,0 +1,25 @@
+/**
+ * JSFrame Examples
+ *
+ * Copyright 2007-2017 Tom Misawa, riversun.org@gmail.com
+ * Copyright 2007-2017 web2driver.com*/
+
+.ex03title_yosemite_style_default {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #f5f5f5, color-stop(1.0, #f8f7f2)));
+    background: -webkit-linear-gradient(top, #f5f5f5, #f8f7f2);
+    background: -moz-linear-gradient(top, #f5f5f5, #f8f7f2);
+    background: linear-gradient(top, #f5f5f5, #f8f7f2);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.ex03title_yosemite_style_focused {
+    /* (c)2015 Johannes Jakob
+       Made with <3 in Germany */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #ebebeb, color-stop(1.0, #d5d5d5)));
+    background: -webkit-linear-gradient(top, #ebebeb, #d5d5d5);
+    background: -moz-linear-gradient(top, #ebebeb, #d5d5d5);
+    background: linear-gradient(top, #ebebeb, #d5d5d5);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}

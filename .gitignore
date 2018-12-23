@@ -17,4 +17,5 @@ build
 .DS_Store
 
 /bin/
-/examples/
+
+/node_modules/
