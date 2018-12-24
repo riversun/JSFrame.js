@@ -4,8 +4,9 @@ const path = require("path");
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = (env, argv) => {
-    //mode: 'production',//production,development
+
     const conf = {
+        mode: 'development',//production,development
         devServer: {
             open: true,
             openPage: "index.html",
@@ -19,7 +20,7 @@ module.exports = (env, argv) => {
         },
         output: {
             path: path.join(__dirname, "dist"),
-            filename: argv.mode === 'production' ? `[name]-${version}.min.js` : `[name]-${version}.js`,
+            filename: argv.mode === 'production' ? `[name]-${version}.min.js` : `[name].js`,
             libraryTarget: 'umd'
         },
         optimization: {
@@ -31,7 +32,7 @@ module.exports = (env, argv) => {
         }
     };
 
-    if (argv.mode === 'development') {
+    if (argv.mode !== 'production') {
         conf.devtool = 'inline-source-map';
     }
 

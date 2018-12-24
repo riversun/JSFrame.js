@@ -2561,7 +2561,7 @@ CDomPartsBuilder.prototype.buildButton = function (btnAppearance) {
  * @param size
  * @returns {HTMLElement}
  */
-CDomPartsBuilder.prototype.buildButton = function (btnAppearance) {
+CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
 
     var size = btnAppearance.size;
     var width = size;
