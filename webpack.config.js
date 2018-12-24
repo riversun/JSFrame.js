@@ -29,7 +29,18 @@ module.exports = (env, argv) => {
                     uglifyOptions: {compress: {drop_console: true}},
                 }),
             ],
-        }
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.css$/,
+                    use: [
+                        {loader: "style-loader"},
+                        {loader: "css-loader"}
+                    ]
+                },
+            ],
+        },
     };
 
     if (argv.mode !== 'production') {

@@ -1,8 +1,8 @@
 /**
- * JSFrame ver.1.2.0 - A javascript floating window library
+ * JSFrame ver.1.3.3 - A javascript floating window library
  *
- * Copyright 2007-2017 Tom Misawa, riversun.org@gmail.com
- * Copyright 2007-2017 web2driver.com
+ * Copyright 2007-2019 Tom Misawa, riversun.org@gmail.com
+ * Copyright 2007-2019 web2driver.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in the
@@ -22,6 +22,8 @@
  * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
+require('./JSFrame.css');
 
 
 'use strict';
@@ -142,7 +144,7 @@ function CFrameAppearance() {
 
             var closeBtnEle = partsBuilder.buildTextButton(btnAppearance);
             var eleLeft = -10;
-            var eleTop = -20;
+            var eleTop = -18;
             var eleAlign = 'RIGHT_TOP';
 
             //closeButton is a special name
@@ -666,8 +668,6 @@ CCanvas.prototype.addBean = function (bean) {
 
 DEF.CFRAME = {};
 DEF.CFRAME.CANVAS_ELEMENT_BGCOLOR = 'transparent';
-DEF.CFRAME.TITLE_BAR_CLASS_DEFAULT = 'jsFrame.titlebar';
-DEF.CFRAME.TITLE_BAR_CLASS_FOCUSED = 'jsFrame.titlebar.focused';
 
 inherit(CFrame, CBeanFrame);
 
@@ -717,8 +717,8 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
     //Buttons to be placed on the screen (positioning same as the close button)
     me.floatingButton = null;
 
-    me.titleBarClassNameDefault = DEF.CFRAME.TITLE_BAR_CLASS_DEFAULT;
-    me.titleBarClassNameFocused = DEF.CFRAME.TITLE_BAR_CLASS_FOCUSED;
+    me.titleBarClassNameDefault = 'jsframe-titlebar-default';// DEF.CFRAME.TITLE_BAR_CLASS_DEFAULT;
+    me.titleBarClassNameFocused = 'jsframe-titlebar-focused';//DEF.CFRAME.TITLE_BAR_CLASS_FOCUSED;
 
 
     //height of titlebar
@@ -2709,10 +2709,6 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
                 if (btnImagePressed) {
                     divElement.innerHTML = '';
                     divElement.appendChild(btnImagePressed);
-
-                    if (evtName == 'onmousedown' && divElement.onclick) {
-                        //divElement.onclick();
-                    }
                 }
 
             } else {
