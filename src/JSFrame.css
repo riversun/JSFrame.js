@@ -17,3 +17,9 @@
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
 }
+
+.jsframe-modal-window-background {
+    background: rgba(0, 0, 0, 0.1);
+    height: 100%;
+    widdth: 100%
+}

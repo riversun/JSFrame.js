@@ -380,16 +380,16 @@ CBeanFrame.prototype.onmouseDown = function (e) {
     //This 'this' means a htmlElement
     var refHtmlElement = this;
 
-
     //Retrieve CBeanFrame
     var refCBeanFrame = refHtmlElement.parent;
 
     if (e.button == 0) {
-        refHtmlElement.parentCanvas.currentObject = refHtmlElement;
 
+        //added 20181225 for modal background window
         if (refCBeanFrame.pullUpDisabled) {
-
+            return false;
         } else {
+            refHtmlElement.parentCanvas.currentObject = refHtmlElement;
             //Bring the current bean to the top
             refHtmlElement.parentCanvas.pullUp(refCBeanFrame.id);
         }
@@ -399,8 +399,10 @@ CBeanFrame.prototype.onmouseDown = function (e) {
         return false;
     }
 
-    refHtmlElement.parentCanvas.offsetX = e.pageX - parseInt(refHtmlElement.parentCanvas.currentObject.style.left, 10);
-    refHtmlElement.parentCanvas.offsetY = e.pageY - parseInt(refHtmlElement.parentCanvas.currentObject.style.top, 10);
+    if (refHtmlElement.parentCanvas.currentObject) {
+        refHtmlElement.parentCanvas.offsetX = e.pageX - parseInt(refHtmlElement.parentCanvas.currentObject.style.left, 10);
+        refHtmlElement.parentCanvas.offsetY = e.pageY - parseInt(refHtmlElement.parentCanvas.currentObject.style.top, 10);
+    }
 
 
     return false;
@@ -689,6 +691,8 @@ CCanvas.prototype.addBean = function (bean) {
 
 DEF.CFRAME = {};
 DEF.CFRAME.CANVAS_ELEMENT_BGCOLOR = 'transparent';
+DEF.CFRAME.MODAL_BACKGROUND_FRAME_ID_PREFIX = 'window__modal_window_background_';
+
 
 inherit(CFrame, CBeanFrame);
 
@@ -1185,17 +1189,40 @@ CFrame.prototype.mouseUp = function (e) {
 };
 
 CFrame.prototype.close = function (e) {
+    var me = this;
     //Close processing of CFrame from CloseButton
-    this.parentObject.parentCanvas.removeBean(this.parentObject.id);
+
+    var parentCanvas = this.parentObject.parentCanvas;
+    var cframeObj = this.parentObject;
+    var windowId = cframeObj.id;
+    cframeObj.closeInternally(e, parentCanvas, windowId);
+
+
 };
 
 CFrame.prototype.closeFrame = function (e) {
     //Close processing of CFrame
     var me = this;
 
-    this.parentCanvas.removeBean(me.windowId);
+    var parentCanvas = this.parentCanvas;
+    me.closeInternally(e, parentCanvas, me.windowId);
+
+
+};
+
+CFrame.prototype.closeInternally = function (e, parentCanvas, windowId) {
+    var me = this;
+    parentCanvas.removeBean(windowId);
+
+
     if (me.onCloseFrameListener) {
         me.onCloseFrameListener(me);
+    }
+
+    //added for modal window
+    if (me.modalBackgroundWindowId) {
+        this.parentCanvas.removeBean(me.modalBackgroundWindowId);
+        me.modalBackgroundWindowId = null;
     }
 };
 
@@ -1709,16 +1736,65 @@ CIfFrame.prototype.handleTakingFocus = function (e) {
 };
 
 
-CIfFrame.prototype.show = function () {
+CFrame.prototype.show = function () {
     var me = this;
-    me.htmlElement.style.visibility = 'visible';
+    //me.htmlElement.style.visibility = 'visible';
+    me.htmlElement.style.display = 'flex';//hidden';
     me.requestFocus();
     return me;
 };
 
+
+CFrame.prototype.showModal = function () {
+    var me = this;
+
+    var appearance = jsFrame.createFrameAppearance();
+    appearance.showTitleBar = false;
+    appearance.showCloseButton = false;
+    appearance.frameBorderRadius = '0px';
+    appearance.frameBorderWidthDefault = '0px';
+    appearance.frameBorderWidthFocused = '0px';
+    appearance.frameBoxShadow = null;
+    appearance.frameBackgroundColor = 'transparent';
+    appearance.frameComponents = [];
+    appearance.frameHeightAdjust = 0;
+    appearance.onInitialize = function () {
+    };
+
+    //added for modal window
+    appearance.pullUpDisabled = true;
+
+    var windowManager = me.parentCanvas;
+
+    var modalBackgroundWindowId = DEF.CFRAME.MODAL_BACKGROUND_FRAME_ID_PREFIX + me.id;
+
+    //create background window for preventing click background
+    var modalBackgroundFrame = new CIfFrame(modalBackgroundWindowId, 0, 0, window.parent.screen.width, window.parent.screen.height, appearance);
+
+    //remember id of modal background frame
+    me.modalBackgroundWindowId = modalBackgroundWindowId;
+
+
+    // if (properties && properties.windowName) {
+    //     frame.setName(properties.windowName);
+    // }
+
+    modalBackgroundFrame.hide();
+    windowManager.addWindow(modalBackgroundFrame);
+
+
+    modalBackgroundFrame.setTitle('').getFrameView().innerHTML = '<div class="jsframe-modal-window-background"></div>';
+    modalBackgroundFrame.getFrameView().style.backgroundColor = "rgba(0,0,0,0.0)";
+    modalBackgroundFrame.show();
+
+    me.show();
+}
+
+
 CIfFrame.prototype.hide = function () {
     var me = this;
-    me.htmlElement.style.visibility = 'hidden';
+    //  me.htmlElement.style.visibility = 'hidden';
+    me.htmlElement.style.display = 'none';//hidden';
     return me;
 };
 
@@ -2285,9 +2361,14 @@ CWindowManager.prototype.removeBean = function (windowId) {
     if (removeTargetBeanHasFocus) {
         for (var windowId in beanList) {
             var frame = beanList[windowId];
-            if (maxFocusTime <= frame._hasFocusTime) {
+
+            //pullUpDisabled=true means that the frame is modal background window
+            if (maxFocusTime <= frame._hasFocusTime && !frame.pullUpDisabled) {
+
                 maxFocusTime = frame._hasFocusTime;
+
                 lastFocusedFrame = frame;
+
             }
         }
         if (lastFocusedFrame) {

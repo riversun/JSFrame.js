@@ -70,24 +70,36 @@ function handleRestoreWindow(e) {
 }
 
 var frame01 = jsFrame.createFrame(20, 40, 320, 240, getOriginalStyle_ex04_win10_style(jsFrame.createFrameAppearance()));
+//
+//
+// var appearance = getOriginalStyle_modal_bg_style(jsFrame.createFrameAppearance());
+// appearance.pullUpDisabled = true;
+//
+// var bgFrame = jsFrame.createFrame(0, 0, window.parent.screen.width, window.parent.screen.height, appearance);
+// bgFrame.setTitle("").getFrameView().innerHTML = '<div style="background:rgba(0,0,0,0.5);height:100%;widdth:100%"></div>';
+// bgFrame.getFrameView().style.backgroundColor = "rgba(0,0,0,0.2)";
+// bgFrame.show();
+
 
 frame01.setTitle("My Window 1").getFrameView().innerHTML =
     '<div style="padding:5px;font-size:10px;color:dimgray;">Win64 Style<br/>Click Maximize button to maximize me.</div>';
 frame01.setTitleBarClassName('ex04title_default', 'ex04title_focused');
-frame01.show();
+frame01.showModal();
+frame01.setOnCloseFrameListener(function(){
+   //alert("a");
+});
 
 frame01.getFrameComponentElement('maximizeButton').onclick = handleMaximizeWindow;
 frame01.getFrameComponentElement('restoreButton').onclick = handleRestoreWindow;
 
-var appearance = getOriginalStyle_modal_bg_style(jsFrame.createFrameAppearance());
-appearance.pullUpDisabled = true;
-var frame02 = jsFrame.createFrame(0, 0, 1920,1280, appearance);
 
-frame02.setTitle("").getFrameView().innerHTML =
-    '<div style="background:rgba(0,0,0,0.5);height:100%;widdth:100%">Win64 Style<br/>Click Maximize button to maximize me.</div>';
-//frame02.setTitleBarClassName('ex04title_default','ex04title_focused');
-frame02.show();
-frame02.getFrameView().style.backgroundColor = "rgba(0,0,0,0.5)";
+var frame02 = jsFrame.createFrame(300, 40, 320, 240, getOriginalStyle_ex04_win10_style(jsFrame.createFrameAppearance()));
+
+frame02.setTitle("My Window 2").getFrameView().innerHTML =
+    '<div style="padding:5px;font-size:10px;color:dimgray;">Win64 Style<br/>Click Maximize button to maximize me.</div>';
+frame02.setTitleBarClassName('ex04title_default', 'ex04title_focused');
+frame02.showModal();
+//frame02.show();
 
 
-frame01.requestFocus();
+//frame01.requestFocus();
