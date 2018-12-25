@@ -1074,7 +1074,7 @@ CFrame.prototype.on = function (id, eventType, callbackFunc) {
     var me = this;
     var component = me.getFrameComponentElement(id);
     if (component) {
-        component.addEventListener(eventType, e => {
+        component.addEventListener(eventType, function (e) {
             callbackFunc(me);
         });
     }
