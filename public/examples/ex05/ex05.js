@@ -26,7 +26,7 @@ var jsFrame = new JSFrame();
 
 
 var frame01 = jsFrame.createFrame(20, 40, 320, 100, getOriginalStyle_ex05_01(jsFrame.createFrameAppearance()));
-
+frame01.setTitleBarClassName('ex05title_default','ex05title_focused');
 
 frame01.setTitle("").getFrameView().innerHTML =
     '<div style="overflow:hidden;padding:15px;color:gray;font-size: 10px;top: 40%; margin-top: -1em;">' +

@@ -23,10 +23,17 @@
  *
  */
 
+
+'use strict';
+
 require('./JSFrame.css');
 
 
-'use strict';
+//If you don't want to bundle preset styles in JsFrame.js ,comment out below.
+var presetStyleYosemite = require('./PresetStyleYosemite.js');
+var presetStyleRedstone = require('./PresetStyleRedstone.js');
+var presetStylePopup = require('./PresetStylePopup.js');
+
 
 var DEF = {},
     CALIGN = {};
@@ -152,6 +159,10 @@ function CFrameAppearance() {
         }
     };
 
+    this.onTitleBarStyleInitialize = function () {
+
+    };
+
 }
 
 
@@ -194,6 +205,7 @@ CFrameAppearance.prototype.addFrameComponent = function (id, myDomElement, x, y,
 
     return frameComponent;
 };
+
 
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 
@@ -251,7 +263,7 @@ DEF.CBEAN.TYPE_NAME = 'bean';
  * @param zindex
  * @constructor
  */
-function CBeanFrame(beanId, left, top, width, height, zindex) {
+function CBeanFrame(beanId, left, top, width, height, zindex, w_border_width, appearance) {
 
     var me = this;
 
@@ -261,6 +273,11 @@ function CBeanFrame(beanId, left, top, width, height, zindex) {
 
     me.parentCanvas = null;
     me.htmlElement = null;
+
+    me.pullUpDisabled = false;
+    if (appearance) {
+        me.pullUpDisabled = appearance.pullUpDisabled;
+    }
 
 
     //initialize
@@ -370,8 +387,12 @@ CBeanFrame.prototype.onmouseDown = function (e) {
     if (e.button == 0) {
         refHtmlElement.parentCanvas.currentObject = refHtmlElement;
 
-        //Bring the current bean to the top
-        refHtmlElement.parentCanvas.pullUp(refCBeanFrame.id);
+        if (refCBeanFrame.pullUpDisabled) {
+
+        } else {
+            //Bring the current bean to the top
+            refHtmlElement.parentCanvas.pullUp(refCBeanFrame.id);
+        }
 
     }
     else if (e.button == 2) {
@@ -694,8 +715,7 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
     var me = this;
 
     //call constructor of superclass
-    CFrame.superConstructor.call(this, windowId, w_left, w_top, w_width, w_height, zindex);
-
+    CFrame.superConstructor.call(this, windowId, w_left, w_top, w_width, w_height, zindex, w_border_width, appearance);
 
     me.anchor = CALIGN.LEFT_TOP;
 
@@ -1039,7 +1059,11 @@ CFrame.prototype.addFrameComponent = function (frameComponent) {
  */
 CFrame.prototype.getFrameComponentElement = function (id) {
     var me = this;
-    return me.frameComponentMap[id].htmlElement;
+    if (me.frameComponentMap[id]) {
+        return me.frameComponentMap[id].htmlElement;
+    } else {
+        return null;
+    }
 };
 
 CFrame.prototype.removeFrameComponentById = function (frameComponentId) {
@@ -1050,6 +1074,22 @@ CFrame.prototype.removeFrameComponentById = function (frameComponentId) {
     me.canvas.canvasElement.removeChild(frameComponent.htmlElement);
     delete me.frameComponentMap[frameComponentId];
 };
+
+CFrame.prototype.showFrameComponent = function (frameComponentId) {
+    var me = this;
+    var comp = me.getFrameComponentElement(frameComponentId);
+    if (comp) {
+        comp.style.display = "flex";
+    }
+};
+CFrame.prototype.hideFrameComponent = function (frameComponentId) {
+    var me = this;
+    var comp = me.getFrameComponentElement(frameComponentId);
+    if (comp) {
+        comp.style.display = "none";
+    }
+};
+
 CFrame.prototype.setTitle = function (str) {
     var me = this;
     if (me.showTitleBar) {
@@ -1075,6 +1115,7 @@ CFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeight
     me.htmlElement.style.width = parseInt(tmpWidth + deltaWidth, 10) + 'px';
     me.htmlElement.style.height = parseInt(tmpHeight + deltaHeight, 10) + 'px';
 
+
     var tmpCanvasWidth = parseInt(me.canvas.canvasElement.style.width, 10);
     var tmpCanvasHeight = parseInt(me.canvas.canvasElement.style.height, 10);
 
@@ -1082,6 +1123,7 @@ CFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeight
     // so it is not necessary to change left and top.
     me.canvas.canvasElement.style.width = (tmpCanvasWidth + deltaWidth) + 'px';
     me.canvas.canvasElement.style.height = (tmpCanvasHeight + deltaHeight) + 'px';
+
 
     if (me.showTitleBar) {
 
@@ -2045,6 +2087,8 @@ CIfFrame.prototype.setResizable = function (enabled) {
     }
     return me;
 };
+
+
 /**
  * end of CIFrame class
  */
@@ -2362,6 +2406,14 @@ JSFrame.prototype.createFrame = function (left, top, width, height, appearance, 
     me.windowManager.addWindow(frame);
 
 
+    if (appearance.getTitleBarStyle) {
+
+        var titleBarStyle = appearance.getTitleBarStyle();
+        if (titleBarStyle) {
+            frame.setTitleBarClassName(titleBarStyle.titleBarClassNameDefault, titleBarStyle.titleBarClassNameFocused);
+        }
+    }
+
     return frame;
 
 };
@@ -2398,6 +2450,27 @@ JSFrame.prototype.createAnimator = function () {
 
     return new CSimpleLayoutAnimator();
 };
+
+JSFrame.prototype.getPresetStyle = function (presetName, focusedFrameOnly) {
+
+    var me = this;
+    var apr = me.createFrameAppearance();
+    if (focusedFrameOnly) {
+        apr.focusedFrameOnly = focusedFrameOnly;
+    }
+    if (presetName == 'yosemite' && typeof(presetStyleYosemite) !== 'undefined') {
+        return presetStyleYosemite.getStyle(apr);
+    }
+    if (presetName == 'redstone' && typeof(presetStyleRedstone) !== 'undefined') {
+        return presetStyleRedstone.getStyle(apr);
+    }
+    if (presetName == 'popup' && typeof(presetStylePopup) !== 'undefined') {
+        return presetStylePopup.getStyle(apr);
+    }
+    console.error('Preset appearance "' + presetName + '" not found.');
+    return apr;
+};
+
 /**
  * end of FrameManager class
  */
@@ -3308,6 +3381,8 @@ var CTimer =
  * end of CTimer class
  */
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+
+
 Object.freeze(DEF);
 
     
