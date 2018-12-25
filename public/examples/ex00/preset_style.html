@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+      JSFrame Examples
+      Copyright 2007-2019 Tom Misawa, riversun.org@gmail.com
+     -->
+    <title>JsFrame.js example</title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+
+
+</head>
+<body>
+<div style="color:#666666">
+    <a href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : Quick start
+</div>
+<script src="../../jsframe.js"></script>
+
+<script>
+    function start() {
+
+        const jsFrame = new JSFrame();
+
+        const frame01Style = jsFrame.createPresetStyle('yosemite');
+        const frame01 = jsFrame.createFrame(20, 40, 320, 220, frame01Style)//create frame (left,top,width,height)
+            .setTitle("Window1")
+            .setResizable(true)
+            .setMovable(true);
+        frame01.setHTML(`<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Contents of window01</div>`);
+        frame01.show();
+        {
+            const frame02Style = jsFrame.createPresetStyle('redstone');
+            const frame02 = jsFrame.createFrame(20 + (340 * 1), 40, 320, 220, frame02Style)//create frame (left,top,width,height)
+                .setTitle("Window2")
+                .setResizable(true)
+                .setMovable(true);
+            frame02.setHTML(`<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Contents of window02</div>`);
+            frame02.show();
+        }
+
+        {
+            const frame03Style = jsFrame.createPresetStyle('popup');
+            const frame03 = jsFrame.createFrame(20 + (340 * 0), 40+(240*1), 320, 220, frame03Style)//create frame (left,top,width,height)
+                .setTitle("Window3")
+                .setResizable(true)
+                .setMovable(true);
+            frame03.setHTML(`<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Contents of window03</div>`);
+            frame03.show();
+        }
+
+        frame01.requestFocus();
+    }
+
+    start();
+</script>
+
+</body>
+</html>

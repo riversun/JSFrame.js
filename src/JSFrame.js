@@ -1748,7 +1748,8 @@ CFrame.prototype.show = function () {
 CFrame.prototype.showModal = function () {
     var me = this;
 
-    var appearance = jsFrame.createFrameAppearance();
+
+    var appearance =new CFrameAppearance();
     appearance.showTitleBar = false;
     appearance.showCloseButton = false;
     appearance.frameBorderRadius = '0px';
@@ -2532,7 +2533,7 @@ JSFrame.prototype.createAnimator = function () {
     return new CSimpleLayoutAnimator();
 };
 
-JSFrame.prototype.getPresetStyle = function (presetName, focusedFrameOnly) {
+JSFrame.prototype.createPresetStyle = function (presetName, focusedFrameOnly) {
 
     var me = this;
     var apr = me.createFrameAppearance();

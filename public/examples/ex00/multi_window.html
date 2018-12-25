@@ -20,21 +20,18 @@
 
 <script>
     function start() {
-
         const jsFrame = new JSFrame();
 
-        const frame01 = jsFrame.createFrame(20, 40, 320, 220)//create frame (left,top,width,height)
-            .setTitle("Window1")//window title
-            .setResizable(true)//if true,you can resize the window
-            .setMovable(true);//if true,you can drag and move the window
-
-        const innerHTML = '<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Contents of window01</div>';
-
-        //set content
-        frame01.setHTML(innerHTML);
-
-        //show window
-        frame01.show();
+        for (let i = 0; i < 3; i++) {
+            const frame = jsFrame.createFrame(20 + 260 * i, 40, 240, 220)//create frame (left,top,width,height)
+                .setTitle(`Window${i}`)
+                .setResizable(true)
+                .setMovable(true);
+            const innerHTML = `<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Contents of window${i}</div>`;
+            frame.setHTML(innerHTML);
+            //show window
+            frame.show();
+        }
     }
 
     start();

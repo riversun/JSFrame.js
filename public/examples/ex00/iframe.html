@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+      JSFrame Examples
+
+      Copyright 2007-2019 Tom Misawa, riversun.org@gmail.com
+     -->
+    <title>JsFrame.js example - Use IFrame</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+
+</head>
+<body>
+<div style="color:#666666">
+    <a href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : Quick start
+</div>
+<link href="ex02.css" rel="stylesheet" type="text/css"/>
+
+<!-- for Internet explorer [begin] -->
+<script src="https://www.promisejs.org/polyfills/promise-6.1.0.min.js"></script>
+<!-- for Internet explorer [end] -->
+
+<script src="../../jsframe.js"></script>
+
+<script>
+    function start() {
+
+        const jsFrame = new JSFrame();
+
+        var frame01Style = jsFrame.createFrameAppearance().setUseIFrame(true);//useIframe as content view;
+
+        const frame01 = jsFrame.createFrame(20, 40, 320, 220, frame01Style)
+            .setTitle("Window1")
+            .setResizable(true)
+            .setMovable(true);
+
+        var frame02Style = jsFrame.createFrameAppearance().setUseIFrame(true);//useIframe as content view;
+        const frame02 = jsFrame.createFrame(360, 40, 320, 220, frame01Style)
+            .setTitle("Window2")
+            .setResizable(true)
+            .setMovable(true);
+
+
+        var urls = [
+            frame01.setUrl('iframe_content01.html'),
+            frame02.setUrl('iframe_content02.html'),
+        ];
+
+        //Load urls.Wait until the content of iframe is loaded.
+        Promise.all(urls)
+            .then(function () {
+                //When All iframe pages loaded,show frame
+                frame01.show();
+                frame02.show();
+
+                //focus on frame01
+                frame01.requestFocus();
+            });
+
+
+    }
+
+    start();
+</script>
+
+</body>
+</html>

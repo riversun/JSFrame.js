@@ -27,15 +27,16 @@
 require('./PresetStylePopup.css');
 function getStyle(fApr) {
 
-    fApr.showTitleBar = true;
+
+    fApr.showTitleBar = false;
     fApr.showCloseButton = true;
 
 
     fApr.titleBarCaptionFontSize = '12px';
     fApr.titleBarCaptionFontWeight = 'normal';
     fApr.titleBarCaptionLeftMargin = '10px';
-    fApr.titleBarCaptionColorDefault = 'transparent';
-    fApr.titleBarCaptionColorFocused = 'transparent';
+    fApr.titleBarCaptionColorDefault = '#4d494d';
+    fApr.titleBarCaptionColorFocused = '#4d494d';
 
     fApr.titleBarHeight = '5px';
 
@@ -126,7 +127,7 @@ function getStyle(fApr) {
         //caption
         cbApr.caption = CROSS_MARK;
 
-        cbApr.captionColorDefault = '#black';
+        cbApr.captionColorDefault = 'black';
         cbApr.captionColorFocused = 'black';
         cbApr.captionColorHovered = 'white';
         cbApr.captionColorPressed = 'white';
@@ -135,8 +136,8 @@ function getStyle(fApr) {
         cbApr.captionFontRatio = 0.6;
 
         var closeBtnEle = partsBuilder.buildTextButton(cbApr);
-        var eleLeft = 4;
-        var eleTop = -10 - parseInt(fApr.titleBarHeight);
+        var eleLeft = 10;
+        var eleTop = -6 - parseInt(fApr.titleBarHeight);
         var eleAlign = 'RIGHT_TOP';
 
         // 'closeButton' is a special name
@@ -147,6 +148,8 @@ function getStyle(fApr) {
 
     };
     //
+
+    return fApr;
 
     return fApr;
 }

@@ -233,11 +233,11 @@ function getOriginalStyle01(frameAppearance) {
         const crossMark0 = '\u274c';
         const crossMark1 = '\u2716';
         const crossMark2 = '\u274e';
-
+        const CROSS_MARK = '\u2573';
         /**
          * Caption text for text button
          */
-        btnAppearance.caption = crossMark0;
+        btnAppearance.caption = CROSS_MARK;
 
         /**
          * Caption color for default state
