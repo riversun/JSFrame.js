@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+      JSFrame Examples
+      Copyright 2007-2019 Tom Misawa, riversun.org@gmail.com
+     -->
+    <title>JsFrame.js example</title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+
+</head>
+<body style="background: url('http://upload.wikimedia.org/wikipedia/commons/d/d6/Half_Dome_from_Glacier_Point%2C_Yosemite_NP_-_Diliff.jpg') 50% no-repeat fixed; background-size: cover;">
+
+<div style="color:#666666">
+    <a href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example:preset style 'yosemite'
+</div>
+<script src="../../jsframe.js"></script>
+
+<script>
+    function start() {
+
+        const jsFrame = new JSFrame();
+
+        const frames = [];
+        for (let i = 0; i < 3; i++) {
+            const yosemiteStyle = jsFrame.createPresetStyle('yosemite');
+            const frame = jsFrame.createFrame(20 + 320 * i, 40, 300, 200, yosemiteStyle).setTitle(`Window${i}`)
+            const innerHTML = `<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Contents of window${i}</div>`;
+            frame.setHTML(innerHTML);
+            frame.setMinFrameSize(160, 100);
+            frame.getFrameView().style.backgroundColor = "rgba(255,255,255,0.9)";
+
+            frame.on('minimizeButton', 'click', (frm) => {
+                console.log(frm)
+                const size = frm.getSize();
+                frm.setSize(size.width - 20, size.height - 20);
+            });
+
+            frame.on('zoomButton', 'click', (frm) => {
+                console.log(frm)
+                const size = frm.getSize();
+                frm.setSize(size.width + 20, size.height + 20);
+            });
+
+
+            frame.show();
+            frames.push(frame);
+
+        }
+
+        frames[0].requestFocus();
+    }
+
+    start();
+</script>
+
+</body>
+</html>

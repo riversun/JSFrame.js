@@ -1070,6 +1070,17 @@ CFrame.prototype.getFrameComponentElement = function (id) {
     }
 };
 
+CFrame.prototype.on = function (id, eventType, callbackFunc) {
+    var me = this;
+    var component = me.getFrameComponentElement(id);
+    if (component) {
+        component.addEventListener(eventType, e => {
+            callbackFunc(me);
+        });
+    }
+
+}
+
 CFrame.prototype.removeFrameComponentById = function (frameComponentId) {
     var me = this;
 
@@ -1366,6 +1377,11 @@ CFrame.prototype.getWidth = function () {
 CFrame.prototype.getHeight = function () {
     var me = this;
     return parseInt(me.htmlElement.style.height, 10);
+};
+
+CFrame.prototype.getSize = function () {
+    var me = this;
+    return {width: me.getWidth(), height: me.getHeight()};
 };
 
 CFrame.prototype.setSize = function (width, height) {
@@ -1749,7 +1765,7 @@ CFrame.prototype.showModal = function () {
     var me = this;
 
 
-    var appearance =new CFrameAppearance();
+    var appearance = new CFrameAppearance();
     appearance.showTitleBar = false;
     appearance.showCloseButton = false;
     appearance.frameBorderRadius = '0px';
