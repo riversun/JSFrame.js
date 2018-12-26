@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js preset style 'yosemite'</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+</head>
+<body style="background: url('http://upload.wikimedia.org/wikipedia/commons/d/d6/Half_Dome_from_Glacier_Point%2C_Yosemite_NP_-_Diliff.jpg') 50% no-repeat fixed; background-size: cover;">
+<script src="../../jsframe.js"></script>
+
+<script>
+    function start() {
+
+        const jsFrame = new JSFrame();
+        const frames = [];
+
+        const innerHTML = '<div class="container">' +
+            '<div class="py-5 text-center">\n' +
+            '<h2>My contents</h2>\n' +
+            '<p class="lead">コンテンツを記述します.</p>\n' +
+            '<div class="col-12 text-center">\n' +
+            '<button id="my_button_01" type="button" class="btn btn-primary">ボタン1</button>\n' +
+            '<button id="my_button_02" type="button" class="btn btn-secondary">ボタン2</button>\n' +
+            '<button id="my_button_03" type="button" class="btn btn-success">ボタン3</button>\n' +
+            '</div></div></div>'
+
+
+        for (let i = 0; i < 2; i++) {
+
+            const frame = jsFrame.create({
+                name: `MyWindow${i}`,
+                title: `Window${i}`,
+                left: 20 + 420 * i, top: 40, width: 400, height: 260,
+                minWidth: 160, minHeight: 100,
+                appearanceName: 'yosemite',
+                style: {
+                    backgroundColor: 'rgba(255,255,255,0.9)',
+                    overflow: 'auto'
+                },
+                html: innerHTML
+            });
+            //プリセットアピアランスのボタンを取得する
+            frame.on('minimizeButton', 'click', (_frame, evt) => {
+                const size = _frame.getSize();
+                _frame.setSize(size.width - 20, size.height - 20);
+            });
+
+            frame.on('zoomButton', 'click', (_frame, evt) => {
+                const size = _frame.getSize();
+                _frame.setSize(size.width + 20, size.height + 20);
+            });
+            frame.on('closeButton', 'click', (_frame, evt) => {
+                _frame.closeFrame();
+            });
+
+            const htmlButtonListener = (_frame, evt) => {
+                alert(`${_frame.getName()}の${evt.target.id}がクリックされた`);
+            };
+
+            //HTML内の要素を取得する場合はセレクタ表記で
+            frame.on('#my_button_01', 'click', htmlButtonListener);
+            frame.on('#my_button_02', 'click', htmlButtonListener);
+            frame.on('#my_button_03', 'click', htmlButtonListener);
+            frame.show();
+            frames.push(frame);
+        }
+        frames[0].requestFocus();
+    }
+
+    start();
+</script>
+
+</body>
+</html>

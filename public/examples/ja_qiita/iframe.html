@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js example - Use IFrame</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+</head>
+<body>
+<script src="../../jsframe.js"></script>
+<script>
+    function start() {
+        const jsFrame = new JSFrame();
+        const frame01 = jsFrame.create({
+            title: 'ウィンドウ1',
+            name: 'window01',
+            left: 20, top: 20, width: 320, height: 160,
+            url: 'iframe_content01.html',//iframe内に表示するURL
+            //urlLoaded:iframe読み込み終了後に呼び出されるコールバック
+            urlLoaded: (frame) => {
+                frame.on('#my_button_01', 'click', (_frame, evt) => {
+                    alert(`${_frame.getName()}の${evt.target.id}がクリックされた`);
+                });
+                frame.on('#my_button_02', 'click', (_frame, evt) => {
+                    _frame.closeFrame();
+                });
+            }
+        });
+        frame01.show();
+
+        const frame02 = jsFrame.create({
+            title: 'ウィンドウ2',
+            name: 'window02',
+            left: 360, top: 20, width: 320, height: 160,
+        });
+        //#setUrlメソッドを使ってiframe内に表示するURLを指定することも可能
+        //#setUrlはPromiseを返す、iframeのロードが終了するとコールバックされる
+        frame02.setUrl('iframe_content02.html').then((frame, evt) => {
+            frame.on('#my_button_04', 'click', (_frame, evt) => {
+                alert(`${_frame.getName()}の${evt.target.id}がクリックされた`);
+            });
+            frame.show();
+        });
+    }
+    start();
+</script>
+
+</body>
+</html>

@@ -1070,16 +1070,6 @@ CFrame.prototype.getFrameComponentElement = function (id) {
     }
 };
 
-CFrame.prototype.on = function (id, eventType, callbackFunc) {
-    var me = this;
-    var component = me.getFrameComponentElement(id);
-    if (component) {
-        component.addEventListener(eventType, function (e) {
-            callbackFunc(me);
-        });
-    }
-
-}
 
 CFrame.prototype.removeFrameComponentById = function (frameComponentId) {
     var me = this;
@@ -1096,6 +1086,7 @@ CFrame.prototype.showFrameComponent = function (frameComponentId) {
     if (comp) {
         comp.style.display = "flex";
     }
+    return me;
 };
 CFrame.prototype.hideFrameComponent = function (frameComponentId) {
     var me = this;
@@ -1103,7 +1094,9 @@ CFrame.prototype.hideFrameComponent = function (frameComponentId) {
     if (comp) {
         comp.style.display = "none";
     }
+    return me;
 };
+
 
 CFrame.prototype.setTitle = function (str) {
     var me = this;
@@ -1117,6 +1110,7 @@ CFrame.prototype.setTitle = function (str) {
 };
 
 CFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeight) {
+
     var me = this;
 
     var tmpLeft = parseInt(me.htmlElement.style.left, 10);
@@ -1226,14 +1220,14 @@ CFrame.prototype.closeInternally = function (e, parentCanvas, windowId) {
     parentCanvas.removeBean(windowId);
 
 
-    if (me.onCloseFrameListener) {
-        me.onCloseFrameListener(me);
-    }
-
     //added for modal window
     if (me.modalBackgroundWindowId) {
         this.parentCanvas.removeBean(me.modalBackgroundWindowId);
         me.modalBackgroundWindowId = null;
+    }
+
+    if (me.onCloseFrameListener) {
+        me.onCloseFrameListener(me);
     }
 };
 
@@ -1387,6 +1381,7 @@ CFrame.prototype.getSize = function () {
 CFrame.prototype.setSize = function (width, height) {
     var me = this;
 
+    //call CIFrame#resize instead of CFrame#resize
     me.resize(0, 0, width - me.getWidth(), height - me.getHeight(), true);
     return me;
 };
@@ -1449,7 +1444,10 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
      *  and the size can be adjusted smoothly.
      *  true is recommended.
      */
-    this.overrayTransparentScreenOnResize = true;
+    //20181226
+    //Changed to false.
+    // So it becomes necessary to click twice to react when you call the #setSize,I changed the value to false.
+    this.overrayTransparentScreenOnResize = false;
 
 
     this.titleBarColorFocused = appearance.titleBarColorFocused;
@@ -1618,6 +1616,7 @@ CIfFrame.prototype.$ = function (q) {
     var me = this;
 
     if (me.useIframe) {
+
         var docInIframe = me.iframe.contentWindow.document;
         return docInIframe.querySelector(q);
 
@@ -1627,6 +1626,24 @@ CIfFrame.prototype.$ = function (q) {
 
     }
 };
+
+CIfFrame.prototype.on = function (id, eventType, callbackFunc) {
+    var me = this;
+    var component = me.getFrameComponentElement(id);
+    if (component) {
+        component.addEventListener(eventType, function (e) {
+            callbackFunc(me, e);
+        });
+    }
+
+    var domElement = me.$(id);
+    if (domElement) {
+        domElement.addEventListener(eventType, function (e) {
+            callbackFunc(me, e);
+        });
+    }
+
+}
 
 
 CIfFrame.prototype.adjustFrameBorderRadius = function () {
@@ -1761,9 +1778,8 @@ CFrame.prototype.show = function () {
 };
 
 
-CFrame.prototype.showModal = function () {
+CFrame.prototype.showModal = function (onCloseListener) {
     var me = this;
-
 
     var appearance = new CFrameAppearance();
     appearance.showTitleBar = false;
@@ -1791,7 +1807,6 @@ CFrame.prototype.showModal = function () {
     //remember id of modal background frame
     me.modalBackgroundWindowId = modalBackgroundWindowId;
 
-
     // if (properties && properties.windowName) {
     //     frame.setName(properties.windowName);
     // }
@@ -1805,6 +1820,10 @@ CFrame.prototype.showModal = function () {
     modalBackgroundFrame.show();
 
     me.show();
+
+    if(onCloseListener){
+        me.setOnCloseFrameListener(onCloseListener);
+    }
 }
 
 
@@ -1946,7 +1965,6 @@ CIfFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeig
     //Image resizing for iframe that is the child element of canvas
     refCIfFrame.iframe.width = (tmpCanvasWidth - refCIfFrame.ifDelta + deltaWidth + 0) + 'px';
     refCIfFrame.iframe.height = (tmpCanvasHeight - refCIfFrame.ifDelta + deltaHeight + refCIfFrame.frameHeightAdjust) + 'px';
-
 
     if (refCIfFrame.overrayTransparentScreenEnabled || refCIfFrame.overrayTransparentScreenOnResize) {
         //Deploy a transparent screen.
@@ -2137,11 +2155,10 @@ CIfFrame.prototype.setUrl = function (url) {
                 if (me.onMouseUpOnIframe) {
                     me.onMouseUpOnIframe(eventFromIframe);
                 }
-
             };
 
 
-            resolve(me.iframe.contentWindow.document);
+            resolve(me, me.iframe.contentWindow.document);
         };
 
 
@@ -2477,6 +2494,74 @@ JSFrame.prototype.getDomPartsBuilder = function () {
     return me.domPartsBuilder;
 };
 
+JSFrame.prototype.create = function (model) {
+
+    var properties = {};
+    properties.name = model.name;
+    var title = model.title;
+    var left = model.left;
+    var top = model.top;
+    var width = model.width;
+    var height = model.height;
+    var appearance = model.appearance;
+    var appearanceName = model.appearanceName;
+    var style = model.style;
+
+
+    var minWidth = model.minWidth;
+    var minHeight = model.minHeight;
+
+
+    var html = model.html;
+    var resizable = model.resizable;
+    var movable = model.movable;
+    var url = model.url;
+    var urlLoaded = model.urlLoaded;
+
+    if (appearanceName) {
+        appearance = this.createPresetStyle(appearanceName);
+    }
+
+    var frame = this.createFrame(left, top, width, height, appearance, properties);
+
+    if (title) {
+        frame.setTitle(title);
+    }
+
+    if (html) {
+        frame.setHTML(html);
+    }
+    if (url) {
+        var urlPromise = frame.setUrl(url);
+        if (urlLoaded) {
+            urlPromise.then(urlLoaded);
+        }
+    }
+    if (resizable == false) {
+        frame.setResizable(false);
+    }
+    if (movable == false) {
+        frame.setMovable(false);
+    }
+
+    if (minWidth && minHeight) {
+        frame.minFrameWidth = minWidth;
+    }
+    if (minHeight) {
+        frame.minWindowHeight = minHeight;
+    }
+
+    if (style) {
+        var frameView = frame.getFrameView();
+        for (var name in style) {
+            if (style.hasOwnProperty(name)) {
+                frameView.style[name] = style[name];
+            }
+        }
+    }
+
+    return frame;
+}
 
 /**
  * Create a new window
@@ -2494,10 +2579,24 @@ JSFrame.prototype.createFrame = function (left, top, width, height, appearance, 
 
     var windowId = 'window_' + me.generateUUID();
 
+    if (!left) {
+        left = 0;
+    }
+    if (!top) {
+        top = 0;
+    }
+    if (!width) {
+        width = 128;
+    }
+    if (!height) {
+        height = 128;
+    }
+
+
     var frame = new CIfFrame(windowId, left, top, width, height, appearance);
 
-    if (properties && properties.windowName) {
-        frame.setName(properties.windowName);
+    if (properties && properties.name) {
+        frame.setName(properties.name);
     }
     frame.hide();
 
@@ -2814,7 +2913,11 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
     divElement.style.width = (width) + 'px';
     divElement.style.height = (height) + 'px';
     divElement.style.cursor = 'pointer';
-
+    divElement.style.margin = '0px';
+    divElement.style.padding = '0px';
+    //added for preventing bootstrap.css pollution
+    divElement.style.boxSizing = 'content-box';
+    divElement.style.fontFamily = 'sans-serif';
     divElement.onmousedown = function (e) {
 
         divElement._isMouseDown = true;

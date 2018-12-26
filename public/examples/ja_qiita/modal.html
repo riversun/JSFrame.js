@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js modal window</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+</div>
+<br>
+<button id="bt_open" type="button" onclick="openModalWindow()" class="btn btn-primary">モーダルウィンドウを開く</button>
+<script src="../../jsframe.js"></script>
+<script>
+
+    function openModalWindow() {
+        const jsFrame = new JSFrame();
+        const innerHTML = '<div class="modal-header">' +
+            '<h6 class="modal-title">変更を保存してよいですか？</h6>' +
+            '</div>' +
+            ' <div class="modal-body">' +
+            '保存する場合はOKを押してください。保存しない場合はCancelを押してください。' +
+            '</div>' +
+            '<div class="modal-footer">' +
+            '<button id="bt_submit" type="button" class="btn btn-outline-primary">OK</button>' +
+            '<button id="bt_cancel" type="button" class="btn btn-outline-secondary">Cancel</button>' +
+            '</div>';
+
+        const modalFrame = jsFrame.create({
+            name: 'my-modal-window',
+            title: 'モーダルウィンドウ',
+            left: 0, top: 0, width: 320, height: 220,
+            movable: true,
+            resizable: true,
+            html: innerHTML
+        });
+        //画面の中心に配置する
+        modalFrame.setPosition(window.innerWidth / 2, window.innerHeight / 2, 'CENTER_BOTTOM');
+
+        //ボタンのクリックイベント処理
+        modalFrame.on('#bt_submit', 'click', (frame, e) => {
+            frame.closeFrame();
+        });
+        modalFrame.on('#bt_cancel', 'click', (frame, e) => {
+            alert('cancel!');
+            //jsFrameオブジェクトからウィンドウを取得することも可能
+            var _frame = jsFrame.getWindowByName('my-modal-window');
+            _frame.closeFrame();
+        });
+
+        //モーダルウィンドウとして開く
+        modalFrame.showModal(_frame => {
+            alert(`${_frame.getName()}が閉じられました`);
+        });
+    }
+</script>
+</body>
+</html>
