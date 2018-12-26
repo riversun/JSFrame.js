@@ -33,6 +33,7 @@ require('./JSFrame.css');
 var presetStyleYosemite = require('./PresetStyleYosemite.js');
 var presetStyleRedstone = require('./PresetStyleRedstone.js');
 var presetStylePopup = require('./PresetStylePopup.js');
+var presetStyleToast = require('./PresetStyleToast.js');
 
 
 var DEF = {},
@@ -270,6 +271,8 @@ function CBeanFrame(beanId, left, top, width, height, zindex, w_border_width, ap
     //fields
     me.id = beanId;
     me.property = {};
+
+    me.extra = {};
 
     me.parentCanvas = null;
     me.htmlElement = null;
@@ -1821,7 +1824,7 @@ CFrame.prototype.showModal = function (onCloseListener) {
 
     me.show();
 
-    if(onCloseListener){
+    if (onCloseListener) {
         me.setOnCloseFrameListener(onCloseListener);
     }
 }
@@ -2561,7 +2564,7 @@ JSFrame.prototype.create = function (model) {
     }
 
     return frame;
-}
+};
 
 /**
  * Create a new window
@@ -2664,8 +2667,117 @@ JSFrame.prototype.createPresetStyle = function (presetName, focusedFrameOnly) {
     if (presetName == 'popup' && typeof(presetStylePopup) !== 'undefined') {
         return presetStylePopup.getStyle(apr);
     }
+    if (presetName == 'toast' && typeof(presetStyleToast) !== 'undefined') {
+        return presetStyleToast.getStyle(apr);
+    }
     console.error('Preset appearance "' + presetName + '" not found.');
     return apr;
+};
+
+JSFrame.prototype.showToast = function (model) {
+    if (!model) {
+        return;
+    }
+
+    var me = this;
+    var toastHeight = 60;
+    var toastWidth = 260;
+    var openCloseDurationMs = 300;
+    var stayDurationMs = 1000;
+    var startY = window.innerHeight - 10 - toastHeight / 2;
+    var endY = window.innerHeight - 20 - toastHeight / 2;
+    var myHtml = '';
+    var showButton = false;
+    var style = {
+        borderRadius: '10px',
+        background: 'rgba(0,0,0,0.8)',
+    };
+
+    if (model.style) {
+        style = model.style;
+    }
+    if (model.height) {
+        toastHeight = model.height;
+    }
+    if (model.width) {
+        toastWidth = model.width;
+    }
+    if (model.duration) {
+        stayDurationMs = model.duration;
+    }
+    if (model.align) {
+
+        if (model.align == 'top') {
+            startY = 10 + toastHeight / 2;
+            endY = 20 + toastHeight / 2;
+        }
+        else if (model.align == 'center') {
+            startY = window.innerHeight / 2;
+            endY = window.innerHeight / 2;
+        } else {
+            //bottom
+        }
+    }
+    if (model.html) {
+        myHtml = model.html;
+    }
+    if (model.closeButton == true) {
+        showButton = true;
+    } else {
+        showButton = false;
+    }
+
+
+    var apr = me.createPresetStyle('toast');
+
+    if (style.borderRadius) {
+        apr.frameBorderRadius = style.borderRadius;
+    }
+
+    if (model.closeButtonColor) {
+        apr.captionClor = model.closeButtonColor;
+
+    }
+
+
+    var frame = me.create({
+        width: toastWidth, height: toastHeight,
+        movable: false,
+        resizable: false,
+        appearance: apr,
+        style: style,
+        html: '<div id="my_element" style="box-sizing:border-box;display: flex;justify-content: center;align-items: center;padding:10px;font-size:16px;color:darkgray;height:' + (toastHeight) + 'px">' +
+            myHtml +
+            '</div>'
+    });
+
+    if (showButton) {
+    } else {
+        frame.hideFrameComponent('closeButton');
+    }
+
+    var animator = me.createAnimator();
+    animator.set(frame)
+        .setDuration(openCloseDurationMs)
+        .fromPosition(window.innerWidth / 2, startY, 'CENTER_CENTER')
+        .toPosition(window.innerWidth / 2, endY, 'CENTER_CENTER')
+        .toAlpha(1.0)
+        .fromAlpha(0.0)
+        .start()
+        .then(animatorObj => {
+            return animatorObj
+                .setDuration(openCloseDurationMs)
+                .fromPosition(window.innerWidth / 2, endY, 'CENTER_CENTER')
+                .toPosition(window.innerWidth / 2, startY, 'CENTER_CENTER')
+                .fromAlpha(1.0)
+                .toAlpha(0.5)
+                .start(stayDurationMs);
+        })
+        .then(animatorObj => {
+            var _frame = animatorObj.get();
+            _frame.closeFrame();
+        });
+
 };
 
 /**
@@ -3183,6 +3295,9 @@ function CSimpleLayoutAnimator() {
     this.durationMillis = 200;
     this.targetFrame = null;
 
+    this._crrAlpha = 1.0;
+    this._toAlpha = 1.0;
+
     //current width/height
     this._crrWidth = 0;
     this._crrHeight = 0;
@@ -3220,6 +3335,7 @@ CSimpleLayoutAnimator.prototype.set = function (ciframe) {
     me.toHeight(ciframe.getHeight());
 
     var crrPos = ciframe.getPosition();
+
     me.fromPosition(crrPos.x, crrPos.y, crrPos.anchor);
 
 
@@ -3335,6 +3451,30 @@ CSimpleLayoutAnimator.prototype.toHeight = function (toHeight) {
 };
 
 /**
+ * Set from alpha
+ * @param fromAlpha
+ * @returns {*}
+ */
+CSimpleLayoutAnimator.prototype.fromAlpha = function (fromAlpha) {
+    var me = this;
+    me._crrAlpha = fromAlpha;
+
+    return me;
+};
+
+/**
+ * Set to alpha
+ * @param toAlpha
+ * @returns {*}
+ */
+CSimpleLayoutAnimator.prototype.toAlpha = function (toAlpha) {
+    var me = this;
+    me._toAlpha = toAlpha;
+
+    return me;
+};
+
+/**
  * Set move to position
  * @param x
  * @param y
@@ -3381,6 +3521,8 @@ CSimpleLayoutAnimator.prototype.start = function (waitMillis) {
     var fromX = me._pinX;
     var fromY = me._pinY;
 
+    var fromAlpha = me._crrAlpha;
+
 
     return new Promise(function (resolve, reject) {
 
@@ -3394,6 +3536,7 @@ CSimpleLayoutAnimator.prototype.start = function (waitMillis) {
         var deltaX = (me._toX - fromX) / numOfSteps;
         var deltaY = (me._toY - fromY) / numOfSteps;
 
+        var deltaAlpha = (me._toAlpha - fromAlpha) / numOfSteps;
 
         var unitMillis = me.durationMillis / numOfSteps;
 
@@ -3415,10 +3558,17 @@ CSimpleLayoutAnimator.prototype.start = function (waitMillis) {
                     var _x = fromX + deltaX * idx;
                     var _y = fromY + deltaY * idx;
 
+                    var _alpha = me._toAlpha;
+
                     if (me.pinnedAnimationEnabled) {
                         //me.targetFrame._setPositionInternally(me._pinX, me._pinY, me._pinAnchor, _width, _height);
 
                         me.targetFrame._setPositionInternally(_x, _y, me._pinAnchor, _width, _height);
+                    }
+
+
+                    if (me.targetFrame.htmlElement.style) {
+                        me.targetFrame.htmlElement.style.opacity = _alpha;
                     }
 
                     me.targetFrame.resizeDirect(_width, _height);
@@ -3444,15 +3594,29 @@ CSimpleLayoutAnimator.prototype.start = function (waitMillis) {
                 var _x = fromX + deltaX * idx;
                 var _y = fromY + deltaY * idx;
 
+                var _alpha = fromAlpha + deltaAlpha * idx;
+
                 if (me.pinnedAnimationEnabled) {
                     //me.targetFrame._setPositionInternally(me._pinX, me._pinY, me._pinAnchor, _width, _height);
                     me.targetFrame._setPositionInternally(_x, _y, me._pinAnchor, _width, _height);
                 }
 
+                if (me.targetFrame.htmlElement.style) {
+                    me.targetFrame.htmlElement.style.opacity = _alpha;
+                }
+
                 me.targetFrame.resizeDirect(_width, _height);
 
                 if (idx == 0) {
-                    me.targetFrame.show();
+
+                    //check window existence
+                    var wmgr = me.targetFrame.parentCanvas;
+                    var _targetFrame = wmgr.getWindow(me.targetFrame.id);
+                    if (_targetFrame) {
+                        me.targetFrame.show();
+                    } else {
+                        //the target window must be deleted.
+                    }
                 }
 
                 idx++;

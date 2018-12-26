@@ -41,19 +41,25 @@
         modalFrame.setPosition(window.innerWidth / 2, window.innerHeight / 2, 'CENTER_BOTTOM');
 
         //ボタンのクリックイベント処理
-        modalFrame.on('#bt_submit', 'click', (frame, e) => {
-            frame.closeFrame();
+        modalFrame.on('#bt_submit', 'click', (_frame, e) => {
+            _frame.extra = {
+                result: 'submitted'
+            }
+            _frame.closeFrame();
         });
         modalFrame.on('#bt_cancel', 'click', (frame, e) => {
-            alert('cancel!');
             //jsFrameオブジェクトからウィンドウを取得することも可能
             var _frame = jsFrame.getWindowByName('my-modal-window');
+
+            _frame.extra = {
+                result: 'canceled'
+            }
             _frame.closeFrame();
         });
 
         //モーダルウィンドウとして開く
         modalFrame.showModal(_frame => {
-            alert(`${_frame.getName()}が閉じられました`);
+            alert(`${_frame.getName()}が閉じられました.結果は${_frame.extra.result}`);
         });
     }
 </script>
