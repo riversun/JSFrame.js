@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js example Position</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+</head>
+<body>
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+<script>
+    function start() {
+        const jsFrame = new JSFrame();
+        const frame01 = jsFrame.createFrame().setTitle("My window");
+        //Set size with setSize method
+        frame01.setSize(320, 240);
+
+        //Set position with method
+        const align = 'CENTER_CENTER';//alignment
+        const x = window.innerWidth / 2;
+        const y = window.innerHeight / 2;
+        frame01.setPosition(x, y, align);
+        frame01.setHTML('hello');
+        frame01.show();
+    }
+
+    start();
+</script>
+</body>
+</html>

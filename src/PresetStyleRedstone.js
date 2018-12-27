@@ -244,7 +244,58 @@ function getStyle(fApr) {
 
             //configure close button appearance[end]//////////////
         }
+        {
+            //configure close button appearance[begin]//////////////
 
+
+            var deminApr = partsBuilder.buildTextButtonAppearance();
+
+            deminApr.width = 45;
+            deminApr.height = 28;
+
+
+            deminApr.borderRadius = 0;
+            deminApr.borderWidth = 0;
+
+            deminApr.borderColorDefault = '#c6c6c6';
+            deminApr.borderColorFocused = '#fc615c';
+            deminApr.borderColorHovered = deminApr.borderColorFocused;
+            deminApr.borderColorPressed = '#e64842';
+
+            deminApr.borderStyleDefault = 'solid';
+            deminApr.borderStyleFocused = deminApr.borderStyleDefault;
+            deminApr.borderStyleHovered = deminApr.borderStyleDefault;
+            deminApr.borderStylePressed = deminApr.borderStyleDefault;
+
+            //background
+            deminApr.backgroundColorDefault = 'white';
+            deminApr.backgroundColorFocused = 'white';
+            deminApr.backgroundColorHovered = '#e5e5e5';
+            deminApr.backgroundColorPressed = '#cccccc';
+
+            //caption
+            deminApr.caption ='\u25A3';
+
+            deminApr.captionColorDefault = '#9b9a9b';
+            deminApr.captionColorFocused = 'black';
+            deminApr.captionColorHovered = 'black';
+            deminApr.captionColorPressed = 'black';
+
+            deminApr.captionShiftYpx = 1;
+            deminApr.captionFontRatio = 0.6;
+
+            var deminBtnEle = partsBuilder.buildTextButton(deminApr);
+            var eleLeft = -92;
+            var eleTop = -parseInt(fApr.titleBarHeight);
+            var eleAlign = 'RIGHT_TOP';
+
+            deminBtnEle.style.display = 'none';
+
+            // 'closeButton' is a special name
+            fApr.addFrameComponent('deminimizeButton', deminBtnEle, eleLeft, eleTop, eleAlign);
+
+            //configure close button appearance[end]//////////////
+        }
         {
             //configure close button appearance[begin]//////////////
 

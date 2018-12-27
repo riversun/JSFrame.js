@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js event handling</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body style="background: url('http://upload.wikimedia.org/wikipedia/commons/d/d6/Half_Dome_from_Glacier_Point%2C_Yosemite_NP_-_Diliff.jpg') 50% no-repeat fixed; background-size: cover;">
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+
+<script>
+    function start() {
+
+        const jsFrame = new JSFrame();
+        const frames = [];
+
+        const innerHTML = '<div class="container">' +
+            '<div class="py-5 text-center">\n' +
+            '<h2>My contents</h2>\n' +
+            '<p class="lead">Your contents here</p>\n' +
+            '<div class="col-12 text-center">\n' +
+            '<button id="my_button_01" type="button" class="btn btn-primary">Button 1</button>\n' +
+            '<button id="my_button_02" type="button" class="btn btn-secondary">Button 2</button>\n' +
+            '<button id="my_button_03" type="button" class="btn btn-success">Button 3</button>\n' +
+            '</div></div></div>'
+
+
+        for (let i = 0; i < 2; i++) {
+
+            const frame = jsFrame.create({
+                name: `MyWindow${i}`,
+                title: `Window${i}`,
+                left: 20 + 420 * i, top: 40, width: 400, height: 260,
+                minWidth: 160, minHeight: 100,
+                appearanceName: 'yosemite',
+                style: {
+                    backgroundColor: 'rgba(255,255,255,0.9)',
+                    overflow: 'auto'
+                },
+                html: innerHTML
+            });
+            //set event listener
+            frame.on('minimizeButton', 'click', (_frame, evt) => {
+                const size = _frame.getSize();
+                _frame.setSize(size.width - 20, size.height - 20);
+            });
+
+            frame.on('zoomButton', 'click', (_frame, evt) => {
+                const size = _frame.getSize();
+                _frame.setSize(size.width + 20, size.height + 20);
+            });
+            frame.on('closeButton', 'click', (_frame, evt) => {
+                _frame.closeFrame();
+            });
+
+            const htmlButtonListener = (_frame, evt) => {
+                const jsFrame = new JSFrame();
+                jsFrame.showToast({
+                    html: `Clicked ${_frame.getName()}'s ${evt.target.id}`,
+                    align: 'top'
+                });
+            };
+
+            //You can get DOM element in the HTML by selector format
+            frame.on('#my_button_01', 'click', htmlButtonListener);
+            frame.on('#my_button_02', 'click', htmlButtonListener);
+            frame.on('#my_button_03', 'click', htmlButtonListener);
+            frame.show();
+            frames.push(frame);
+        }
+        frames[0].requestFocus();
+    }
+
+    start();
+</script>
+
+</body>
+</html>

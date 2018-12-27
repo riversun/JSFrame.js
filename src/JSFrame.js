@@ -977,13 +977,17 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
     };
     me.enableMarkers = function (enabled) {
         if (enabled) {
+
+            markerRD.htmlElement.style.display='flex';
+            markerDD.htmlElement.style.display='flex';
+            markerRR.htmlElement.style.display='flex';
             markerRD.htmlElement.style.cursor = 'se-resize'
             markerDD.htmlElement.style.cursor = 'n-resize';
             markerRR.htmlElement.style.cursor = 'w-resize';
         } else {
-            markerRD.htmlElement.style.cursor = 'default'
-            markerDD.htmlElement.style.cursor = 'default';
-            markerRR.htmlElement.style.cursor = 'default';
+            markerRD.htmlElement.style.display='none';
+            markerDD.htmlElement.style.display='none';
+            markerRR.htmlElement.style.display='none';
         }
         // me.canvas.removeBean(markerRD.id);
         // me.canvas.removeBean(markerDD.id);

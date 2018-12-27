@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js example - Use IFrame</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+</head>
+<body>
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+<script>
+    const jsFrame = new JSFrame();
+
+    function start() {
+
+        const frame01 = jsFrame.create({
+            title: 'Window1',
+            name: 'window01',
+            left: 20, top: 20, width: 320, height: 160,
+            url: 'iframe_content01.html',//URL to display in iframe
+            //urlLoaded:Callback function called after loading iframe
+            urlLoaded: (frame) => {
+                frame.on('#my_button_01', 'click', (_frame, evt) => {
+                    showToast(`Clicked ${_frame.getName()}'s ${evt.target.id}`);
+                });
+                frame.on('#my_button_02', 'click', (_frame, evt) => {
+                    _frame.closeFrame();
+                });
+            }
+        });
+        frame01.show();
+
+        const frame02 = jsFrame.create({
+            title: 'Window2',
+            name: 'window02',
+            left: 360, top: 20, width: 320, height: 160,
+        });
+        //You can also call #setUrl to show page specified by 'url' in iframe.
+        //#setUrl returns Promise.Promise will be resolved(you'll get callback) after loading iframe.
+        frame02.setUrl('iframe_content02.html').then((frame, evt) => {
+            frame.on('#my_button_04', 'click', (_frame, evt) => {
+                showToast(`Clicked ${_frame.getName()}'s ${evt.target.id}`);
+            });
+            frame.show();
+        });
+    }
+
+    function showToast(str) {
+        jsFrame.showToast({
+            html: str, align: 'top'
+        });
+    }
+
+    start();
+</script>
+
+</body>
+</html>

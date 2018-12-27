@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js yosemite</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+</head>
+<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/c/c5/Kurumayama_K%C5%8Dgen_Snow_Resort_2.jpg') 50% no-repeat fixed; background-size: cover;">
+
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+
+<script>
+    function start() {
+
+        const jsFrame = new JSFrame();
+
+        const frames = [];
+        for (let i = 0; i < 2; i++) {
+            const frame = jsFrame.create({
+                name: `Win${i}`,
+                title: `Win${i} - Win10 style`,
+                left: 20 + (320 + 20) * i, top: 50, width: 320, height: 220, minWidth: 200, minHeight: 110,
+                appearanceName: 'redstone',
+                style: {
+                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    overflow: 'hidden'
+                },
+                html: '<div style="padding:10px;">Your contents here.</div>'
+            }).show();
+
+            frame.on('minimizeButton', 'click', (_frame, evt) => {
+
+                frame.hideFrameComponent('minimizeButton');
+                frame.showFrameComponent('deminimizeButton');
+
+                const force = true;
+
+                _frame.extra.__restore_info = {
+                    org_left: _frame.getLeft(),
+                    org_top: _frame.getTop(),
+                    org_width: _frame.getWidth(),
+                    org_height: _frame.getHeight()
+                };
+
+                _frame.setSize(_frame.getWidth(), 30, force);
+                _frame.setResizable(false);
+
+
+            });
+            frame.on('deminimizeButton', 'click', (_frame, evt) => {
+
+                _frame.showFrameComponent('minimizeButton');
+                _frame.hideFrameComponent('deminimizeButton');
+
+                const force = true;
+                _frame.setSize(_frame.extra.__restore_info.org_width, _frame.extra.__restore_info.org_height, force);
+
+            });
+
+            frame.on('maximizeButton', 'click', (_frame, evt) => {
+
+                _frame.extra.__restore_info = {
+                    org_left: _frame.getLeft(),
+                    org_top: _frame.getTop(),
+                    org_width: _frame.getWidth(),
+                    org_height: _frame.getHeight()
+                };
+
+                frame.hideFrameComponent('maximizeButton');
+                frame.showFrameComponent('restoreButton');
+
+                frame.setPosition(0, 0);
+                frame.setSize(window.innerWidth - 2, window.innerHeight - 2, true);
+
+                frame.setMovable(false);
+                frame.setResizable(false);
+
+
+            });
+
+            frame.on('restoreButton', 'click', (_frame, evt) => {
+
+                frame.setMovable(true);
+                frame.setResizable(true);
+
+                _frame.setPosition(_frame.extra.__restore_info.org_left, _frame.extra.__restore_info.org_top);
+
+                const force = true;
+                _frame.setSize(_frame.extra.__restore_info.org_width, _frame.extra.__restore_info.org_height, force);
+
+                _frame.showFrameComponent('maximizeButton');
+                _frame.hideFrameComponent('restoreButton');
+
+
+            });
+            frame.on('closeButton', 'click', (_frame, evt) => {
+                _frame.closeFrame();
+            });
+            frames.push(frame);
+        }
+        frames[0].requestFocus();
+    }
+
+    start();
+</script>
+<div style="color:white"><a href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : Preset style redstone
+</div>
+<div
+        style="font-size: 12px; color: white; position: fixed; right: 10px; bottom: 10px">
+    Photo by Ski Mania License: CC-BY-SA 4.0
+</div>
+</body>
+</html>

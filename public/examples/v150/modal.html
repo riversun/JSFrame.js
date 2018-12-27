@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js modal window</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+</div>
+<br>
+<button id="bt_open" type="button" onclick="openModalWindow()" class="btn btn-primary">Open as a modal window</button>
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+<script>
+
+    function openModalWindow() {
+        const jsFrame = new JSFrame();
+        const innerHTML = '<div class="modal-header">' +
+            '<h6 class="modal-title">Do want to save ?</h6>' +
+            '</div>' +
+            '<div class="modal-footer">' +
+            '<button id="bt_submit" type="button" class="btn btn-outline-primary">OK</button>' +
+            '<button id="bt_cancel" type="button" class="btn btn-outline-secondary">Cancel</button>' +
+            '</div>';
+
+        const modalFrame = jsFrame.create({
+            name: 'my-modal-window',
+            title: 'Confirmation',
+            left: 0, top: 0, width: 320, height: 150,
+            movable: true,
+            resizable: true,
+            html: innerHTML
+        });
+        //Place window in the center
+        modalFrame.setPosition(window.innerWidth / 2, window.innerHeight / 2, 'CENTER_BOTTOM');
+
+        //Handling the button's click event
+        modalFrame.on('#bt_submit', 'click', (_frame, e) => {
+            _frame.extra = {
+                result: 'submitted'
+            }
+            _frame.closeFrame();
+        });
+        modalFrame.on('#bt_cancel', 'click', (frame, e) => {
+            //You can also get frame object from JSFrame object.
+            var _frame = jsFrame.getWindowByName('my-modal-window');
+            _frame.extra = {
+                result: 'canceled'
+            }
+            _frame.closeFrame();
+        });
+
+        //Open as modal window
+        modalFrame.showModal(_frame => {
+            //You can get callback when closing the modal window
+            jsFrame.showToast({
+                html: `${_frame.getName()} is closed.The result is ${_frame.extra.result}`,
+                align: 'center',
+                duration: 2000
+            });
+        });
+    }
+</script>
+</body>
+</html>

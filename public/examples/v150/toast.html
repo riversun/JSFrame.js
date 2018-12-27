@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js modal window</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body style="background: url('https://upload.wikimedia.org/wikipedia/commons/e/e0/Clouds_over_the_Atlantic_Ocean.jpg') 50% no-repeat fixed; background-size: cover;">
+<br>
+<div class="container-fluid">
+    <button type="button" onclick="showToast01()" class="m-1 btn btn-primary btn-sm">トースト(標準＝下部)を表示</button>
+    <button type="button" onclick="showToast02()" class="m-1 btn btn-primary btn-sm">トースト(中央)を表示</button>
+    <button type="button" onclick="showToast03()" class="m-1 btn btn-primary btn-sm">トースト(上部)を表示</button>
+    <br>
+    <button type="button" onclick="showToast04()" class="m-1 btn btn-primary btn-sm">トースト(カスタム)を表示</button>
+</div>
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+<script>
+
+    function showToast01() {
+        const jsFrame = new JSFrame();
+        jsFrame.showToast({
+            html: '標準トーストです',
+        });
+    }
+
+    function showToast02() {
+        const jsFrame = new JSFrame();
+        jsFrame.showToast({
+            align: 'center', html: '中央トーストです'
+        });
+    }
+
+    function showToast03() {
+        const jsFrame = new JSFrame();
+        jsFrame.showToast({
+            align: 'top', html: '上部トーストです',
+        });
+    }
+
+    function showToast04() {
+        const jsFrame = new JSFrame();
+        jsFrame.showToast({
+            width: 260,
+            height: 100,
+            duration: 2000,//表示時間(millis)
+            align: 'center',// 表示位置 'top'/'center'/'bottom'(default)
+            style: {
+                borderRadius: '2px',
+                backgroundColor: 'rgba(0,124,255,0.8)',
+            },
+            html: '<span style="color:white;">カスタムトーストです</span>',
+            closeButton: true,//閉じるボタンを表示
+            closeButtonColor: 'white'//閉じるボタンの色
+        });
+    }
+</script>
+</body>
+</html>

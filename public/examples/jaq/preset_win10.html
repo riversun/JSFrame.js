@@ -5,17 +5,17 @@
     <meta charset="utf-8">
     <meta name="description" content="A javascript popup/floating window library.">
 </head>
-<!--<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/c/c5/Kurumayama_K%C5%8Dgen_Snow_Resort_2.jpg') 50% no-repeat fixed; background-size: cover;">-->
-<body>
-<!--<script src="https://riversun.github.io/jsframe/jsframe.js"></script>-->
-<script src="../../jsframe.js"></script>
+<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/c/c5/Kurumayama_K%C5%8Dgen_Snow_Resort_2.jpg') 50% no-repeat fixed; background-size: cover;">
+
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+
 <script>
     function start() {
 
         const jsFrame = new JSFrame();
 
         const frames = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
             const frame = jsFrame.create({
                 name: `Win${i}`,
                 title: `Win${i} - Win10 style`,
@@ -28,24 +28,38 @@
                 html: '<div style="padding:10px;">Your contents here.</div>'
             }).show();
 
-            //プリセットアピアランスのボタンを取得する
             frame.on('minimizeButton', 'click', (_frame, evt) => {
-                const size = _frame.getSize();
-                //_frame.setSize(size.width - 20, size.height - 20);
+
+                frame.hideFrameComponent('minimizeButton');
+                frame.showFrameComponent('deminimizeButton');
 
                 const force = true;
+
+                _frame.extra.__restore_info = {
+                    org_left: _frame.getLeft(),
+                    org_top: _frame.getTop(),
+                    org_width: _frame.getWidth(),
+                    org_height: _frame.getHeight()
+                };
+
                 _frame.setSize(_frame.getWidth(), 30, force);
                 _frame.setResizable(false);
 
-                jsFrame.showToast({
-                    align: 'top',
-                    html: `<span style="color:red">${_frame.getName()}</span>を小さくしました}`
-                });
 
             });
+            frame.on('deminimizeButton', 'click', (_frame, evt) => {
+
+                _frame.showFrameComponent('minimizeButton');
+                _frame.hideFrameComponent('deminimizeButton');
+
+                const force = true;
+                _frame.setSize(_frame.extra.__restore_info.org_width, _frame.extra.__restore_info.org_height, force);
+
+            });
+
             frame.on('maximizeButton', 'click', (_frame, evt) => {
 
-                _frame.extra = {
+                _frame.extra.__restore_info = {
                     org_left: _frame.getLeft(),
                     org_top: _frame.getTop(),
                     org_width: _frame.getWidth(),
@@ -56,37 +70,31 @@
                 frame.showFrameComponent('restoreButton');
 
                 frame.setPosition(0, 0);
-                frame.setSize(window.innerWidth, window.innerHeight, true);
+                frame.setSize(window.innerWidth - 2, window.innerHeight - 2, true);
 
                 frame.setMovable(false);
                 frame.setResizable(false);
 
-                jsFrame.showToast({
-                    html: `<span style="color:red">${_frame.getName()}</span>を最大化しました`
-                });
+
             });
+
             frame.on('restoreButton', 'click', (_frame, evt) => {
 
                 frame.setMovable(true);
                 frame.setResizable(true);
 
-                _frame.setPosition(_frame.extra.org_left, _frame.extra.org_top);
-                _frame.setSize(_frame.extra.org_width, _frame.extra.org_height, true);
+                _frame.setPosition(_frame.extra.__restore_info.org_left, _frame.extra.__restore_info.org_top);
 
+                const force = true;
+                _frame.setSize(_frame.extra.__restore_info.org_width, _frame.extra.__restore_info.org_height, force);
 
                 _frame.showFrameComponent('maximizeButton');
                 _frame.hideFrameComponent('restoreButton');
 
-                jsFrame.showToast({
-                    html: `<span style="color:red">${_frame.getName()}</span>を元にもどしました`
-                });
+
             });
             frame.on('closeButton', 'click', (_frame, evt) => {
                 _frame.closeFrame();
-                jsFrame.showToast({
-                    align: 'top', html: `<span style="color:red">${_frame.getName()}</span>を閉じました`
-                });
-
             });
             frames.push(frame);
         }
