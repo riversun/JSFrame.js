@@ -2,57 +2,242 @@
 
 ###  What is '**JsFrame.js**' like?
 It is an independent lightweight multi-window library for javascript.
-- Create various popup windows.
-- Styling the appearance flexibly.
+- You can create various floating windows (called **frame**) and popup windows.
+- You can create toast.
+- You can create multi-window apps.
 
+# DEMO
+https://riversun.github.io/jsframe/examples/v150/preset_yosemite.html
+https://riversun.github.io/jsframe/examples/v150/preset_win10.html
 
-[Click to open DEMO](https://riversun.github.io/jsframe/examples/ex03/index.html)  
-
-[![ex00](https://riversun.github.io/jsframe/capture/ex03.png)](https://riversun.github.io/jsframe/examples/ex03/index.html)
+[![ex00](https://riversun.github.io/jsframe/capture/img_01_yosemite.png)](https://riversun.github.io/jsframe/examples/ex00/index.html)
 
 
 It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
 
 # install
 
+**using npm**
+
+```shell
+npm install jsframe.js
 ```
-npm i jsframe.js
+
+**use as below**
+
+```html
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
 ```
 
 # Quick Start
-## Show Popup Window
-- Resizable
-- Draggable (Movable)
+## Create window
 
-**SCRIPT**
+Here's is basic example of JSFrame.js to show a simple window.
+
+- Call the ```JSFrame.create``` method with initialization parameter to show a window
+- Set html as a content of the window.Content could simply be some text or html.
+- ```frame.show``` to show the window
+
 ```js
-            var jsFrame = new JSFrame();
-
-            var frame01 = jsFrame.createFrame(20, 40, 320, 220)//create frame (left,top,width,height)
-                    .setTitle("Example")//window title
-                    .setResizable(true)//if true,you can resize the window
-                    .setMovable(true)//if true,you can drag and move the window
-                    .setTitleBarClassName('style_default', 'style_focused');//set titlebar style
-
-            var innerHTML='<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Example</div>';
-
-            //set content
-            frame01.setHTML(innerHTML);
-
-            //show window
-            frame01.show();
-
-            //get inner element by queryselector and change it.
-            frame01.$("#my_element").innerHTML='Hello World!';
-
-            //if you want to close frame using code,uncomment following line.
-            //frame01.closeFrame();
+const jsFrame = new JSFrame();
+//Create window
+const frame = jsFrame.create({
+    title: 'Window',
+    left: 20, top: 20, width: 320, height: 220,
+    movable: true,//Enable to be moved by mouse
+    resizable: true,//Enable to be resized by mouse
+    html: '<div id="my_element" style="padding:10px;font-size:12px;color:darkgray;">Contents of window</div>'
+});
 ```
 
 **DEMO**  
-https://riversun.github.io/jsframe/examples/ex00/index.html  
-[![ex00](https://riversun.github.io/jsframe/capture/ex00.png)](https://riversun.github.io/jsframe/examples/ex00/index.html)
+https://riversun.github.io/jsframe/examples/v150/simple.html
 
+[![ex00](https://riversun.github.io/jsframe/capture/ex00.png)](https://riversun.github.io/jsframe/examples/v150/simple.html)
+
+**Tips**
+- You can also get DOM element from contents that you set as html.Call ```frame.$([selector])```.For example, you can get the element which id is 'my_element' by calling ```frame.$('#my_element')```
+
+## Show specified URL as content of window
+
+- Set ```url``` to the initialization parameter.
+- The window contents will be shown as iframe.
+- Set callback function which is called after loading a page as ```urlLoaded```
+
+```js
+const frame01 = jsFrame.create({
+    title: 'Window1',
+    left: 20, top: 20, width: 320, height: 160,
+    url: 'iframe_content01.html',//URL to display in iframe
+    //urlLoaded:Callback function called after loading iframe
+    urlLoaded: (frame) => {
+      //Called when the url finishes loading
+    }
+});
+frame01.show();
+```
+
+**DEMO**  
+https://riversun.github.io/jsframe/examples/v150/iframe.html
+
+[![ifrmae](https://riversun.github.io/jsframe/capture/img_03_iframe.png)](https://riversun.github.io/jsframe/examples/v150/iframe.html)
+
+**Tips**
+- You can also get DOM element in the page shown as window's content area specified by url(iframe) ,You can call like ```frame.$('#my_element')```.
+
+
+## Show window as a modal window
+
+- Call ```frame.showModal``` to show the window as a modal window.
+- By specifying like ```showModal(callbackFunc)``` you can receive a callback when the modal window is closed.
+
+```js
+const modalFrame = jsFrame.create({
+      title: 'modal window',
+      left: 0, top: 0, width: 320, height: 220,
+      html: 'something'
+  });
+  //Show as a modal window
+  modalFrame.showModal(_frame => {
+  //Callback when modal window is closed.
+  });
+```
+
+**DEMO**  
+https://riversun.github.io/jsframe/examples/v150/modal.html
+
+[![ifrmae](https://riversun.github.io/jsframe/capture/img_04_modal.png)](https://riversun.github.io/jsframe/examples/v150/modal.html)
+
+## Styling
+
+- JSFrame.js has the option where you can design the window appearance or apply style to certain elements and then apply styles to them as you want.
+- You can specify style from preset or design it yourself.
+- Set ```appearanceName``` to initialization parameter to select the window design called ```appearance```.
+- Or if you want to design appearance from scratch, you can set ```appearance``` to initialization parameter.
+
+**Style from preset**
+
+```javascript
+const frame01 = jsFrame.create({
+    title: 'Yosemite style',
+    left: 20, top: 20, width: 320, height: 220,
+    appearanceName: 'yosemite',//Now preset is selectable from  'yosemite','redstone','popup'
+    style: {
+        backgroundColor: 'rgba(255,255,255,0.9)',
+    },
+    html: '<div style="padding:10px;">Preset is selected by preset name</div>'
+}).show();
+```
+
+**DEMO**  
+https://riversun.github.io/jsframe/examples/v150/styling.html
+
+[![styling](https://riversun.github.io/jsframe/capture/img_05_styling.gif)](https://riversun.github.io/jsframe/examples/v150/styling.html)
+
+
+## Event handling
+- You can set an event handler (callback function) for the DOM element in the content specified by html or url.
+- You can also set an event handler for buttons on the title bar.
+- Call like ```frame.on(selector,'click',(_frame,event)=>{});``` to set click event handler functions.
+
+```javascript
+//Set click handler for DOM element specified as html or url in the initialization parameters.
+frame.on('#bt_cancel', 'click', (_frame, evt) => {
+});
+
+//Event handler for buttons on the title bar.
+frame.on('minimizeButton', 'click', (_frame, evt) => {
+});
+
+```  
+
+**DEMO**  
+https://riversun.github.io/jsframe/examples/v150/event_handling.html
+
+[![styling](https://riversun.github.io/jsframe/capture/img_05_event.png)](https://riversun.github.io/jsframe/examples/v150/event_handling.html
+)
+
+## Show toast messages.
+
+- A toast provides simple message about an operation in a small popup. Toasts automatically disappear after the time specified by ```duration```.
+- Call ```JSFrame.showToast``` to show a toast.
+- You can customize the appearance and something.
+
+**Simple toast**
+
+```js
+const jsFrame = new JSFrame();
+  jsFrame.showToast({
+      html: 'Default toast'
+  });
+```
+
+[![toast](https://riversun.github.io/jsframe/capture/toastd.gif)](https://riversun.github.io/jsframe/examples/v150/toast.html)
+
+**Specify the position**
+
+```js
+jsFrame.showToast({
+    align: 'center', html: 'Toast displayed in the center'
+});
+```
+
+You can specify the position with ```align``` like below.
+
+**align:'top'** =>Toast displayed at the top  
+**align:'center'** =>Toast displayed in the center  
+**align:'bottom'** =>Toast displayed at the bottom(default)  
+
+**Customize toast**
+
+```js
+jsFrame.showToast(
+    {
+        width: 260,
+        height: 100,
+        duration: 2000,//Duration(millis)
+        align: 'center',// alignment from 'top'/'center'/'bottom'(default)
+        style: {
+            borderRadius: '2px',
+            backgroundColor: 'rgba(0,124,255,0.8)',
+        },
+        html: '<span style="color:white;">Custom toast</span>',
+        closeButton: true,//Show close button
+        closeButtonColor: 'white'//Color of close button
+    });
+
+```
+
+**DEMO**  
+https://riversun.github.io/jsframe/examples/v150/toast.html
+
+[![toast](https://riversun.github.io/jsframe/capture/toastc.gif)](https://riversun.github.io/jsframe/examples/v150/toast.html)
+
+## Window operation
+
+**Close window**
+
+```js
+frame.closeFrame();
+```
+
+**Hide Window**
+
+```js
+frame.hide();
+```
+
+**Focus window (and pull up to the front)**
+
+```js
+frame.requestFocus();
+```
+
+**Get window by name**
+
+```js
+var frame = jsFrame.getWindowByName('my-window');
+```
 
 # Examples
 All examples are included in the project. You can modify,customize example after cloning the project
@@ -61,47 +246,33 @@ All examples are included in the project. You can modify,customize example after
 git clone https://github.com/riversun/JSFrame.js.git
 ```
 
+## Window initialization parameters
 
-## Example:Basic
-**DEMO**  
-https://riversun.github.io/jsframe/examples/ex01/index.html  
+```js
+const frame = jsFrame.create(
+    {
+        name: 'my-window-name',//Window name.Unique name is required.
+        title: 'Window0',//Window title
+        left: 20,//x coordinate of the upper left corner of the window
+        top: 20,//y coordinate of the upper left corner of the window
+        width: 320,//width of the window
+        height: 220,//height of the window
+        minWidth: 160,//The minimum width of the window
+        minHeight: 100,//The minimum height of the window
+        movable: true,//true:You can move the window with mouse
+        resizable: true,//true:You can resize the window with mouse
+        appearance: appearanceObj,//Appearance object
+        appearanceName: 'yosemite',//Preset name of appearance(Not with 'appearance')
+        style: {//Style of the content.Can be specified just like inline style attribute.
+            backgroundColor: 'rgba(220,220,220,0.8)',//Ex.Background color of content(Opacity can be specified)
+            overflow: 'auto',//Ex.What to do when the drawing extends beyond the content area
+        },
+        html: 'Contents',//HTML shown in the content(Not with 'url')
+        url: 'content01.html',//The URL for contents.To be shown in iframe.
+        urlLoaded: (frame) = {}//Callback function when url is finished loading.
 
-[![ex00](https://riversun.github.io/jsframe/capture/ex01.png)](https://riversun.github.io/jsframe/examples/ex01/index.html)
-
-## Example:Window with Iframe contents
-**DEMO**  
-https://riversun.github.io/jsframe/examples/ex02/index.html  
-
-[![ex00](https://riversun.github.io/jsframe/capture/ex02.png)](https://riversun.github.io/jsframe/examples/ex02/index.html)
-
-## Example:OS X style
-
-**DEMO**  
-https://riversun.github.io/jsframe/examples/ex03/index.html  
-
-[![ex00](https://riversun.github.io/jsframe/capture/ex03.png)](https://riversun.github.io/jsframe/examples/ex03/index.html)
-
-## Example:Win style
-
-**DEMO**  
-https://riversun.github.io/jsframe/examples/ex04/index.html  
-
-[![ex00](https://riversun.github.io/jsframe/capture/ex04.png)](https://riversun.github.io/jsframe/examples/ex04/index.html)
-
-
-## Example:Various styles
-**DEMO**  
-https://riversun.github.io/jsframe/examples/ex05/index.html  
-
-[![ex00](https://riversun.github.io/jsframe/capture/ex05.png)](https://riversun.github.io/jsframe/examples/ex05/index.html)
-
-
-## Example:Animations #1
-**DEMO**  
-https://riversun.github.io/jsframe/examples/ex06/index.html  
-
-[![ex00](https://riversun.github.io/jsframe/capture/ex06.png)](https://riversun.github.io/jsframe/examples/ex06/index.html)
-
+    });
+```    
 
 # Classese and Methods/Members
 ### org.riversun.JSFrame class
@@ -166,5 +337,47 @@ https://riversun.github.io/jsframe/examples/ex06/index.html
 
 <hr>
 
+### V1.00 Examples (available for latest version)
+
+
+## Example:Basic
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex01/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex01.png)](https://riversun.github.io/jsframe/examples/ex01/index.html)
+
+## Example:Window with Iframe contents
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex02/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex02.png)](https://riversun.github.io/jsframe/examples/ex02/index.html)
+
+## Example:OS X style
+
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex03/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex03.png)](https://riversun.github.io/jsframe/examples/ex03/index.html)
+
+## Example:Win style
+
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex04/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex04.png)](https://riversun.github.io/jsframe/examples/ex04/index.html)
+
+
+## Example:Various styles
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex05/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex05.png)](https://riversun.github.io/jsframe/examples/ex05/index.html)
+
+
+## Example:Animations #1
+**DEMO**  
+https://riversun.github.io/jsframe/examples/ex06/index.html  
+
+[![ex00](https://riversun.github.io/jsframe/capture/ex06.png)](https://riversun.github.io/jsframe/examples/ex06/index.html)
 
 ### All assets moved from mysvn
