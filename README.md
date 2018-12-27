@@ -1,10 +1,12 @@
 # Overview
 
 ###  What is '**JsFrame.js**' like?
-It is an independent lightweight multi-window library for javascript.
+It is an independent and lightweight multi-window library for javascript.
+
 - You can create various floating windows (called **frame**) and popup windows.
-- You can create toast.
-- You can create multi-window apps.
+- You can create a [modal window](https://riversun.github.io/jsframe/examples/v150/modal.html).
+- You can create a [toast](https://riversun.github.io/jsframe/examples/v150/toast.html).
+- You can create [multi-window](https://riversun.github.io/jsframe/examples/v150/preset_win10.html) apps.
 
 # DEMO
 https://riversun.github.io/jsframe/examples/v150/preset_yosemite.html
