@@ -291,7 +291,7 @@ function getStyle(fApr) {
             var eleTop = -parseInt(fApr.titleBarHeight);
             var eleAlign = 'RIGHT_TOP';
 
-            restoreBtnEle.style.visibility = 'hidden';
+            restoreBtnEle.style.display = 'none';
 
             // 'closeButton' is a special name
             fApr.addFrameComponent('restoreButton', restoreBtnEle, eleLeft, eleTop, eleAlign);

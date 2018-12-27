@@ -3,11 +3,10 @@
 <head>
     <title>JsFrame.js example</title>
     <meta charset="utf-8">
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="bootstrap.css">
 </head>
 <body style="background: url('https://upload.wikimedia.org/wikipedia/commons/e/e0/Clouds_over_the_Atlantic_Ocean.jpg') 50% no-repeat fixed; background-size: cover;">
-<script src="../../jsframe.js"></script>
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
 <script>
     function start() {
 
@@ -25,11 +24,11 @@
         // var startY = window.innerHeight / 2;
         // var endY = window.innerHeight / 2;
 
-        var myHtml='aaaa';
+        var myHtml = 'aaaa';
         const jsFrame = new JSFrame();
 
         const frame = jsFrame.create({
-            left:20,top:20,
+            left: 20, top: 20,
             width: toastWidth, height: toastHeight,
             movable: false,
             resizable: false,
@@ -39,10 +38,10 @@
                 background: 'black',
             },
             html: '<div id="my_element" style="box-sizing:border-box;display: flex;justify-content: center;align-items: center;padding:10px;font-size:16px;color:darkgray;height:' + (toastHeight) + 'px">' +
-                myHtml+
+                myHtml +
                 '</div>'
         });
-      //  frame.show();
+        //  frame.show();
         var animator = jsFrame.createAnimator();
         animator.set(frame)
             .setDuration(openCloseDurationMs)

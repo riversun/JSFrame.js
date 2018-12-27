@@ -6,10 +6,12 @@
     <meta name="description" content="A javascript popup/floating window library.">
 </head>
 <body>
-<script src="../../jsframe.js"></script>
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
 <script>
+    const jsFrame = new JSFrame();
+
     function start() {
-        const jsFrame = new JSFrame();
+
         const frame01 = jsFrame.create({
             title: 'ウィンドウ1',
             name: 'window01',
@@ -18,7 +20,7 @@
             //urlLoaded:iframe読み込み終了後に呼び出されるコールバック
             urlLoaded: (frame) => {
                 frame.on('#my_button_01', 'click', (_frame, evt) => {
-                    alert(`${_frame.getName()}の${evt.target.id}がクリックされた`);
+                    showToast(`${_frame.getName()}の${evt.target.id}がクリックされた`);
                 });
                 frame.on('#my_button_02', 'click', (_frame, evt) => {
                     _frame.closeFrame();
@@ -36,11 +38,18 @@
         //#setUrlはPromiseを返す、iframeのロードが終了するとコールバックされる
         frame02.setUrl('iframe_content02.html').then((frame, evt) => {
             frame.on('#my_button_04', 'click', (_frame, evt) => {
-                alert(`${_frame.getName()}の${evt.target.id}がクリックされた`);
+                showToast(`${_frame.getName()}の${evt.target.id}がクリックされた`);
             });
             frame.show();
         });
     }
+
+    function showToast(str) {
+        jsFrame.showToast({
+            html: str, align: 'top'
+        });
+    }
+
     start();
 </script>
 

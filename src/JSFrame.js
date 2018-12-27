@@ -975,7 +975,20 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
         me.canvas.removeBean(markerDD.id);
         me.canvas.removeBean(markerRR.id);
     };
-
+    me.enableMarkers = function (enabled) {
+        if (enabled) {
+            markerRD.htmlElement.style.cursor = 'se-resize'
+            markerDD.htmlElement.style.cursor = 'n-resize';
+            markerRR.htmlElement.style.cursor = 'w-resize';
+        } else {
+            markerRD.htmlElement.style.cursor = 'default'
+            markerDD.htmlElement.style.cursor = 'default';
+            markerRR.htmlElement.style.cursor = 'default';
+        }
+        // me.canvas.removeBean(markerRD.id);
+        // me.canvas.removeBean(markerDD.id);
+        // me.canvas.removeBean(markerRR.id);
+    };
 
     //add frameComponents[begin]
     for (var idx in appearance.frameComponents) {
@@ -1381,11 +1394,18 @@ CFrame.prototype.getSize = function () {
     return {width: me.getWidth(), height: me.getHeight()};
 };
 
-CFrame.prototype.setSize = function (width, height) {
+CFrame.prototype.setSize = function (width, height, force) {
     var me = this;
 
+    var byUser = true;
+
+    if (force) {
+        byUser = false;
+    }
+
+
     //call CIFrame#resize instead of CFrame#resize
-    me.resize(0, 0, width - me.getWidth(), height - me.getHeight(), true);
+    me.resize(0, 0, width - me.getWidth(), height - me.getHeight(), byUser);
     return me;
 };
 
@@ -1484,6 +1504,7 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
     me.onMouseUpOnIframe = null;
 
     me._hasFocus = false;
+
     me._hasFocusTime = 0;
 
 
@@ -1772,11 +1793,16 @@ CIfFrame.prototype.handleTakingFocus = function (e) {
 };
 
 
-CFrame.prototype.show = function () {
+CFrame.prototype.show = function (model) {
     var me = this;
     //me.htmlElement.style.visibility = 'visible';
     me.htmlElement.style.display = 'flex';//hidden';
-    me.requestFocus();
+
+    if (model && model.requestFocus == false) {
+
+    } else {
+        me.requestFocus();
+    }
     return me;
 };
 
@@ -1918,10 +1944,10 @@ CIfFrame.prototype.setMinFrameSize = function (width, height) {
 
 CIfFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeight, byUser) {
 
+
     var refCIfFrame = this;
 
-
-    if (!refCIfFrame.resizable) {
+    if (!refCIfFrame.resizable && byUser) {
         return null;
     }
 
@@ -1941,7 +1967,7 @@ CIfFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeig
 
     if (byUser && (tmpHeight + deltaHeight < refCIfFrame.minWindowHeight & deltaHeight < 0)) {
         //Minimum adjustment of height
-        refCIfFrame.htmlElement.style.height = tmpHeight;
+        refCIfFrame.htmlElement.style.height = tmpHeight+'px';
         deltaHeight = 0;
     }
     refCIfFrame.htmlElement.style.left = (tmpLeft + deltaLeft) + 'px';
@@ -2195,9 +2221,12 @@ CIfFrame.prototype.setResizable = function (enabled) {
     var me = this;
 
     me.resizable = enabled;
-    if (!enabled) {
-        me.removeMarkers2();
-    }
+
+    //added 20181227
+    me.enableMarkers(enabled);
+    // if (!enabled) {
+    //     me.removeMarkers2();
+    // }
     return me;
 };
 
@@ -2756,6 +2785,8 @@ JSFrame.prototype.showToast = function (model) {
         frame.hideFrameComponent('closeButton');
     }
 
+    var requestFocusAfterAnimation = false;
+
     var animator = me.createAnimator();
     animator.set(frame)
         .setDuration(openCloseDurationMs)
@@ -2763,17 +2794,17 @@ JSFrame.prototype.showToast = function (model) {
         .toPosition(window.innerWidth / 2, endY, 'CENTER_CENTER')
         .toAlpha(1.0)
         .fromAlpha(0.0)
-        .start()
-        .then(animatorObj => {
+        .start(0, requestFocusAfterAnimation)
+        .then(function (animatorObj) {
             return animatorObj
                 .setDuration(openCloseDurationMs)
                 .fromPosition(window.innerWidth / 2, endY, 'CENTER_CENTER')
                 .toPosition(window.innerWidth / 2, startY, 'CENTER_CENTER')
                 .fromAlpha(1.0)
                 .toAlpha(0.5)
-                .start(stayDurationMs);
+                .start(stayDurationMs, requestFocusAfterAnimation);
         })
-        .then(animatorObj => {
+        .then(function (animatorObj) {
             var _frame = animatorObj.get();
             _frame.closeFrame();
         });
@@ -3510,7 +3541,7 @@ CSimpleLayoutAnimator.prototype.toY = function (t) {
 };
 
 
-CSimpleLayoutAnimator.prototype.start = function (waitMillis) {
+CSimpleLayoutAnimator.prototype.start = function (waitMillis, requestFocusEnabled) {
 
 
     var me = this;
@@ -3613,7 +3644,7 @@ CSimpleLayoutAnimator.prototype.start = function (waitMillis) {
                     var wmgr = me.targetFrame.parentCanvas;
                     var _targetFrame = wmgr.getWindow(me.targetFrame.id);
                     if (_targetFrame) {
-                        me.targetFrame.show();
+                        me.targetFrame.show({requestFocus: requestFocusEnabled});
                     } else {
                         //the target window must be deleted.
                     }

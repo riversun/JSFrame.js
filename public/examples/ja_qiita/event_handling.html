@@ -4,10 +4,9 @@
     <title>JsFrame.js preset style 'yosemite'</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-
 </head>
 <body style="background: url('http://upload.wikimedia.org/wikipedia/commons/d/d6/Half_Dome_from_Glacier_Point%2C_Yosemite_NP_-_Diliff.jpg') 50% no-repeat fixed; background-size: cover;">
-<script src="../../jsframe.js"></script>
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
 
 <script>
     function start() {
@@ -55,7 +54,11 @@
             });
 
             const htmlButtonListener = (_frame, evt) => {
-                alert(`${_frame.getName()}の${evt.target.id}がクリックされた`);
+                const jsFrame = new JSFrame();
+                jsFrame.showToast({
+                    html: `${_frame.getName()}の${evt.target.id}がクリックされた`,
+                    align:'top'
+                });
             };
 
             //HTML内の要素を取得する場合はセレクタ表記で

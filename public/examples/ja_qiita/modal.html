@@ -13,7 +13,7 @@
 </div>
 <br>
 <button id="bt_open" type="button" onclick="openModalWindow()" class="btn btn-primary">モーダルウィンドウを開く</button>
-<script src="../../jsframe.js"></script>
+<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
 <script>
 
     function openModalWindow() {
@@ -59,7 +59,10 @@
 
         //モーダルウィンドウとして開く
         modalFrame.showModal(_frame => {
-            alert(`${_frame.getName()}が閉じられました.結果は${_frame.extra.result}`);
+            //モーダルウィンドウが閉じられたときのコールバック
+            jsFrame.showToast({
+                html: `${_frame.getName()}が閉じられました.結果は${_frame.extra.result}`, align: 'center',duration:2000
+            });
         });
     }
 </script>

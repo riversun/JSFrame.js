@@ -66,6 +66,8 @@ function getStyle(fApr) {
 
     fApr.captionClor='darkgray';
 
+    fApr.pullUpDisabled = false;
+
     fApr.onInitialize = function () {
 
 
