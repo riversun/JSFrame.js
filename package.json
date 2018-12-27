@@ -18,6 +18,14 @@
   "bugs": {
     "url": "https://github.com/riversun/JSFrame.js/issues"
   },
+  "keywords": [
+    "floating",
+    "popup",
+    "window",
+    "toast",
+    "js",
+    "ui"
+  ],
   "homepage": "https://github.com/riversun/JSFrame.js#readme",
   "devDependencies": {
     "@babel/core": "^7.1.5",
