@@ -978,16 +978,16 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
     me.enableMarkers = function (enabled) {
         if (enabled) {
 
-            markerRD.htmlElement.style.display='flex';
-            markerDD.htmlElement.style.display='flex';
-            markerRR.htmlElement.style.display='flex';
+            markerRD.htmlElement.style.display = 'flex';
+            markerDD.htmlElement.style.display = 'flex';
+            markerRR.htmlElement.style.display = 'flex';
             markerRD.htmlElement.style.cursor = 'se-resize'
             markerDD.htmlElement.style.cursor = 'n-resize';
             markerRR.htmlElement.style.cursor = 'w-resize';
         } else {
-            markerRD.htmlElement.style.display='none';
-            markerDD.htmlElement.style.display='none';
-            markerRR.htmlElement.style.display='none';
+            markerRD.htmlElement.style.display = 'none';
+            markerDD.htmlElement.style.display = 'none';
+            markerRR.htmlElement.style.display = 'none';
         }
         // me.canvas.removeBean(markerRD.id);
         // me.canvas.removeBean(markerDD.id);
@@ -1815,15 +1815,21 @@ CFrame.prototype.showModal = function (onCloseListener) {
     var me = this;
 
     var appearance = new CFrameAppearance();
-    appearance.showTitleBar = false;
+    appearance.showTitleBar = true;
     appearance.showCloseButton = false;
     appearance.frameBorderRadius = '0px';
+    appearance.frameBorderStyle = 'none';
     appearance.frameBorderWidthDefault = '0px';
     appearance.frameBorderWidthFocused = '0px';
     appearance.frameBoxShadow = null;
     appearance.frameBackgroundColor = 'transparent';
     appearance.frameComponents = [];
     appearance.frameHeightAdjust = 0;
+    appearance.titleBarHeight = '0px';
+    appearance.titleBarBorderBottomFocused = null;
+    appearance.titleBarCaptionLeftMargin = '0px';
+
+
     appearance.onInitialize = function () {
     };
 
@@ -1835,8 +1841,15 @@ CFrame.prototype.showModal = function (onCloseListener) {
     var modalBackgroundWindowId = DEF.CFRAME.MODAL_BACKGROUND_FRAME_ID_PREFIX + me.id;
 
     //create background window for preventing click background
-    var modalBackgroundFrame = new CIfFrame(modalBackgroundWindowId, 0, 0, window.parent.screen.width, window.parent.screen.height, appearance);
+    var modalBackgroundFrame = new CIfFrame(modalBackgroundWindowId, 0, 0, 1, 1, appearance);
+    modalBackgroundFrame.setSize(window.innerWidth, window.innerHeight, true);
+    modalBackgroundFrame.setResizable(false);
 
+    window.addEventListener('resize', function () {
+        modalBackgroundFrame.setSize(window.innerWidth, window.innerHeight, true);
+    });
+
+    console.log(window.parent.screen.width)
     //remember id of modal background frame
     me.modalBackgroundWindowId = modalBackgroundWindowId;
 
@@ -1971,7 +1984,7 @@ CIfFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeig
 
     if (byUser && (tmpHeight + deltaHeight < refCIfFrame.minWindowHeight & deltaHeight < 0)) {
         //Minimum adjustment of height
-        refCIfFrame.htmlElement.style.height = tmpHeight+'px';
+        refCIfFrame.htmlElement.style.height = tmpHeight + 'px';
         deltaHeight = 0;
     }
     refCIfFrame.htmlElement.style.left = (tmpLeft + deltaLeft) + 'px';

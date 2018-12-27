@@ -14,6 +14,7 @@
 <br>
 <button id="bt_open" type="button" onclick="openModalWindow()" class="btn btn-primary">Open as a modal window</button>
 <script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+
 <script>
 
     function openModalWindow() {
@@ -36,6 +37,7 @@
         });
         //Place window in the center
         modalFrame.setPosition(window.innerWidth / 2, window.innerHeight / 2, 'CENTER_BOTTOM');
+
 
         //Handling the button's click event
         modalFrame.on('#bt_submit', 'click', (_frame, e) => {
@@ -62,7 +64,11 @@
                 duration: 2000
             });
         });
+
+
     }
+
+
 </script>
 </body>
 </html>

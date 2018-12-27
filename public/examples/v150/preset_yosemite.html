@@ -21,32 +21,30 @@
                 appearanceName: 'yosemite',
                 style: {
                     backgroundColor: 'rgba(255,255,255,0.8)',
-                  
+
                 },
 
                 html: '<div style="padding:10px;">Your contents here.</div>'
             }).show();
 
-            //プリセットアピアランスのボタンを取得する
             frame.on('minimizeButton', 'click', (_frame, evt) => {
                 const size = _frame.getSize();
                 _frame.setSize(size.width - 20, size.height - 20);
                 jsFrame.showToast({
-                    align: 'top', html: `<span style="color:red">${_frame.getName()}</span>を小さくしました`
+                    align: 'top', html: `Minimized <span style="color:red">${_frame.getName()}</span>`
                 });
-
             });
             frame.on('zoomButton', 'click', (_frame, evt) => {
                 const size = _frame.getSize();
                 _frame.setSize(size.width + 20, size.height + 20);
                 jsFrame.showToast({
-                    align: 'top', html: `<span style="color:red">${_frame.getName()}</span>を大きくしました`
+                    align: 'top', html: `Zoomed <span style="color:red">${_frame.getName()}</span>`
                 });
             });
             frame.on('closeButton', 'click', (_frame, evt) => {
                 _frame.closeFrame();
                 jsFrame.showToast({
-                    align: 'top', html: `<span style="color:red">${_frame.getName()}</span>を閉じました`
+                    align: 'top', html: `Closed <span style="color:red">${_frame.getName()}</span>`
                 });
 
             });
