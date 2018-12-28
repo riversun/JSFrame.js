@@ -1,11 +1,14 @@
 'use strict';
 
+var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
+
+
 function WindowEventHelper(model) {
 
-    this.minimizeButton = '';
-    this.maximizeButton = '';
-    this.demaximizeButton = '';
-    this.deminimizeButton = '';
+    this.minimizeButton = null;
+    this.maximizeButton = null;
+    this.demaximizeButton = null;
+    this.deminimizeButton = null;
 
     if (model.minimizeButton) {
         this.minimizeButton = model.minimizeButton;
@@ -20,7 +23,7 @@ function WindowEventHelper(model) {
         this.demaximizeButton = model.demaximizeButton;
     }
 
-
+    this.animationEnabled = true;
     this.frame = model.frame;
     this.hideFrameBorder = true;
     this.hideTitleBar = true;
@@ -43,45 +46,142 @@ WindowEventHelper.prototype.doMaximize = function () {
     me.saveWindowStats('maximize_mode');
 
     //Process required for maximization
-    frame.hideFrameComponent(me.maximizeButton);
-    frame.showFrameComponent(me.demaximizeButton);
+    if (me.maximizeButton) {
+        frame.hideFrameComponent(me.maximizeButton);
+    }
+    if (me.demaximizeButton) {
+        frame.showFrameComponent(me.demaximizeButton);
+    }
+
+
     frame.setMovable(false);
     frame.setResizable(false);
 
-    //Render maximization itself
-    me.renderMaximizedMode();
 
+    //Render maximization itself
+    me.renderMaximizedMode({
+        animation: me.animationEnabled
+    });
 };
 
 
 /**
  * Render window as a maximized mode( full screen )
  */
-WindowEventHelper.prototype.renderMaximizedMode = function () {
+WindowEventHelper.prototype.renderMaximizedMode = function (model) {
     var me = this;
     var frame = me.frame;
-    var ri = me.statsStore['maximize_mode'];
+    var from = me.loadWindowStats('maximize_mode');
 
+    var _toX = 0;
+    var _toY = 0;
+    var _toWidth = 0;
+    var _toHeight = 0;
+
+    //compute position and size[begin]
     if (me.hideTitleBar) {
-        frame.setPosition(0, -ri.titleBarHeight);
-    } else {
-        frame.setPosition(0, 0);
+        //frame.setPosition(0, -ri.titleBarHeight);
+        _toX = 0;
+        _toY = -from.titleBarHeight;
     }
 
     if (me.hideFrameBorder) {
         //Since the border will be restored when clicking the window, also set the following two variables to 0
-        frame.frameBorderWidthDefault = 0;
-        frame.frameBorderWidthFocused = 0;
-        frame.htmlElement.style.borderWidth = '0px';
-        frame.setSize(
-            window.innerWidth,
-            window.innerHeight + (me.hideTitleBar ? ri.titleBarHeight : 0), true);
+        // frame.frameBorderWidthDefault = 0;
+        // frame.frameBorderWidthFocused = 0;
+        // frame.htmlElement.style.borderWidth = '0px';
+        // frame.setSize(
+        //     window.innerWidth,
+        //     window.innerHeight + (me.hideTitleBar ? ri.titleBarHeight : 0), true);
+        _toWidth = window.innerWidth;
+        _toHeight = window.innerHeight + (me.hideTitleBar ? from.titleBarHeight : 0);
     } else {
-        frame.setSize(
-            window.innerWidth - ri.frameBorderWidthDefault * 2,
-            window.innerHeight - ri.frameBorderWidthDefault * 2 + (me.hideTitleBar ? ri.titleBarHeight : 0), true);
+        // frame.setSize(
+        //     window.innerWidth - ri.frameBorderWidthDefault * 2,
+        //     window.innerHeight - ri.frameBorderWidthDefault * 2 + (me.hideTitleBar ? ri.titleBarHeight : 0), true);
+        _toWidth = window.innerWidth - from.frameBorderWidthDefault * 2;
+        _toHeight = window.innerHeight - from.frameBorderWidthDefault * 2 + (me.hideTitleBar ? from.titleBarHeight : 0);
     }
+    //compute position and size[end]
+
+
+    //render position and size[begin]
+    var funcDoRender = function () {
+
+        frame.setPosition(0, _toY);
+
+        if (me.hideFrameBorder) {
+            frame.frameBorderWidthDefault = 0;
+            frame.frameBorderWidthFocused = 0;
+            frame.htmlElement.style.borderWidth = '0px';
+        }
+
+        frame.setSize(_toWidth, _toHeight, true);
+    };
+
+
+    if (model && model.animation) {
+
+
+
+        me.animateFrame({
+            frame: frame,
+            fromLeft: from.left,
+            fromTop: from.top,
+            fromWidth: from.width,
+            fromHeight: from.height,
+            toLeft: _toX,
+            toTop: _toY,
+            toWidth: _toWidth,
+            toHeight: _toHeight,
+            callback: funcDoRender
+        });
+
+        //var needRequestFocusAfterAnimation = false;
+        // var animator = new CSimpleLayoutAnimator();
+        // animator.set(frame)
+        //     .setDuration(100)
+        //     .fromPosition(from.left, from.top, 'LEFT_TOP')
+        //     .toPosition(_toX, _toY, 'LEFT_TOP')
+        //     .fromWidth(from.width)
+        //     .fromHeight(from.height)
+        //     .toWidth(_toWidth)
+        //     .toHeight(_toHeight)
+        //     .fromAlpha(1.0)
+        //     .toAlpha(1.0)
+        //     .start(0, needRequestFocusAfterAnimation)
+        //     .then(function (animatorObj) {
+        //         funcDoRender();
+        //     });
+
+    } else {
+        funcDoRender();
+    }
+    //render position and size[end]
+
+
 };
+
+
+WindowEventHelper.prototype.animateFrame = function (model) {
+    var needRequestFocusAfterAnimation = false;
+
+    var animator = new CSimpleLayoutAnimator();
+    animator.set(model.frame)
+        .setDuration(100)
+        .fromPosition(model.fromLeft, model.fromTop, 'LEFT_TOP')
+        .toPosition(model.toLeft, model.toTop, 'LEFT_TOP')
+        .fromWidth(model.fromWidth)
+        .fromHeight(model.fromHeight)
+        .toWidth(model.toWidth)
+        .toHeight(model.toHeight)
+        .fromAlpha(1.0)
+        .toAlpha(1.0)
+        .start(0, needRequestFocusAfterAnimation)
+        .then(function (animatorObj) {
+            model['callback']();
+        });
+}
 
 /**
  * Restore window from maximized mode
@@ -89,10 +189,15 @@ WindowEventHelper.prototype.renderMaximizedMode = function () {
 WindowEventHelper.prototype.doDemaximize = function () {
     var me = this;
     var frame = me.frame;
-    frame.showFrameComponent(me.maximizeButton);
-    frame.hideFrameComponent(me.demaximizeButton);
 
-    me.restoreWindowStats({restorePosition: true, restoreMode: 'maximize_mode'});
+    if (me.maximizeButton) {
+        frame.showFrameComponent(me.maximizeButton);
+    }
+    if (me.demaximizeButton) {
+        frame.hideFrameComponent(me.demaximizeButton);
+    }
+
+    me.restoreWindow({restorePosition: true, restoreMode: 'maximize_mode'});
 };
 
 
@@ -115,8 +220,13 @@ WindowEventHelper.prototype.doMinimize = function () {
     //Remember the stats of the window before maximizing the window
     me.saveWindowStats('minimize_mode');
 
-    frame.hideFrameComponent(me.minimizeButton);
-    frame.showFrameComponent(me.deminimizeButton);
+    if (me.minimizeButton) {
+        frame.hideFrameComponent(me.minimizeButton);
+    }
+
+    if (me.deminimizeButton) {
+        frame.showFrameComponent(me.deminimizeButton);
+    }
     frame.setResizable(false);
 
     me.renderMinimizedMode();
@@ -129,7 +239,7 @@ WindowEventHelper.prototype.doMinimize = function () {
 WindowEventHelper.prototype.renderMinimizedMode = function () {
     var me = this;
     var frame = me.frame;
-    var ri = me.statsStore['minimize_mode'];
+    var ri = me.loadWindowStats('minimize_mode');
 
     var forceSetSize = true;
     frame.setSize(frame.getWidth(), ri.titleBarHeight, forceSetSize);
@@ -143,10 +253,14 @@ WindowEventHelper.prototype.doDeminimize = function () {
     var me = this;
     var frame = me.frame;
 
-    frame.showFrameComponent(me.minimizeButton);
-    frame.hideFrameComponent(me.deminimizeButton);
+    if (me.minimizeButton) {
+        frame.showFrameComponent(me.minimizeButton);
+    }
+    if (me.deminimizeButton) {
+        frame.hideFrameComponent(me.deminimizeButton);
+    }
 
-    me.restoreWindowStats(
+    me.restoreWindow(
         {
             restorePosition: false,
             restoreMode: 'minimize_mode'
@@ -154,10 +268,14 @@ WindowEventHelper.prototype.doDeminimize = function () {
 };
 
 
+WindowEventHelper.prototype.loadWindowStats = function (storeKeyName) {
+    var me = this;
+    return me.statsStore[storeKeyName];
+};
 /**
  * Remember the status of the window before maximizing or minimizing the window size
  */
-WindowEventHelper.prototype.saveWindowStats = function (keyName) {
+WindowEventHelper.prototype.saveWindowStats = function (storeKeyName) {
     var me = this;
     var frame = me.frame;
 
@@ -172,7 +290,8 @@ WindowEventHelper.prototype.saveWindowStats = function (keyName) {
     var __resizable = frame.resizable;
     var __movable = frame.movable;
 
-    me.statsStore[keyName] = {
+
+    me.statsStore[storeKeyName] = {
         left: __left,
         top: __top,
         width: __width,
@@ -191,30 +310,31 @@ WindowEventHelper.prototype.saveWindowStats = function (keyName) {
  * Restore the state of the window
  * @param model
  */
-WindowEventHelper.prototype.restoreWindowStats = function (model) {
+WindowEventHelper.prototype.restoreWindow = function (model) {
     var me = this;
     var frame = me.frame;
-    var ri = me.statsStore[model.restoreMode];
+    var to = me.loadWindowStats(model.restoreMode);
+
+    me.saveWindowStats('temp');
+    var from = me.loadWindowStats('temp');
 
     window.removeEventListener('resize', me.resizeListener);
 
-    frame.frameBorderWidthDefault = ri.frameBorderWidthDefault;
-    frame.frameBorderWidthFocused = ri.frameBorderWidthFocused;
+    frame.frameBorderWidthDefault = to.frameBorderWidthDefault;
+    frame.frameBorderWidthFocused = to.frameBorderWidthFocused;
     frame.htmlElement.style.borderWidth = frame.frameBorderWidthFocused;
 
     if (model && model.restorePosition == false) {
 
     } else {
-        frame.setPosition(ri.left, ri.top);
+        frame.setPosition(to.left, to.top);
     }
 
     var force = true;
-    frame.setSize(ri.width, ri.height, force);
+    frame.setSize(to.width, to.height, force);
 
-    frame.setResizable(ri.resizable);
-    frame.setMovable(ri.movable);
-
-
+    frame.setResizable(to.resizable);
+    frame.setMovable(to.movable);
 };
 
 module.exports = WindowEventHelper;

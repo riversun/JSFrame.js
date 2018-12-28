@@ -44,7 +44,7 @@
                     backgroundColor: 'rgba(255,255,255,0.95)',
                     overflow: 'hidden'
                 },
-                html: '<div style="padding:10px;">Your contents here.</div>'
+                html: '<div style="padding:10px;background:darkcyan;height:100%">Your contents here.</div>'
             }).show();
 
 
@@ -58,105 +58,18 @@
 
             jjs.push(jj);
             frame.on('minimizeButton', 'click', (_frame, evt) => {
-
-                // frame.hideFrameComponent('minimizeButton');
-                // frame.showFrameComponent('deminimizeButton');
-                //
-                // const force = true;
-                //
-                // _frame.extra.__restore_info = {
-                //     org_left: _frame.getLeft(),
-                //     org_top: _frame.getTop(),
-                //     org_width: _frame.getWidth(),
-                //     org_height: _frame.getHeight()
-                // };
-                //
-                // _frame.setSize(_frame.getWidth(), 30, force);
-                // _frame.setResizable(false);
-
                 jj.doMinimize();
-
             });
             frame.on('deminimizeButton', 'click', (_frame, evt) => {
-
-                // _frame.showFrameComponent('minimizeButton');
-                // _frame.hideFrameComponent('deminimizeButton');
-                //
-                // const force = true;
-                // _frame.setSize(_frame.extra.__restore_info.org_width, _frame.extra.__restore_info.org_height, force);
                 jj.doDeminimize();
             });
 
             frame.on('maximizeButton', 'click', (_frame, evt) => {
                 jj.doMaximize();
-                // _frame.extra.__restore_info = {
-                //     org_left: _frame.getLeft(),
-                //     org_top: _frame.getTop(),
-                //     org_width: _frame.getWidth(),
-                //     org_height: _frame.getHeight()
-                // };
-                //
-                // frame.hideFrameComponent('maximizeButton');
-                // frame.showFrameComponent('restoreButton');
-                //
-                // var hideFrameBorder = true;
-                // var hideTitleBar = true;
-                //
-                // const titleBarHeight = parseInt(frame.titleBar.style.height, 10);
-                // const frameBorderWidth = parseInt(frame.htmlElement.style.borderWidth, 10);
-                //
-                //
-                // if (hideTitleBar) {
-                //     frame.setPosition(0, -titleBarHeight);
-                // } else {
-                //     frame.setPosition(0, 0);
-                // }
-                //
-                //
-                // if (hideFrameBorder) {
-                //     frame.frameBorderWidthDefault = 0;
-                //     frame.frameBorderWidthFocused = 0;
-                //     frame.htmlElement.style.borderWidth = '0px';
-                //     frame.setSize(window.innerWidth, window.innerHeight + (hideTitleBar ? titleBarHeight : 0), true);
-                // } else {
-                //     frame.setSize(window.innerWidth - frameBorderWidth * 2, window.innerHeight - frameBorderWidth * 2 + (hideTitleBar ? titleBarHeight : 0), true);
-                // }
-                //
-                //
-                // frame.setMovable(false);
-                // frame.setResizable(false);
-                //
-                //
-                // //追従するようにする
-                // const listener = () => {
-                //     if (hideFrameBorder) {
-                //         frame.htmlElement.style.borderWidth = '0px';
-                //         frame.setSize(window.innerWidth, window.innerHeight + (hideTitleBar ? titleBarHeight : 0), true);
-                //     } else {
-                //         frame.setSize(window.innerWidth - frameBorderWidth * 2, window.innerHeight - frameBorderWidth * 2 + (hideTitleBar ? titleBarHeight : 0), true);
-                //     }
-                // };
-                //
-                //
-                // window.addEventListener('resize', listener);
-
-
             });
 
             frame.on('restoreButton', 'click', (_frame, evt) => {
                 jj.doDemaximize();
-                // frame.setMovable(true);
-                // frame.setResizable(true);
-                //
-                // _frame.setPosition(_frame.extra.__restore_info.org_left, _frame.extra.__restore_info.org_top);
-                //
-                // const force = true;
-                // _frame.setSize(_frame.extra.__restore_info.org_width, _frame.extra.__restore_info.org_height, force);
-                //
-                // _frame.showFrameComponent('maximizeButton');
-                // _frame.hideFrameComponent('restoreButton');
-
-
             });
 
             frame.on('closeButton', 'click', (_frame, evt) => {
