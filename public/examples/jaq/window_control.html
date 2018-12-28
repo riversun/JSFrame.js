@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <!--<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/c/c5/Kurumayama_K%C5%8Dgen_Snow_Resort_2.jpg') 50% no-repeat fixed; background-size: cover;">-->
-<body style="background:red">
+<body >
 
 <button id="bt_open" type="button" onclick="rest()" class="btn btn-primary">BUTTON</button>
 <!--<script src="https://riversun.github.io/jsframe/jsframe.js"></script>-->
@@ -22,7 +22,7 @@
 
 
             if (event.key === "Escape") {
-                jjs[0].doRestore();
+                jjs[0].doDemaximize();
             }
         }
 
@@ -47,7 +47,15 @@
                 html: '<div style="padding:10px;">Your contents here.</div>'
             }).show();
 
-            const jj = new WindowEventHelper(frame);
+
+            const jj = new WindowEventHelper({
+                frame: frame,
+                minimizeButton: 'minimizeButton',
+                maximizeButton: 'maximizeButton',
+                demaximizeButton: 'demaximizeButton',
+                deminimizeButton: 'deminimizeButton'
+            });
+
             jjs.push(jj);
             frame.on('minimizeButton', 'click', (_frame, evt) => {
 
@@ -136,7 +144,7 @@
             });
 
             frame.on('restoreButton', 'click', (_frame, evt) => {
-                jj.doRestore();
+                jj.doDemaximize();
                 // frame.setMovable(true);
                 // frame.setResizable(true);
                 //
