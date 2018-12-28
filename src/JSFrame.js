@@ -28,6 +28,12 @@
 
 require('./JSFrame.css');
 
+var WindowEventHelper=require('./WindowEventHelper.js');
+
+export {
+    WindowEventHelper
+}
+
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
 var presetStyleYosemite = require('./PresetStyleYosemite.js');
@@ -268,6 +274,9 @@ function CBeanFrame(beanId, left, top, width, height, zindex, w_border_width, ap
 
     var me = this;
 
+    me.movable=true;
+
+
     //fields
     me.id = beanId;
     me.property = {};
@@ -342,6 +351,9 @@ CBeanFrame.prototype.setMovable = function (enabled) {
         me.htmlElement.argX = 0;
         me.htmlElement.argY = 0;
     }
+
+    me.movable=enabled;
+
     return me;
 };
 
@@ -1493,7 +1505,6 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
     //border width
     me.frameBorderWidthDefault = appearance.frameBorderWidthDefault;
     me.frameBorderWidthFocused = appearance.frameBorderWidthFocused;
-
 
     me.iframe = null;
 
