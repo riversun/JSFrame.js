@@ -2503,17 +2503,38 @@ function CMarkerWindow(windowId, left, top, width, height, zindex, usage) {
  * FrameManager class
  * @constructor
  */
-export function JSFrame(parentElement) {
+export function JSFrame(model) {
 
     var me = this;
+
+    var parentElement = null;
+
+    // Frames will be fixed(Frames keep staying in the same place) even if the user scrolls the browser.
+    var isWindowManagerFixed = true;//default is true.
+
+    //Initialization parameter check
+
+    if (model && model.fixed == false) {
+        isWindowManagerFixed = false;
+    }
+
+    if (isWindowManagerFixed) {
+        var topParentDiv = document.createElement('div');
+        topParentDiv.id = 'jsFrame_fixed_' + me.generateUUID();
+        topParentDiv.setAttribute('style', 'position:fixed;left:0px;top:0px;margin:0px;padding:0px;');
+        document.body.appendChild(topParentDiv);
+        parentElement = topParentDiv;
+    } else {
+        parentElement = document.body;
+    }
+
+    if (model && model.parentElement) {
+        parentElement = model.parentElement;
+    }
 
 
     document.onmouseup = mouseUp;
     document.onmousemove = mouseMove;
-
-    if (!parentElement) {
-        parentElement = document.body;
-    }
 
 
     me.windowManager = new CWindowManager(parentElement, 'windowManager_' + me.generateUUID(), 0, 0, 0, 0);
