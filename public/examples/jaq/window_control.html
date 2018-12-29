@@ -21,16 +21,12 @@
 
     function rest() {
         var frame = jsFrame.getWindowByName('Win0');
-        frame.extra.jj.doDehide();
+        frame.control.doDehide();
     }
 
     function start() {
 
-
         const frames = [];
-        const jjs = [];
-
-        jsFrame.showToast({html: `hello${window.innerHeight}`, align: 'bottom'});
 
         for (let i = 0; i < 2; i++) {
 
@@ -46,44 +42,98 @@
                 html: '<div style="padding:10px;background:darkcyan;height:100%">Your contents here.</div>'
             }).show();
 
-
-            const jj = jsFrame.createWindowEventHelper({
-                frame: frame,
-                animation:true,
-                animationDuration:1000,
+            frame.setControl({
+                animation: true,//ウィンドウ開閉時のアニメーション有効
+                animationDuration: 200,//アニメーションの1アクション時間あたりの長さのデフォルト値
                 minimizeButton: 'minimizeButton',
                 maximizeButton: 'maximizeButton',
                 demaximizeButton: 'restoreButton',
                 deminimizeButton: 'deminimizeButton'
             });
-            frame.extra.jj = jj;
 
-            jjs.push(jj);
+            //maximizedイベントを直接ハンドリングしたい場合
+            frame.control.on('maximized', (frame, info) => {  //最大化した後に呼び出されるコールバック
+                jsFrame.showToast({
+                    text: 'マックスです', align: 'center'
+                });
+            });
+
+            const frmc = frame.control;
+
             frame.on('minimizeButton', 'click', (_frame, evt) => {
-                //jj.doMinimize();
-                jj.doHide({align: 'CENTER_BOTTOM'})
+
+                //'minimizeButton'が押されたときに、最小化したい場合
+                _frame.control.doMinimize({
+                    duration: 100,
+                    callback: (frame, info) => {
+                        jsFrame.showToast({
+                            text: frame.getName() + ' ' + info.eventType
+                        });
+                    }
+                });
+
             });
             frame.on('deminimizeButton', 'click', (_frame, evt) => {
-                jj.doDeminimize();
+                frmc.doDeminimize({
+                    duration: 100,//最小化状態から戻るときのアニメーション時間(ms)
+                    callback: (frame, info) => {
+                        jsFrame.showToast({
+                            text: frame.getName() + ' ' + info.eventType
+                        });
+                    }
+                });
             });
 
+
             frame.on('maximizeButton', 'click', (_frame, evt) => {
-                jj.doMaximize({
-                    hideTitleBar: true,
-                    restoreKey: 'Escape'
+                frmc.doMaximize({
+                    hideTitleBar: true, //true:最大化したときにタイトルバーを隠す
+                    restoreKey: 'Escape',//タイトルバーが隠れたときに復帰するためのキー指定
+                    duration: 100,//最大化するときのアニメーション時間
+                    restoreDuration: 100,//最大化から元に戻るときのアニメーション時間（タイトルバーが無い場合)
+                    callback: (frame, info) => {  //最大化した後に呼び出されるコールバック
+                        jsFrame.showToast({
+                            text: frame.getName() + ' ' + info.eventType
+                        });
+                    },
+                    restoreCallback: (frame, info) => {//最大化から戻ったときに呼び出されるコールバック(タイトルバーが無い場合)
+                        jsFrame.showToast({
+                            text: frame.getName() + ' ' + info.eventType
+                        });
+                    },
                 });
             });
 
             frame.on('restoreButton', 'click', (_frame, evt) => {
-                jj.doDemaximize();
+                frmc.doDemaximize(
+                    {
+                        duration: 100,
+                        callback: (frame, info) => {
+                            jsFrame.showToast({
+                                text: frame.getName() + ' ' + info.eventType
+                            });
+                        }
+                    });
             });
 
             frame.on('closeButton', 'click', (_frame, evt) => {
-                _frame.closeFrame();
+                //
+
+                frmc.doHide({
+                    align: 'CENTER_BOTTOM',
+                    callback: (frame, info) => {
+                        jsFrame.showToast({
+                            text: frame.getName() + ' ' + info.eventType
+                        });
+                        _frame.closeFrame();
+                    }
+                })
             });
             frames.push(frame);
         }
+
         frames[0].requestFocus();
+        jsFrame.showToast({html: `hello${window.innerHeight}`, align: 'center'});
     }
 
     start();

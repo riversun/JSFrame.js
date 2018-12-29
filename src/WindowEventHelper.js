@@ -44,7 +44,11 @@ function WindowEventHelper(model) {
     this.frame = model.frame;
     this.hideFrameBorder = true;
     this.hideTitleBar = true;
-    this.restoreKey = 'Escape';
+
+    this.restoreKey = null;
+    this.restoreDuration = null;
+    this.restoreCallback = null;
+
     this.statsStore = {};
 
     if (model.animation) {
@@ -58,7 +62,14 @@ function WindowEventHelper(model) {
     //If the user changes the window size when the window is maximized state,
     // adjust the size so that window looks maximized.
     this.resizeListener = this.handleOnResize.bind(this);
+
+    this.eventListeners = {};
 }
+
+WindowEventHelper.prototype.on = function (eventType, callback) {
+    var me = this;
+    me.eventListeners[eventType] = callback;
+};
 
 //---------------------------------------------------------------------------------------------------------------------
 WindowEventHelper.prototype.doMaximize = function (model) {
@@ -102,11 +113,17 @@ WindowEventHelper.prototype.doMaximize = function (model) {
     if (model && model.restoreKey) {
         me.restoreKey = model.restoreKey;
     }
-
+    if (model && model.restoreDuration) {
+        me.restoreDuration = model.restoreDuration;
+    }
+    if (model && model.restoreCallback) {
+        me.restoreCallback = model.restoreCallback;
+    }
     //Render maximization itself
     me.renderMaximizedMode({
         animation: me.animationEnabled,
         callback: (model && model.callback) ? model.callback : null, //set maximized finished callback
+        duration: (model && model.duration) ? model.duration : null,
     });
 };
 
@@ -160,11 +177,16 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
 
         if (me.hideTitleBar) {
 
-            me.keyListener = function (event) {
-                if (event.key === me.restoreKey) {
-                    me.doDemaximize();
-                }
-            };
+            if (me.restoreKey) {
+                me.keyListener = function (event) {
+                    if (event.key === me.restoreKey) {
+                        me.doDemaximize({
+                            duration: me.restoreDuration ? me.restoreDuration : null,
+                            callback: me.restoreCallback ? me.restoreCallback : null
+                        });
+                    }
+                };
+            }
 
             window.addEventListener('keydown', me.keyListener);
         }
@@ -172,7 +194,10 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
         me.windowMode = 'maximized';
 
         if (model && model.callback) {
-            model.callback();
+            model.callback(me.frame, {eventType: 'maximized'});
+        }
+        if (me.eventListeners['maximized']) {
+            me.eventListeners['maximized'](me.frame, {eventType: 'maximized'});
         }
     };
 
@@ -189,6 +214,7 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
                 width: _toWidth,
                 height: _toHeight
             },
+            duration: model.duration ? model.duration : me.animationDuration,
             callback: funcDoRender
         });
     } else {
@@ -225,7 +251,9 @@ WindowEventHelper.prototype.doDemaximize = function (model) {
         restoreMode: 'maximize_mode',
         animation: me.animationEnabled,
         callback: (model && model.callback) ? model.callback : null,
-        forceShowFrameComponents: (me.animationEnabled && me.hideTitleBar)
+        forceShowFrameComponents: (me.animationEnabled && me.hideTitleBar),
+        duration: (model && model.duration) ? model.duration : null,
+        eventType: 'demaximized'
     });
 };
 
@@ -251,19 +279,13 @@ WindowEventHelper.prototype.doMinimize = function (model) {
     //Remember the stats of the window before maximizing the window
     me.saveCurrentWindowStats('minimize_mode');
 
-    if (me.minimizeButton) {
-        frame.hideFrameComponent(me.minimizeButton);
-    }
-
-    if (me.deminimizeButton) {
-        frame.showFrameComponent(me.deminimizeButton);
-    }
 
     frame.setResizable(false);
 
     me.renderMinimizedMode({
         animation: me.animationEnabled,
         callback: (model && model.callback) ? model.callback : null,
+        duration: (model && model.duration) ? model.duration : null
     });
 };
 
@@ -287,15 +309,26 @@ WindowEventHelper.prototype.renderMinimizedMode = function (model) {
 
         me.windowMode = 'minimized';
 
+        if (me.minimizeButton) {
+            frame.hideFrameComponent(me.minimizeButton);
+        }
+
+        if (me.deminimizeButton) {
+            frame.showFrameComponent(me.deminimizeButton);
+        }
+
         if (model.callback) {
-            model.callback();
+            model.callback(me.frame, {eventType: 'minimized'});
+        }
+        if (me.eventListeners['minimized']) {
+            me.eventListeners['minimized'](me.frame, {eventType: 'minimized'});
         }
     };
 
     if (model && model.animation) {
         me.animateFrame({
             toAlpha: 1.0,
-            duration: me.animationDuration,
+            duration: model.duration ? model.duration : me.animationDuration,
             frame: frame,
             from: from,
             to: to,
@@ -331,8 +364,10 @@ WindowEventHelper.prototype.doDeminimize = function (model) {
         {
             restorePosition: false,
             restoreMode: 'minimize_mode',
-            animation: me.animationEnabled
-
+            animation: me.animationEnabled,
+            duration: (model && model.duration) ? model.duration : null,
+            callback: (model && model.callback) ? model.callback : null,
+            eventType: 'deminimized'
         });
 };
 
@@ -426,10 +461,13 @@ WindowEventHelper.prototype.renderHideMode = function (model) {
         frame.setSize(to.width, to.height, forceSetSize);
         frame.hide();
 
-        me.windowMode = 'hidden';
+        me.windowMode = 'hid';
 
         if (model && model.callback) {
-            model.callback();
+            model.callback(me.frame, {eventType: 'hid'});
+        }
+        if (me.eventListeners['hid']) {
+            me.eventListeners['hid'](me.frame, {eventType: 'hid'});
         }
     };
 
@@ -469,8 +507,9 @@ WindowEventHelper.prototype.doDehide = function (model) {
             restorePosition: true,
             restoreMode: 'hide_mode',
             animation: me.animationEnabled,
-            forceShowFrameComponents: true
-
+            forceShowFrameComponents: true,
+            callback: (model && model.callback) ? model.callback : null,
+            eventType: 'dehided'
         });
 };
 //---------------------------------------------------------------------------------------------------------------------
@@ -583,14 +622,24 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
 
         frame.show();
 
+        var eventType = 'restored';
+        if (model && model.eventType) {
+            eventType = model.eventType;
+        }
+
         if (model && model.callback) {
-            model.callback();
+            model.callback(
+                me.frame, {eventType: eventType});
+        }
+        if (me.eventListeners[eventType]) {
+            me.eventListeners[eventType](me.frame, {eventType: eventType});
         }
     };
 
 
     if (model && model.animation) {
         me.animateFrame({
+            duration: model.duration ? model.duration : me.animationDuration,
             frame: frame,
             from: crr,
             to: to,

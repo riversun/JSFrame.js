@@ -1150,6 +1150,7 @@ CFrame.prototype.showAllVisibleFrameComponents = function () {
 
 CFrame.prototype.setTitle = function (str) {
     var me = this;
+    me.title = str;
     if (me.showTitleBar) {
 
         var textNode = document.createTextNode(str);
@@ -1244,11 +1245,16 @@ CFrame.prototype.mouseUp = function (e) {
 };
 
 CFrame.prototype.close = function (e) {
+
     var me = this;
     //Close processing of CFrame from CloseButton
 
+
     var parentCanvas = this.parentObject.parentCanvas;
     var cframeObj = this.parentObject;
+
+    console.log('CFrame#close "' + me.title + '(@' + me.getName() + ')' + '" @' + me.windowId);
+
     var windowId = cframeObj.id;
     cframeObj.closeInternally(e, parentCanvas, windowId);
 
@@ -1256,8 +1262,12 @@ CFrame.prototype.close = function (e) {
 };
 
 CFrame.prototype.closeFrame = function (e) {
+
+
     //Close processing of CFrame
     var me = this;
+
+    console.log('CFrame#closeFrame "' + me.title + '(' + me.getName() + ')' + '" @' + me.windowId);
 
     var parentCanvas = this.parentCanvas;
     me.closeInternally(e, parentCanvas, me.windowId);
@@ -1267,6 +1277,7 @@ CFrame.prototype.closeFrame = function (e) {
 
 CFrame.prototype.closeInternally = function (e, parentCanvas, windowId) {
     var me = this;
+
     parentCanvas.removeBean(windowId);
 
 
@@ -1486,9 +1497,12 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
 
     var me = this;
 
+    this.jsFrame = null;
+    this.control = null;
 
     this.minFrameWidth = 128;
     this.minWindowHeight = 32;
+
 
     /**
      * If this value is true, the focus will move when tapping the iframe area,
@@ -1688,15 +1702,31 @@ CIfFrame.prototype.on = function (id, eventType, callbackFunc) {
     var me = this;
     var component = me.getFrameComponentElement(id);
     if (component) {
-        component.addEventListener(eventType, function (e) {
-            callbackFunc(me, e);
-        });
+
+        // component.addEventListener(eventType, function (e) {
+        //     callbackFunc(me, e);
+        // });
+
+        //Since we want to specify only one handler for frame components at the same time,
+        // use an event handler instead of an event listener
+        component['on' + eventType] = function (e) {
+            callbackFunc(me, e,
+                {
+                    type: 'frameComponent',
+                    id: id,
+                    eventType: eventType
+                });
+        };
     }
 
     var domElement = me.$(id);
     if (domElement) {
         domElement.addEventListener(eventType, function (e) {
-            callbackFunc(me, e);
+            callbackFunc(me, e, {
+                type: 'dom',
+                id: id,
+                eventType: eventType
+            });
         });
     }
 
@@ -1878,7 +1908,7 @@ CFrame.prototype.showModal = function (onCloseListener) {
         modalBackgroundFrame.setSize(window.innerWidth, window.innerHeight, true);
     });
 
-    console.log(window.parent.screen.width)
+
     //remember id of modal background frame
     me.modalBackgroundWindowId = modalBackgroundWindowId;
 
@@ -2277,6 +2307,18 @@ CIfFrame.prototype.setResizable = function (enabled) {
 };
 
 
+CIfFrame.prototype.setControl = function (model) {
+    var me = this;
+    //
+    // this.jsFrame
+
+    if (model) {
+        model.frame = me;
+        me.control = me.jsFrame.createWindowEventHelper(model);
+    }
+
+}
+
 /**
  * end of CIFrame class
  */
@@ -2487,6 +2529,9 @@ CWindowManager.prototype.removeBean = function (windowId) {
             lastFocusedFrame.requestFocus();
         }
     }
+
+    targetBean.parentCanvas = null;
+
 };
 /**
  * end of CWindowManager class
@@ -2609,6 +2654,7 @@ JSFrame.prototype.getDomPartsBuilder = function () {
 };
 
 JSFrame.prototype.create = function (model) {
+    var me = this;
 
     var properties = {};
     properties.name = model.name;
@@ -2621,10 +2667,8 @@ JSFrame.prototype.create = function (model) {
     var appearanceName = model.appearanceName;
     var style = model.style;
 
-
     var minWidth = model.minWidth;
     var minHeight = model.minHeight;
-
 
     var html = model.html;
     var resizable = model.resizable;
@@ -2674,6 +2718,7 @@ JSFrame.prototype.create = function (model) {
         }
     }
 
+
     return frame;
 };
 
@@ -2708,6 +2753,9 @@ JSFrame.prototype.createFrame = function (left, top, width, height, appearance, 
 
 
     var frame = new CIfFrame(windowId, left, top, width, height, appearance);
+
+    //experimental
+    frame.jsFrame = me;
 
     if (properties && properties.name) {
         frame.setName(properties.name);
@@ -2850,6 +2898,9 @@ JSFrame.prototype.showToast = function (model) {
     if (model.html) {
         myHtml = model.html;
     }
+    if (model.text) {
+        myHtml = model.text;
+    }
     if (model.closeButton == true) {
         showButton = true;
     } else {
@@ -2870,6 +2921,7 @@ JSFrame.prototype.showToast = function (model) {
 
 
     var frame = me.create({
+        name: 'toast_' + me.generateUUID(),
         width: toastWidth, height: toastHeight,
         movable: false,
         resizable: false,
@@ -2880,6 +2932,7 @@ JSFrame.prototype.showToast = function (model) {
             '</div>'
     });
 
+
     if (showButton) {
     } else {
         frame.hideFrameComponent('closeButton');
@@ -2887,19 +2940,31 @@ JSFrame.prototype.showToast = function (model) {
 
     var requestFocusAfterAnimation = false;
 
+    var startX = window.innerWidth / 2;
+
+    if (me.hAlign == 'right') {
+        startX = -startX;// -500;
+    }
+
+    if (me.vAlign == 'bottom') {
+        startY = startY - window.innerHeight;
+        endY = endY - window.innerHeight;
+    }
+
+
     var animator = me.createAnimator();
     animator.set(frame)
         .setDuration(openCloseDurationMs)
-        .fromPosition(window.innerWidth / 2, startY, 'CENTER_CENTER')
-        .toPosition(window.innerWidth / 2, endY, 'CENTER_CENTER')
+        .fromPosition(startX, startY, 'CENTER_CENTER')
+        .toPosition(startX, endY, 'CENTER_CENTER')
         .toAlpha(1.0)
         .fromAlpha(0.0)
         .start(0, requestFocusAfterAnimation)
         .then(function (animatorObj) {
             return animatorObj
                 .setDuration(openCloseDurationMs)
-                .fromPosition(window.innerWidth / 2, endY, 'CENTER_CENTER')
-                .toPosition(window.innerWidth / 2, startY, 'CENTER_CENTER')
+                .fromPosition(startX, endY, 'CENTER_CENTER')
+                .toPosition(startX, startY, 'CENTER_CENTER')
                 .fromAlpha(1.0)
                 .toAlpha(0.5)
                 .start(stayDurationMs, requestFocusAfterAnimation);
