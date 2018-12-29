@@ -28,14 +28,13 @@
 
 require('./JSFrame.css');
 
-var WindowEventHelper=require('./WindowEventHelper.js');
+var WindowEventHelper = require('./WindowEventHelper.js');
+var CALIGN = require('./CCommon.js');
 
 export {
     WindowEventHelper
 }
-
 var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
-
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
 var presetStyleYosemite = require('./PresetStyleYosemite.js');
@@ -44,19 +43,7 @@ var presetStylePopup = require('./PresetStylePopup.js');
 var presetStyleToast = require('./PresetStyleToast.js');
 
 
-var DEF = {},
-    CALIGN = {};
-
-CALIGN.LEFT_TOP = 'LEFT_TOP';
-CALIGN.HCENTER_TOP = 'CENTER_TOP';
-CALIGN.RIGHT_TOP = 'RIGHT_TOP';
-CALIGN.LEFT_VCENTER = 'LEFT_CENTER';
-CALIGN.HCENTER_VCENTER = 'CENTER_CENTER';
-CALIGN.CENTER = CALIGN.HCENTER_VCENTER;
-CALIGN.RIGHT_VCENTER = 'RIGHT_CENTER';
-CALIGN.LEFT_BOTTOM = 'LEFT_BOTTOM';
-CALIGN.HCENTER_BOTTOM = 'CENTER_BOTTOM';
-CALIGN.RIGHT_BOTTOM = 'RIGHT_BOTTOM';
+var DEF = {};
 
 
 /**
@@ -276,7 +263,7 @@ function CBeanFrame(beanId, left, top, width, height, zindex, w_border_width, ap
 
     var me = this;
 
-    me.movable=true;
+    me.movable = true;
 
 
     //fields
@@ -354,7 +341,7 @@ CBeanFrame.prototype.setMovable = function (enabled) {
         me.htmlElement.argY = 0;
     }
 
-    me.movable=enabled;
+    me.movable = enabled;
 
     return me;
 };
@@ -2531,18 +2518,33 @@ export function JSFrame(model) {
         isWindowManagerFixed = false;
     }
 
-    if (isWindowManagerFixed) {
+    if (model && model.parentElement) {
+        parentElement = model.parentElement;
+    }
+
+    me.hAlign = 'left';
+    me.vAlign = 'top';
+
+    if (model && model.horizontalAlign) {
+        me.hAlign = model.horizontalAlign;
+    }
+
+    if (model && model.verticalAlign) {
+        me.vAlign = model.verticalAlign;
+    }
+
+
+    if (!parentElement && isWindowManagerFixed) {
         var topParentDiv = document.createElement('div');
         topParentDiv.id = 'jsFrame_fixed_' + me.generateUUID();
-        topParentDiv.setAttribute('style', 'position:fixed;left:0px;top:0px;margin:0px;padding:0px;');
+        topParentDiv.setAttribute('style',
+            'position:fixed;' + me.hAlign + ':0px;' + me.vAlign + ':0px;margin:0px;padding:0px;'
+        );
+
         document.body.appendChild(topParentDiv);
         parentElement = topParentDiv;
     } else {
         parentElement = document.body;
-    }
-
-    if (model && model.parentElement) {
-        parentElement = model.parentElement;
     }
 
 
@@ -2730,6 +2732,24 @@ JSFrame.prototype.createAnimator = function () {
 
     return new CSimpleLayoutAnimator();
 };
+
+/**
+ * Helper class for maximizing and minimizing windows(frames) and handling animations accordingly
+ */
+JSFrame.prototype.createWindowEventHelper = function (model) {
+
+    var me = this;
+
+    if (!model) {
+        model = {};
+    }
+
+    model.verticalAlign = me.vAlign;
+    model.horizontalAlign = me.hAlign;
+
+    const wndEventHelper = new WindowEventHelper(model);
+    return wndEventHelper;
+}
 
 JSFrame.prototype.createPresetStyle = function (presetName, focusedFrameOnly) {
 

@@ -1,9 +1,12 @@
 'use strict';
 
 var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
-
+var CALIGN = require('./CCommon.js');
 
 function WindowEventHelper(model) {
+
+    this.horizontalAlign = 'left';
+    this.verticalAlign = 'top';
 
     this.minimizeButton = null;
     this.maximizeButton = null;
@@ -23,6 +26,14 @@ function WindowEventHelper(model) {
         this.demaximizeButton = model.demaximizeButton;
     }
 
+    if (model.horizontalAlign) {
+        this.horizontalAlign = model.horizontalAlign;
+    }
+    if (model.verticalAlign) {
+        this.verticalAlign = model.verticalAlign;
+    }
+
+
     this.animationEnabled = true;
     this.frame = model.frame;
     this.hideFrameBorder = true;
@@ -34,8 +45,8 @@ function WindowEventHelper(model) {
     this.resizeListener = this.handleOnResize.bind(this);
 }
 
-
-WindowEventHelper.prototype.doMaximize = function () {
+//---------------------------------------------------------------------------------------------------------------------
+WindowEventHelper.prototype.doMaximize = function (model) {
     var me = this;
     var frame = me.frame;
 
@@ -43,7 +54,7 @@ WindowEventHelper.prototype.doMaximize = function () {
     window.addEventListener('resize', me.resizeListener);
 
     //Remember the status of the window before maximizing the window size
-    me.saveWindowStats('maximize_mode');
+    me.saveCurrentWindowStats('maximize_mode');
 
     //Process required for maximization
     if (me.maximizeButton) {
@@ -53,14 +64,13 @@ WindowEventHelper.prototype.doMaximize = function () {
         frame.showFrameComponent(me.demaximizeButton);
     }
 
-
     frame.setMovable(false);
     frame.setResizable(false);
 
-
     //Render maximization itself
     me.renderMaximizedMode({
-        animation: me.animationEnabled
+        animation: me.animationEnabled,
+        callback: (model && model.callback) ? model.callback : null,//set maximized finished callback
     });
 };
 
@@ -91,10 +101,18 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
     }
     //compute position and size[end]
 
+    if (me.horizontalAlign == 'right') {
+        _toX = -_toWidth;
+    }
+    if (me.verticalAlign == 'bottom') {
+        _toY = -_toHeight;
+    }
+
+
     //render position and size[begin]
     var funcDoRender = function () {
 
-        frame.setPosition(0, _toY);
+        frame.setPosition(_toX, _toY);
 
         if (me.hideFrameBorder) {
             frame.frameBorderWidthDefault = 0;
@@ -102,11 +120,14 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
             frame.htmlElement.style.borderWidth = '0px';
         }
         frame.setSize(_toWidth, _toHeight, true);
+
+        if (model && model.callback) {
+            model.callback();
+        }
     };
 
 
     if (model && model.animation) {
-        //TODO from(left,top,width,height)とtop(left,top,width,height)を入力したら自動的にアニメできるようにする
         me.animateFrame({
             frame: frame,
             from: from,
@@ -118,8 +139,6 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
             },
             callback: funcDoRender
         });
-
-
     } else {
         funcDoRender();
     }
@@ -127,35 +146,16 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
 };
 
 
-WindowEventHelper.prototype.animateFrame = function (model) {
-    var needRequestFocusAfterAnimation = false;
-
-    var from = model.from;
-    var to = model.to;
-
-    var animator = new CSimpleLayoutAnimator();
-    animator.set(model.frame)
-        .setDuration(100)
-        .fromPosition(from.left, from.top, 'LEFT_TOP')
-        .toPosition(to.left, to.top, 'LEFT_TOP')
-        .fromWidth(from.width)
-        .fromHeight(from.height)
-        .toWidth(to.width)
-        .toHeight(to.height)
-        .fromAlpha(1.0)
-        .toAlpha(1.0)
-        .start(0, needRequestFocusAfterAnimation)
-        .then(function (animatorObj) {
-            model['callback']();
-        });
-}
-
 /**
  * Restore window from maximized mode
  */
-WindowEventHelper.prototype.doDemaximize = function () {
+WindowEventHelper.prototype.doDemaximize = function (model) {
     var me = this;
     var frame = me.frame;
+
+    if (!me.hasWindowStats('maximize_mode')) {
+        return;
+    }
 
     if (me.maximizeButton) {
         frame.showFrameComponent(me.maximizeButton);
@@ -167,7 +167,8 @@ WindowEventHelper.prototype.doDemaximize = function () {
     me.restoreWindow({
         restorePosition: true,
         restoreMode: 'maximize_mode',
-        animation: true
+        animation: me.animationEnabled,
+        callback: (model && model.callback) ? model.callback : null,
     });
 };
 
@@ -180,16 +181,18 @@ WindowEventHelper.prototype.handleOnResize = function () {
     me.renderMaximizedMode();
 };
 
+//---------------------------------------------------------------------------------------------------------------------
+
 /**
  * Make window minimized mode
  */
-WindowEventHelper.prototype.doMinimize = function () {
+WindowEventHelper.prototype.doMinimize = function (model) {
 
     var me = this;
     var frame = me.frame;
 
     //Remember the stats of the window before maximizing the window
-    me.saveWindowStats('minimize_mode');
+    me.saveCurrentWindowStats('minimize_mode');
 
     if (me.minimizeButton) {
         frame.hideFrameComponent(me.minimizeButton);
@@ -198,42 +201,49 @@ WindowEventHelper.prototype.doMinimize = function () {
     if (me.deminimizeButton) {
         frame.showFrameComponent(me.deminimizeButton);
     }
+
     frame.setResizable(false);
 
-
-        me.renderMinimizedMode();
-    
-
-
+    me.renderMinimizedMode({
+        animation: me.animationEnabled,
+        callback: (model && model.callback) ? model.callback : null,
+    });
 };
 
 
 /**
  * Render window as minimized mode
  */
-WindowEventHelper.prototype.renderMinimizedMode = function () {
+WindowEventHelper.prototype.renderMinimizedMode = function (model) {
     var me = this;
     var frame = me.frame;
     var ri = me.loadWindowStats('minimize_mode');
 
+    var from = me.getCurrentWindowStats();
+    var to = me.getCurrentWindowStats();
 
-    var from=me.getWindowStats();
-    var to=me.getWindowStats();
-
-    to.height  = ri.titleBarHeight;
+    to.height = ri.titleBarHeight;
 
     var funcDoRender = function () {
         var forceSetSize = true;
-        frame.setSize(to.width,to.height, forceSetSize);
-    }
+        frame.setSize(to.width, to.height, forceSetSize);
+        if (model.callback) {
+            model.callback();
+        }
+    };
 
-    //
-    me.animateFrame({
-        frame: frame,
-        from: from,
-        to:to,
-        callback: funcDoRender
-    });
+    if (model && model.animation) {
+        me.animateFrame({
+            toAlpha: 1.0,
+            duration: 150,
+            frame: frame,
+            from: from,
+            to: to,
+            callback: funcDoRender
+        });
+    } else {
+        funcDoRender();
+    }
 
 
 };
@@ -242,9 +252,13 @@ WindowEventHelper.prototype.renderMinimizedMode = function () {
 /**
  * Restore window from minimized mode
  */
-WindowEventHelper.prototype.doDeminimize = function () {
+WindowEventHelper.prototype.doDeminimize = function (model) {
     var me = this;
     var frame = me.frame;
+
+    if (!me.hasWindowStats('minimize_mode')) {
+        return;
+    }
 
     if (me.minimizeButton) {
         frame.showFrameComponent(me.minimizeButton);
@@ -253,44 +267,170 @@ WindowEventHelper.prototype.doDeminimize = function () {
         frame.hideFrameComponent(me.deminimizeButton);
     }
 
-
     me.restoreWindow(
         {
             restorePosition: false,
             restoreMode: 'minimize_mode',
-            animation: true
+            animation: me.animationEnabled
+
         });
 };
 
+//---------------------------------------------------------------------------------------------------------------------
+/**
+ * Make window hidden mode
+ */
+WindowEventHelper.prototype.doHide = function (model) {
 
+    var me = this;
+    var frame = me.frame;
+
+    //Remember the stats of the window before maximizing the window
+    me.saveCurrentWindowStats('hide_mode');
+
+    frame.setResizable(false);
+
+    me.renderHideMode({
+        animation: me.animationEnabled,
+        callback: (model && model.callback) ? model.callback : null,
+        align: (model && model.align) ? model.align : null
+    });
+};
+
+
+/**
+ * Render window as hidden mode
+ */
+WindowEventHelper.prototype.renderHideMode = function (model) {
+    var me = this;
+    var frame = me.frame;
+    var ri = me.loadWindowStats('hide_mode');
+
+    var from = me.getCurrentWindowStats();
+
+
+    var left = 0;
+    var top = 0;
+    {
+        var align = (model && model.align) ? model.align : 'LEFT_TOP';
+
+
+        if (!align || CALIGN.LEFT_TOP == align) {
+            left = from.left;
+            top = from.top;
+        }
+        else if (CALIGN.HCENTER_TOP == align) {
+            left = from.left + from.width / 2;
+            top = from.top;
+        }
+        else if (CALIGN.RIGHT_TOP == align) {
+            left = from.left + from.width;
+            top = from.top;
+        }
+        else if (CALIGN.LEFT_VCENTER == align) {
+            left = from.left;
+            top = from.top + from.height / 2;
+        }
+        else if (CALIGN.HCENTER_VCENTER == align) {
+            left = from.left + from.width / 2;
+            top = from.top + from.height / 2;
+        }
+        else if (CALIGN.RIGHT_VCENTER == align) {
+            left = from.left + from.width;
+            top = from.top + from.height / 2;
+        }
+        else if (CALIGN.LEFT_BOTTOM == align) {
+            left = from.left;
+            top = from.top + from.height;
+        }
+        else if (CALIGN.HCENTER_BOTTOM == align) {
+            left = from.left + from.width / 2;
+            top = from.top + from.height;
+        }
+        else if (CALIGN.RIGHT_BOTTOM == align) {
+            left = from.left + from.width;
+            top = from.top + from.height;
+        }
+
+    }
+
+    var to = {
+        left: left,
+        top: top,
+        width: 0,
+        height: ri.titleBarHeight
+    };
+
+    var funcDoRender = function () {
+        var forceSetSize = true;
+        frame.setSize(to.width, to.height, forceSetSize);
+        frame.hide();
+        if (model && model.callback) {
+            model.callback();
+        }
+    };
+
+    if (model && model.animation) {
+        me.animateFrame({
+            toAlpha: 0,
+            duration: 150,
+            frame: frame,
+            from: from,
+            to: to,
+            callback: funcDoRender
+        });
+    } else {
+        funcDoRender();
+    }
+
+
+};
+
+
+/**
+ * Restore window from hided mode
+ */
+WindowEventHelper.prototype.doDehide = function (model) {
+    var me = this;
+    var frame = me.frame;
+
+    if (!me.hasWindowStats('hide_mode')) {
+        return;
+    }
+
+    me.restoreWindow(
+        {
+            restorePosition: true,
+            restoreMode: 'hide_mode',
+            animation: me.animationEnabled
+
+        });
+};
+//---------------------------------------------------------------------------------------------------------------------
 WindowEventHelper.prototype.loadWindowStats = function (storeKeyName) {
     var me = this;
     return me.statsStore[storeKeyName];
 };
+
 /**
  * Remember the status of the window before maximizing or minimizing the window size
  */
-WindowEventHelper.prototype.saveWindowStats = function (storeKeyName) {
+WindowEventHelper.prototype.saveCurrentWindowStats = function (storeKeyName) {
     var me = this;
-    // var frame = me.frame;
-    //
-    // //Acquire window's stats
-    // var __titleBarHeight = parseInt(frame.titleBar.style.height, 10);
-    // var __frameBorderWidthDefault = frame.frameBorderWidthDefault;// parseInt(frame.htmlElement.style.borderWidth, 10);
-    // var __frameBorderWidthFocused = frame.frameBorderWidthFocused;
-    // var __left = frame.getLeft();
-    // var __top = frame.getTop();
-    // var __width = frame.getWidth();
-    // var __height = frame.getHeight();
-    // var __resizable = frame.resizable;
-    // var __movable = frame.movable;
-
-
-    me.statsStore[storeKeyName] = me.getWindowStats();
-
+    me.statsStore[storeKeyName] = me.getCurrentWindowStats();
 };
 
-WindowEventHelper.prototype.getWindowStats = function () {
+WindowEventHelper.prototype.clearWindowStats = function (storeKeyName) {
+    var me = this;
+    me.statsStore[storeKeyName] = null;
+};
+
+WindowEventHelper.prototype.hasWindowStats = function (storeKeyName) {
+    var me = this;
+    return me.statsStore[storeKeyName];
+};
+
+WindowEventHelper.prototype.getCurrentWindowStats = function () {
     var me = this;
     var frame = me.frame;
 
@@ -330,11 +470,12 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
     var to = me.loadWindowStats(model.restoreMode);
 
     //現在の状態を一時保存する
-    me.saveWindowStats('temp');
-    var crr = me.loadWindowStats('temp');
+    //me.saveCurrentWindowStats('temp');
+    var crr = me.getCurrentWindowStats();//loadWindowStats('temp');
 
 
     var funcDoRender = function () {
+
         frame.frameBorderWidthDefault = to.frameBorderWidthDefault;
         frame.frameBorderWidthFocused = to.frameBorderWidthFocused;
         frame.htmlElement.style.borderWidth = frame.frameBorderWidthFocused;
@@ -352,6 +493,13 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
 
         frame.setResizable(to.resizable);
         frame.setMovable(to.movable);
+
+        //リストアしたらデータはクリアする
+        me.clearWindowStats(model.restoreMode);
+
+        if (model && model.callback) {
+            model.callback();
+        }
     }
 
 
@@ -368,6 +516,31 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
 
 
     window.removeEventListener('resize', me.resizeListener);
+};
+
+
+WindowEventHelper.prototype.animateFrame = function (model) {
+    var needRequestFocusAfterAnimation = false;
+
+    var from = model.from;
+    var to = model.to;
+
+    var animator = new CSimpleLayoutAnimator();
+
+    animator.set(model.frame)
+        .setDuration(model.duration ? model.duration : 100)
+        .fromPosition(from.left, from.top, 'LEFT_TOP')
+        .toPosition(to.left, to.top, 'LEFT_TOP')
+        .fromWidth(from.width)
+        .fromHeight(from.height)
+        .toWidth(to.width)
+        .toHeight(to.height)
+        .fromAlpha(1.0)
+        .toAlpha((model.toAlpha == 0) ? 0 : 1.0)
+        .start(0, needRequestFocusAfterAnimation)
+        .then(function (animatorObj) {
+            model['callback']();
+        });
 };
 
 module.exports = WindowEventHelper;
