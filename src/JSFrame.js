@@ -1109,6 +1109,7 @@ CFrame.prototype.showFrameComponent = function (frameComponentId) {
     }
     return me;
 };
+
 CFrame.prototype.hideFrameComponent = function (frameComponentId) {
     var me = this;
     var comp = me.getFrameComponentElement(frameComponentId);
@@ -1118,6 +1119,34 @@ CFrame.prototype.hideFrameComponent = function (frameComponentId) {
     return me;
 };
 
+CFrame.prototype.hideAllVisibleFrameComponents = function () {
+    var me = this;
+
+    var compMap = me.frameComponentMap;
+    for (var key in  compMap) {
+        if (compMap.hasOwnProperty(key)) {
+            var comp = compMap[key].htmlElement;
+            if (comp.style.display === 'none') {
+                comp._alreadyNone = true;
+            }
+            comp.style.display = 'none';
+        }
+    }
+};
+CFrame.prototype.showAllVisibleFrameComponents = function () {
+    var me = this;
+    var compMap = me.frameComponentMap;
+    for (var key in  compMap) {
+        if (compMap.hasOwnProperty(key)) {
+            var comp = compMap[key].htmlElement;
+            if (comp._alreadyNone) {
+                comp._alreadyNone = null;
+            } else {
+                comp.style.display = 'flex';
+            }
+        }
+    }
+};
 
 CFrame.prototype.setTitle = function (str) {
     var me = this;

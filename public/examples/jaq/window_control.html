@@ -13,9 +13,10 @@
 <!--<script src="https://riversun.github.io/jsframe/jsframe.js"></script>-->
 <script src="../../jsframe.js"></script>
 <script>
+
     const jsFrame = new JSFrame({
         horizontalAlign: 'right',
-        verticalAlign:'bottom'
+        verticalAlign: 'bottom',
     });
 
     function rest() {
@@ -25,11 +26,6 @@
 
     function start() {
 
-        window.document.onkeydown = function (event) {
-            if (event.key === "Escape") {
-                jjs[0].doDemaximize();
-            }
-        }
 
         const frames = [];
         const jjs = [];
@@ -37,7 +33,6 @@
         jsFrame.showToast({html: `hello${window.innerHeight}`, align: 'bottom'});
 
         for (let i = 0; i < 2; i++) {
-
 
             const frame = jsFrame.create({
                 name: `Win${i}`,
@@ -54,9 +49,11 @@
 
             const jj = jsFrame.createWindowEventHelper({
                 frame: frame,
+                animation:true,
+                animationDuration:1000,
                 minimizeButton: 'minimizeButton',
                 maximizeButton: 'maximizeButton',
-                demaximizeButton: 'demaximizeButton',
+                demaximizeButton: 'restoreButton',
                 deminimizeButton: 'deminimizeButton'
             });
             frame.extra.jj = jj;
@@ -71,7 +68,10 @@
             });
 
             frame.on('maximizeButton', 'click', (_frame, evt) => {
-                jj.doMaximize();
+                jj.doMaximize({
+                    hideTitleBar: true,
+                    restoreKey: 'Escape'
+                });
             });
 
             frame.on('restoreButton', 'click', (_frame, evt) => {

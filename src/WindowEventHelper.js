@@ -5,8 +5,13 @@ var CALIGN = require('./CCommon.js');
 
 function WindowEventHelper(model) {
 
+    this.windowMode = 'default';
+
     this.horizontalAlign = 'left';
     this.verticalAlign = 'top';
+
+    this.keyListener = null;
+
 
     this.minimizeButton = null;
     this.maximizeButton = null;
@@ -34,11 +39,21 @@ function WindowEventHelper(model) {
     }
 
 
-    this.animationEnabled = true;
+    this.animationEnabled = false;
+    this.animationDuration = 100;
     this.frame = model.frame;
     this.hideFrameBorder = true;
     this.hideTitleBar = true;
+    this.restoreKey = 'Escape';
     this.statsStore = {};
+
+    if (model.animation) {
+        this.animationEnabled = model.animation;
+    }
+    if (model.animationDuration) {
+        this.animationDuration = model.animationDuration;
+    }
+
 
     //If the user changes the window size when the window is maximized state,
     // adjust the size so that window looks maximized.
@@ -56,21 +71,42 @@ WindowEventHelper.prototype.doMaximize = function (model) {
     //Remember the status of the window before maximizing the window size
     me.saveCurrentWindowStats('maximize_mode');
 
-    //Process required for maximization
-    if (me.maximizeButton) {
-        frame.hideFrameComponent(me.maximizeButton);
+
+    if (me.hideTitleBar) {
+        //Hide only the currently visible FrameComponent
+        //ウィンドウのモードを変更する前の今の状態で可視状態にあるフレームコンポーネント（閉じるボタン類）を不可視にする
+        //(タイトルバー非表示の場合には最大化するときのアニメーションでフレームコンポーネントを見せないようにする)
+        frame.hideAllVisibleFrameComponents();
+
+        //またhideAllVisibleFrameComponentを実施するときに、個別のhideFrameComponentやshowFrameComponentを実行すると
+        //管理ステートが破綻するため、タイトルバー非表示の場合はどうせ操作できないということもあり
+        //hideFrameComponent や showFrameComponentは実行しない
+
+    } else {
+
+        //Process required for maximization
+        if (me.maximizeButton) {
+            frame.hideFrameComponent(me.maximizeButton);
+        }
+        if (me.demaximizeButton) {
+            frame.showFrameComponent(me.demaximizeButton);
+        }
     }
-    if (me.demaximizeButton) {
-        frame.showFrameComponent(me.demaximizeButton);
-    }
+
 
     frame.setMovable(false);
     frame.setResizable(false);
 
+    me.hideTitleBar = model ? model.hideTitleBar : false;
+
+    if (model && model.restoreKey) {
+        me.restoreKey = model.restoreKey;
+    }
+
     //Render maximization itself
     me.renderMaximizedMode({
         animation: me.animationEnabled,
-        callback: (model && model.callback) ? model.callback : null,//set maximized finished callback
+        callback: (model && model.callback) ? model.callback : null, //set maximized finished callback
     });
 };
 
@@ -92,6 +128,7 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
         _toX = 0;
         _toY = -from.titleBarHeight;
     }
+
     if (me.hideFrameBorder) {
         _toWidth = window.innerWidth;
         _toHeight = window.innerHeight + (me.hideTitleBar ? from.titleBarHeight : 0);
@@ -121,6 +158,19 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
         }
         frame.setSize(_toWidth, _toHeight, true);
 
+        if (me.hideTitleBar) {
+
+            me.keyListener = function (event) {
+                if (event.key === me.restoreKey) {
+                    me.doDemaximize();
+                }
+            };
+
+            window.addEventListener('keydown', me.keyListener);
+        }
+
+        me.windowMode = 'maximized';
+
         if (model && model.callback) {
             model.callback();
         }
@@ -128,6 +178,8 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
 
 
     if (model && model.animation) {
+
+
         me.animateFrame({
             frame: frame,
             from: from,
@@ -157,11 +209,15 @@ WindowEventHelper.prototype.doDemaximize = function (model) {
         return;
     }
 
-    if (me.maximizeButton) {
-        frame.showFrameComponent(me.maximizeButton);
-    }
-    if (me.demaximizeButton) {
-        frame.hideFrameComponent(me.demaximizeButton);
+    if (me.hideTitleBar) {
+
+    } else {
+        if (me.maximizeButton) {
+            frame.showFrameComponent(me.maximizeButton);
+        }
+        if (me.demaximizeButton) {
+            frame.hideFrameComponent(me.demaximizeButton);
+        }
     }
 
     me.restoreWindow({
@@ -169,6 +225,7 @@ WindowEventHelper.prototype.doDemaximize = function (model) {
         restoreMode: 'maximize_mode',
         animation: me.animationEnabled,
         callback: (model && model.callback) ? model.callback : null,
+        forceShowFrameComponents: (me.animationEnabled && me.hideTitleBar)
     });
 };
 
@@ -227,6 +284,9 @@ WindowEventHelper.prototype.renderMinimizedMode = function (model) {
     var funcDoRender = function () {
         var forceSetSize = true;
         frame.setSize(to.width, to.height, forceSetSize);
+
+        me.windowMode = 'minimized';
+
         if (model.callback) {
             model.callback();
         }
@@ -235,7 +295,7 @@ WindowEventHelper.prototype.renderMinimizedMode = function (model) {
     if (model && model.animation) {
         me.animateFrame({
             toAlpha: 1.0,
-            duration: 150,
+            duration: me.animationDuration,
             frame: frame,
             from: from,
             to: to,
@@ -365,15 +425,21 @@ WindowEventHelper.prototype.renderHideMode = function (model) {
         var forceSetSize = true;
         frame.setSize(to.width, to.height, forceSetSize);
         frame.hide();
+
+        me.windowMode = 'hidden';
+
         if (model && model.callback) {
             model.callback();
         }
     };
 
+    //Hide only the currently visible FrameComponent
+    frame.hideAllVisibleFrameComponents();
+
     if (model && model.animation) {
         me.animateFrame({
             toAlpha: 0,
-            duration: 150,
+            duration: me.animationDuration,
             frame: frame,
             from: from,
             to: to,
@@ -402,7 +468,8 @@ WindowEventHelper.prototype.doDehide = function (model) {
         {
             restorePosition: true,
             restoreMode: 'hide_mode',
-            animation: me.animationEnabled
+            animation: me.animationEnabled,
+            forceShowFrameComponents: true
 
         });
 };
@@ -474,11 +541,15 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
     var crr = me.getCurrentWindowStats();//loadWindowStats('temp');
 
 
+    //以下の3つは、ボーダーを太さを変更するためのものだが
+    // funcDoRender内で処理してしまうとアニメーション中にはボーダーが描かれなくなる
+    //アニメーション中にはボーダーは復活していたほうが自然なのでfuncDoRender外で実行する
+    frame.frameBorderWidthDefault = to.frameBorderWidthDefault;
+    frame.frameBorderWidthFocused = to.frameBorderWidthFocused;
+    frame.htmlElement.style.borderWidth = frame.frameBorderWidthFocused;
+
     var funcDoRender = function () {
 
-        frame.frameBorderWidthDefault = to.frameBorderWidthDefault;
-        frame.frameBorderWidthFocused = to.frameBorderWidthFocused;
-        frame.htmlElement.style.borderWidth = frame.frameBorderWidthFocused;
 
         if (model && model.restorePosition == false) {
             //位置の移動を伴わない場合（最小化から戻すときなど)
@@ -497,10 +568,25 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
         //リストアしたらデータはクリアする
         me.clearWindowStats(model.restoreMode);
 
+        if (me.keyListener) {
+            //タイトルバー無し最大化状態から戻すためのキーリスナーは削除する
+            window.removeEventListener('keydown', me.keyListener);
+            me.keyListener = null;
+        }
+
+        me.windowMode = 'default';
+
+        if (model && model.forceShowFrameComponents) {
+            //ウィンドウのモード変更前に可視状態にあったフレームコンポーネント（閉じるボタン類）を可視状態にする
+            frame.showAllVisibleFrameComponents();
+        }
+
+        frame.show();
+
         if (model && model.callback) {
             model.callback();
         }
-    }
+    };
 
 
     if (model && model.animation) {
@@ -511,6 +597,7 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
             callback: funcDoRender
         });
     } else {
+
         funcDoRender();
     }
 
@@ -520,6 +607,7 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
 
 
 WindowEventHelper.prototype.animateFrame = function (model) {
+    var me = this;
     var needRequestFocusAfterAnimation = false;
 
     var from = model.from;
@@ -528,7 +616,7 @@ WindowEventHelper.prototype.animateFrame = function (model) {
     var animator = new CSimpleLayoutAnimator();
 
     animator.set(model.frame)
-        .setDuration(model.duration ? model.duration : 100)
+        .setDuration(model.duration ? model.duration : me.animationDuration)
         .fromPosition(from.left, from.top, 'LEFT_TOP')
         .toPosition(to.left, to.top, 'LEFT_TOP')
         .fromWidth(from.width)
