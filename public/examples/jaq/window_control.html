@@ -6,17 +6,27 @@
     <meta name="description" content="A javascript popup/floating window library.">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
-<!--<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/c/c5/Kurumayama_K%C5%8Dgen_Snow_Resort_2.jpg') 50% no-repeat fixed; background-size: cover;">-->
-<body>
+<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/4/40/Mont_Blanc_depuis_Chamonix.JPG') 50% no-repeat fixed; background-size: cover;">
 
-<button id="bt_open" type="button" onclick="rest()" class="btn btn-primary">BUTTON</button>
-<!--<script src="https://riversun.github.io/jsframe/jsframe.js"></script>-->
+<div style="color:#f5f5f5;text-shadow: 2px 2px 1px #333333;"><a
+        href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : Preset style redstone
+</div>
+
+
+<div
+        style="font-size: 12px; color: white; position: fixed; right: 10px; bottom: 10px">
+    Photo License: CC-BY-SA 4.0
+</div>
 <script src="../../jsframe.js"></script>
 <script>
 
     const jsFrame = new JSFrame({
-        horizontalAlign: 'right',
-        verticalAlign: 'bottom',
+        //ウィンドウ生成の水平方向のアンカーを指定(left/right)
+        //'right'の場合は右端に固定される(右端のx座標が0で、左端にむかったマイナス方向で座標指定する)
+        horizontalAlign: 'left',
+        //ウィンドウ生成の垂直方向のアンカーを指定(top/bottom)
+        //'bottom'の場合は下端に固定される(下端のy座標が0で上端にむかったマイナス方向で座標指定する)
+        verticalAlign: 'top',
     });
 
     function rest() {
@@ -26,124 +36,138 @@
 
     function start() {
 
-        const frames = [];
+        const frame = jsFrame.create({
+            name: `Win`,
+            title: `Win - Win10 style`,
+            left: 20, top: 40, width: 320, height: 220, minWidth: 200, minHeight: 110,
+            appearanceName: 'redstone',
+            style: {
+                backgroundColor: 'rgba(255,255,255,0.8)',
+                overflow: 'auto'
+            },
 
-        for (let i = 0; i < 2; i++) {
+            url: 'iframe_content03.html',
+        }).show();
 
-            const frame = jsFrame.create({
-                name: `Win${i}`,
-                title: `Win${i} - Win10 style`,
-                left: -520 + (320 + 20) * i, top: -550, width: 320, height: 220, minWidth: 200, minHeight: 110,
-                appearanceName: 'redstone',
-                style: {
-                    backgroundColor: 'rgba(255,255,255,0.95)',
-                    overflow: 'hidden'
+
+        //#setControlメソッドを使うと、frame.control以下のメソッドが利用可能となる
+        //frame.controlはウィンドウの最大化、最小化などの操作を実施する
+        frame.setControl({
+            //最大化ボタンのFrameComponent名を指定する
+            maximizeButton: 'maximizeButton',
+            //最大化からの復帰ボタンのFrameComponent名を指定する
+            demaximizeButton: 'restoreButton',
+            //最小化ボタンのFrameComponent名を指定する
+            minimizeButton: 'minimizeButton',
+            //最小化からの復帰ボタンのFrameComponent名を指定する
+            deminimizeButton: 'deminimizeButton',
+            //ウィンドウ開閉時のアニメーション有効
+            animation: true,
+            //1アニメーションあたりの長さのデフォルト値(ミリ秒)
+            animationDuration: 200,
+
+        });
+
+        //maximizedイベントを直接ハンドリングしたい場合
+        frame.control.on('maximized', (frame, info) => {  //最大化した後に呼び出されるコールバック
+
+        });
+
+        const ctrl = frame.control;
+
+
+        frame.on('maximizeButton', 'click', (_frame, evt) => {
+            //ウィンドウを最大化する
+            _frame.control.doMaximize({
+                //true:最大化したときにタイトルバーを隠す
+                hideTitleBar: true,
+                //最大化するときのアニメーション時間
+                duration: 100,
+                //タイトルバーを隠すときはボタンで復帰できないので変わりにキー入力を使いたい場合はキーを指定できる
+                restoreKey: 'Escape',
+                //最大化から復帰するまでのアニメーション時間（タイトルバーを隠すときはここで指定可能)
+                restoreDuration: 100,
+                //ウィンドウを最大化終了を受け取るコールバック関数
+                callback: (frame, info) => {
+                    // jsFrame.showToast({
+                    //     text: 'ESCキーを押すと復帰します', align: 'top', duration: 2000
+                    // });
+                    frame.requestFocus();
+                    frame.disableTransparent();
                 },
-                html: '<div style="padding:10px;background:darkcyan;height:100%">Your contents here.</div>'
-            }).show();
-
-            frame.setControl({
-                animation: true,//ウィンドウ開閉時のアニメーション有効
-                animationDuration: 200,//アニメーションの1アクション時間あたりの長さのデフォルト値
-                minimizeButton: 'minimizeButton',
-                maximizeButton: 'maximizeButton',
-                demaximizeButton: 'restoreButton',
-                deminimizeButton: 'deminimizeButton'
-            });
-
-            //maximizedイベントを直接ハンドリングしたい場合
-            frame.control.on('maximized', (frame, info) => {  //最大化した後に呼び出されるコールバック
-                jsFrame.showToast({
-                    text: 'マックスです', align: 'center'
-                });
-            });
-
-            const frmc = frame.control;
-
-            frame.on('minimizeButton', 'click', (_frame, evt) => {
-
-                //'minimizeButton'が押されたときに、最小化したい場合
-                _frame.control.doMinimize({
-                    duration: 100,
-                    callback: (frame, info) => {
-                        jsFrame.showToast({
-                            text: frame.getName() + ' ' + info.eventType
-                        });
-                    }
-                });
-
-            });
-            frame.on('deminimizeButton', 'click', (_frame, evt) => {
-                frmc.doDeminimize({
-                    duration: 100,//最小化状態から戻るときのアニメーション時間(ms)
-                    callback: (frame, info) => {
-                        jsFrame.showToast({
-                            text: frame.getName() + ' ' + info.eventType
-                        });
-                    }
-                });
-            });
-
-
-            frame.on('maximizeButton', 'click', (_frame, evt) => {
-                frmc.doMaximize({
-                    hideTitleBar: true, //true:最大化したときにタイトルバーを隠す
-                    restoreKey: 'Escape',//タイトルバーが隠れたときに復帰するためのキー指定
-                    duration: 100,//最大化するときのアニメーション時間
-                    restoreDuration: 100,//最大化から元に戻るときのアニメーション時間（タイトルバーが無い場合)
-                    callback: (frame, info) => {  //最大化した後に呼び出されるコールバック
-                        jsFrame.showToast({
-                            text: frame.getName() + ' ' + info.eventType
-                        });
-                    },
-                    restoreCallback: (frame, info) => {//最大化から戻ったときに呼び出されるコールバック(タイトルバーが無い場合)
-                        jsFrame.showToast({
-                            text: frame.getName() + ' ' + info.eventType
-                        });
-                    },
-                });
-            });
-
-            frame.on('restoreButton', 'click', (_frame, evt) => {
-                frmc.doDemaximize(
-                    {
-                        duration: 100,
-                        callback: (frame, info) => {
-                            jsFrame.showToast({
-                                text: frame.getName() + ' ' + info.eventType
-                            });
-                        }
+                //最大化から戻ったときに呼び出されるコールバック(タイトルバーが無い場合)
+                restoreCallback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
                     });
+                },
             });
+        });
 
-            frame.on('closeButton', 'click', (_frame, evt) => {
-                //
-
-                frmc.doHide({
-                    align: 'CENTER_BOTTOM',
+        frame.on('restoreButton', 'click', (_frame, evt) => {
+            //ウィンドウを最大化状態から復帰する
+            _frame.control.doDemaximize(
+                {
+                    //最大化から復帰するまでのアニメーション時間
+                    duration: 100,
+                    //ウィンドウを最大化から復帰した後のコールバックを受け取る関数
                     callback: (frame, info) => {
                         jsFrame.showToast({
                             text: frame.getName() + ' ' + info.eventType
                         });
-                        _frame.closeFrame();
                     }
-                })
-            });
-            frames.push(frame);
-        }
+                });
+        });
 
-        frames[0].requestFocus();
-        jsFrame.showToast({html: `hello${window.innerHeight}`, align: 'center'});
+        frame.on('minimizeButton', 'click', (_frame, evt) => {
+
+            //'minimizeButton'が押されたときに、最小化したい場合
+            _frame.control.doMinimize({
+                duration: 100,
+                callback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+                }
+            });
+
+        });
+        frame.on('deminimizeButton', 'click', (_frame, evt) => {
+            _frame.control.doDeminimize({
+                duration: 100,//最小化状態から戻るときのアニメーション時間(ms)
+                //最小化状態から復帰を受け取るコールバック関数
+                callback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+                }
+            });
+        });
+
+
+        frame.on('closeButton', 'click', (_frame, evt) => {
+            //
+
+            //ウィンドウを非表示状態に遷移する
+            _frame.control.doHide({
+                //非表示にするときのアニメーションの終点
+                align: 'CENTER_BOTTOM',
+                //非表示処理が終了したときのコールバックを受け取る関数
+                callback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+
+                    //非表示にした後、ウィンドウを閉じる（削除する）
+                    _frame.closeFrame();
+                }
+            })
+        });
+
+
     }
 
     start();
 </script>
-<div style="color:white"><a href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : Preset style redstone
-</div>
-
-<div
-        style="font-size: 12px; color: white; position: fixed; right: 10px; bottom: 10px">
-    Photo by Ski Mania License: CC-BY-SA 4.0
-</div>
 </body>
 </html>

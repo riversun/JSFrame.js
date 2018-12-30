@@ -37,10 +37,16 @@ export {
 var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
-var presetStyleYosemite = require('./PresetStyleYosemite.js');
-var presetStyleRedstone = require('./PresetStyleRedstone.js');
-var presetStylePopup = require('./PresetStylePopup.js');
-var presetStyleToast = require('./PresetStyleToast.js');
+// var presetStyleYosemite = require('./PresetStyleYosemite.js');
+// var presetStyleRedstone = require('./PresetStyleRedstone.js');
+// var presetStylePopup = require('./PresetStylePopup.js');
+// var presetStyleToast = require('./PresetStyleToast.js');
+// var presetStyleMaterial = require('./PresetStyleMaterial.js');
+
+var presetStyles = {
+    'yosemite': require('./PresetStyleYosemite.js'),
+    'redstone': require('./PresetStyleRedstone.js'),
+};
 
 
 var DEF = {};
@@ -1518,8 +1524,10 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
     //20181226
     //Changed to false.
     // So it becomes necessary to click twice to react when you call the #setSize,I changed the value to false.
-    this.overrayTransparentScreenOnResize = false;
 
+    //20181231
+    //I found the way that iframe will be changed the size smoothly.so the final answer is true.
+    this.overrayTransparentScreenOnResize = true;
 
     this.titleBarColorFocused = appearance.titleBarColorFocused;
     this.titleBarColorDefault = appearance.titleBarColorDefault;
@@ -1572,7 +1580,7 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
     me.iframe.id = exIframeName;
 
     me.iframe.frameBorder = '0';
-    me.iframe.scrolling = 'no';
+    //me.iframe.scrolling = 'no';
 
     me.iframe.zIndex = -1;
 
@@ -1606,6 +1614,12 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
         me.iframe.style.top = '0px';
         me.iframe.style.width = '100%';
         me.iframe.style.height = '100%';
+
+
+        //DEBUGG
+        //me.iframe.style.overflow = 'hidden';
+        //me.iframe.scrolling = 'auto';
+
 
         me.dframe.style.visibility = 'hidden';
         me.dframe.style.position = 'absolute';
@@ -1650,8 +1664,11 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
         me.transparence.style.zIndex = 4;
         me.transparence.style.borderWidth = '0px';
         me.transparence.style.borderColor = '#ff00ee';
-        //this.transparence.style.borderStyle='none';
+        me.transparence.style.borderStyle = 'none';
         me.transparence.style.cursor = 'default';
+
+        //20181231
+        me.transparence.style.pointerEvents = 'none';
 
         me.canvas.canvasElement.style.backgroundColor = appearance.frameBackgroundColor;
 
@@ -1811,16 +1828,25 @@ CIfFrame.prototype.handleReleasingFocus = function (e) {
 
     return me;
 };
+CIfFrame.prototype.disableTransparent = function (e) {
+    var me = this;
+    // me.transparence.style.width = '0px';
+    // me.transparence.style.height = '0px';
 
+    me.transparence.style.pointerEvents = 'none';
+
+};
 CIfFrame.prototype.handleTakingFocus = function (e) {
     var me = this;
     me._hasFocus = true;
     me._hasFocus = Date.now();
 
     if (me.overrayTransparentScreenEnabled) {
+
         //close transparence screen
         me.transparence.style.width = '0px';
         me.transparence.style.height = '0px';
+
     }
 
     me.titleBar.style.backgroundColor = me.titleBarColorFocused;
@@ -2010,6 +2036,9 @@ CIfFrame.prototype.mouseUp = function (e) {
     document.body.ondrag = null;
     document.body.onselectstart = null;
 
+    //Disable when stopping moving.(Enable transparent window only when moving.)
+    //This will work smoothly even with iframe content
+    refCIfFrame.transparence.style.pointerEvents = 'none';
 };
 
 CIfFrame.prototype.setMinFrameSize = function (width, height) {
@@ -2282,6 +2311,7 @@ CIfFrame.prototype.getIfDocument = function () {
     return me.iframe.contentWindow.document;
 };
 
+
 CIfFrame.prototype.setScrolling = function (str) {
     var me = this;
     me.iframe.scrolling = str;
@@ -2427,6 +2457,11 @@ CWindowManager.prototype.windowMouseMove = function (e) {
             if (eventData.targetTypeName == 'cmarkerwindow') {
 
                 var targetObject = eventData.targetObject;
+
+
+                //Enable transparent window only when moving.
+                //This will work smoothly even with iframe content
+                targetWindow.transparence.style.pointerEvents = 'auto';
 
                 if (targetObject.usage == 'RD') {
                     targetWindow.resize(0, 0, eventData.deltaX, eventData.deltaY, true);
@@ -2680,6 +2715,7 @@ JSFrame.prototype.create = function (model) {
         appearance = this.createPresetStyle(appearanceName);
     }
 
+
     var frame = this.createFrame(left, top, width, height, appearance, properties);
 
     if (title) {
@@ -2733,6 +2769,7 @@ JSFrame.prototype.createFrame = function (left, top, width, height, appearance, 
     if (!appearance) {
         appearance = me.createFrameAppearance();
     }
+
 
     appearance.initialize();
 
@@ -2835,18 +2872,26 @@ JSFrame.prototype.createPresetStyle = function (presetName, focusedFrameOnly) {
     if (focusedFrameOnly) {
         apr.focusedFrameOnly = focusedFrameOnly;
     }
-    if (presetName == 'yosemite' && typeof(presetStyleYosemite) !== 'undefined') {
-        return presetStyleYosemite.getStyle(apr);
+
+    if (presetStyles[presetName]) {
+        var styleObj = presetStyles[presetName];
+        return styleObj.getStyle(apr);
     }
-    if (presetName == 'redstone' && typeof(presetStyleRedstone) !== 'undefined') {
-        return presetStyleRedstone.getStyle(apr);
-    }
-    if (presetName == 'popup' && typeof(presetStylePopup) !== 'undefined') {
-        return presetStylePopup.getStyle(apr);
-    }
-    if (presetName == 'toast' && typeof(presetStyleToast) !== 'undefined') {
-        return presetStyleToast.getStyle(apr);
-    }
+    // if (presetName == 'yosemite' && typeof(presetStyleYosemite) !== 'undefined') {
+    //     return presetStyleYosemite.getStyle(apr);
+    // }
+    // if (presetName == 'redstone' && typeof(presetStyleRedstone) !== 'undefined') {
+    //     return presetStyleRedstone.getStyle(apr);
+    // }
+    // if (presetName == 'popup' && typeof(presetStylePopup) !== 'undefined') {
+    //     return presetStylePopup.getStyle(apr);
+    // }
+    // if (presetName == 'toast' && typeof(presetStyleToast) !== 'undefined') {
+    //     return presetStyleToast.getStyle(apr);
+    // }
+    // if (presetName == 'material' && typeof(presetStyleMaterial) !== 'undefined') {
+    //     return presetStyleToast.getStyle(apr);
+    // }
     console.error('Preset appearance "' + presetName + '" not found.');
     return apr;
 };

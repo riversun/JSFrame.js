@@ -42,6 +42,21 @@
             });
             frame.show();
         });
+
+        const frame03 = jsFrame.create({
+            title: 'Window2',
+            name: 'window02',
+            left: 20, top: 200, width: 320, height: 160,
+            //When this option is enabled,
+            // transparent screens are displayed to realize smooth scrolling,
+            // so if there are buttons or the like, it may stop responding unless you click twice
+            smoothResizeOnIframe:true,
+        });
+        //You can also call #setUrl to show page specified by 'url' in iframe.
+        //#setUrl returns Promise.Promise will be resolved(you'll get callback) after loading iframe.
+        frame03.setUrl('iframe_content03.html').then((frame, evt) => {
+            frame.show();
+        });
     }
 
     function showToast(str) {

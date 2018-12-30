@@ -23,7 +23,7 @@
  *
  */
 
-require('./PresetStyleRedstone.css');
+require('./PresetStyleMaterial.css');
 
 function getStyle(fApr) {
 
@@ -72,13 +72,13 @@ function getStyle(fApr) {
 
         if (fApr.focusedFrameOnly) {
             return {
-                titleBarClassNameDefault: 'jsframe-preset-style-redstone-focused',
-                titleBarClassNameFocused: 'jsframe-preset-style-redstone-focused'
+                titleBarClassNameDefault: 'jsframe-preset-style-material-focused',
+                titleBarClassNameFocused: 'jsframe-preset-style-material-focused'
             };
         } else {
             return {
-                titleBarClassNameDefault: 'jsframe-preset-style-redstone-default',
-                titleBarClassNameFocused: 'jsframe-preset-style-redstone-focused'
+                titleBarClassNameDefault: 'jsframe-preset-style-material-default',
+                titleBarClassNameFocused: 'jsframe-preset-style-material-focused'
             };
         }
     };
