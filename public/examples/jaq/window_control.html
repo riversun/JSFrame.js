@@ -1,10 +1,15 @@
 <!DOCTYPE html>
+<!--
+ウィンドウのコントロール（最大化、最小化）を詳細にマニュアル設定するデモ
+-->
 <html>
 <head>
     <title>JsFrame.js yosemite</title>
     <meta charset="utf-8">
     <meta name="description" content="A javascript popup/floating window library.">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 </head>
 <body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/4/40/Mont_Blanc_depuis_Chamonix.JPG') 50% no-repeat fixed; background-size: cover;">
 
@@ -15,7 +20,7 @@
 
 <div
         style="font-size: 12px; color: white; position: fixed; right: 10px; bottom: 10px">
-    Photo License: CC-BY-SA 4.0
+    Photo by Aiguille License: CC0
 </div>
 <script src="../../jsframe.js"></script>
 <script>
@@ -40,7 +45,13 @@
             name: `Win`,
             title: `Win - Win10 style`,
             left: 20, top: 40, width: 320, height: 220, minWidth: 200, minHeight: 110,
-            appearanceName: 'redstone',
+            appearanceName: 'material',
+            appearanceParam: {
+                titleBar: {
+                    color: 'white',
+                    background: '#333333',
+                }
+            },
             style: {
                 backgroundColor: 'rgba(255,255,255,0.8)',
                 overflow: 'auto'
@@ -73,16 +84,15 @@
 
         });
 
-        const ctrl = frame.control;
 
-
+        //イベントはオーバーライドされる
         frame.on('maximizeButton', 'click', (_frame, evt) => {
             //ウィンドウを最大化する
             _frame.control.doMaximize({
                 //true:最大化したときにタイトルバーを隠す
-                hideTitleBar: true,
+                hideTitleBar: false,
                 //最大化するときのアニメーション時間
-                duration: 100,
+                duration: 200,
                 //タイトルバーを隠すときはボタンで復帰できないので変わりにキー入力を使いたい場合はキーを指定できる
                 restoreKey: 'Escape',
                 //最大化から復帰するまでのアニメーション時間（タイトルバーを隠すときはここで指定可能)
@@ -109,7 +119,7 @@
             _frame.control.doDemaximize(
                 {
                     //最大化から復帰するまでのアニメーション時間
-                    duration: 100,
+                    duration: 200,
                     //ウィンドウを最大化から復帰した後のコールバックを受け取る関数
                     callback: (frame, info) => {
                         jsFrame.showToast({
@@ -123,7 +133,7 @@
 
             //'minimizeButton'が押されたときに、最小化したい場合
             _frame.control.doMinimize({
-                duration: 100,
+                duration: 200,
                 callback: (frame, info) => {
                     jsFrame.showToast({
                         text: frame.getName() + ' ' + info.eventType
@@ -134,7 +144,7 @@
         });
         frame.on('deminimizeButton', 'click', (_frame, evt) => {
             _frame.control.doDeminimize({
-                duration: 100,//最小化状態から戻るときのアニメーション時間(ms)
+                duration: 200,//最小化状態から戻るときのアニメーション時間(ms)
                 //最小化状態から復帰を受け取るコールバック関数
                 callback: (frame, info) => {
                     jsFrame.showToast({
@@ -150,6 +160,7 @@
 
             //ウィンドウを非表示状態に遷移する
             _frame.control.doHide({
+                duration: 100,
                 //非表示にするときのアニメーションの終点
                 align: 'CENTER_BOTTOM',
                 //非表示処理が終了したときのコールバックを受け取る関数

@@ -25,35 +25,96 @@
 
 require('./PresetStyleMaterial.css');
 
-function getStyle(fApr) {
+
+function getStyle(fApr, userParam) {
+
+    var srcParam = {
+        border: {
+            color: 'transparent',
+            width: 0,
+            radius: 6,
+        },
+        titleBar: {
+            color: 'white',
+            background: 'black',
+            leftMargin: 20,
+            height: 30,
+            fontSize: 12,
+            buttonWidth: 36,
+            buttonHeight: 16,
+            buttonColor: 'white',
+            buttons: [
+                {
+                    fa: 'fas fa-times',
+                    name: 'closeButton',
+                    visible: true
+                },
+                {
+                    fa: 'far fa-window-maximize',
+                    name: 'maximizeButton',
+                    visible: true
+                },
+                {
+                    fa: 'far fa-window-restore',
+                    name: 'restoreButton',
+                    visible: false
+                },
+                {
+                    fa: 'far fa-window-minimize',
+                    name: 'minimizeButton',
+                    visible: true
+                },
+                {
+                    fa: 'fas fa-caret-up',
+                    name: 'deminimizeButton',
+                    visible: false
+                }
+
+            ]
+        },
+
+
+    };
+
+    var param = srcParam;
+
+    if (userParam) {
+        //param=Object.assign({},srcParam, userParam);
+
+        objectAssign(srcParam, userParam);
+        console.log(srcParam);
+    }
+
 
     fApr.showTitleBar = true;
     fApr.showCloseButton = true;
 
-    fApr.titleBarCaptionFontSize = '12px';
+    fApr.titleBarCaptionFontSize = param.titleBar.fontSize + 'px';//'12px';
     fApr.titleBarCaptionFontWeight = 'normal';
-    fApr.titleBarCaptionLeftMargin = '10px';
-    fApr.titleBarCaptionColorDefault = '#9b9a9b';
-    fApr.titleBarCaptionColorFocused = '#4d494d';
+    fApr.titleBarCaptionLeftMargin = param.titleBar.leftMargin + 'px';
+    fApr.titleBarCaptionColorDefault = param.titleBar.color;
+    fApr.titleBarCaptionColorFocused = param.titleBar.color;
+    fApr.titleBarCaptionTextShadow = null;
+    fApr.titleBarCaptionTextAlign = 'left';
 
-    fApr.titleBarHeight = '30px';
+    fApr.titleBarHeight = param.titleBar.height + 'px';// '50px';
 
-    fApr.titleBarColorDefault = 'white';
-    fApr.titleBarColorFocused = 'white';
+    fApr.titleBarColorDefault = param.titleBar.background;
+    fApr.titleBarColorFocused = param.titleBar.background;
 
-    fApr.titleBarBorderBottomDefault = 'solid 1px #aaaaaa';
-    fApr.titleBarBorderBottomFocused = 'solid 1px #1883d7';
+    fApr.titleBarBorderBottomDefault = 'solid 0px #aaaaaa';
+    fApr.titleBarBorderBottomFocused = 'solid 0px #1883d7';
 
-    fApr.frameBorderRadius = '0px';
+    fApr.frameBorderRadius = param.border.radius + 'px';// '6px';
 
     //border width
-    fApr.frameBorderWidthDefault = '1px';
-    fApr.frameBorderWidthFocused = '1px';
+    fApr.frameBorderWidthDefault = param.border.width + 'px';
+    fApr.frameBorderWidthFocused = param.border.width + 'px';
 
 
     //border color
-    fApr.frameBorderColorDefault = '#aaaaaa';
-    fApr.frameBorderColorFocused = '#1883d7';
+    fApr.frameBorderColorDefault = param.border.color;
+    fApr.frameBorderColorFocused = param.border.color;
 
     fApr.frameBorderStyle = 'solid';
 
@@ -62,292 +123,94 @@ function getStyle(fApr) {
 
     fApr.frameBackgroundColor = 'transparent';
 
-
     fApr.frameComponents = new Array();
 
-    //adjustment value
     fApr.frameHeightAdjust = 0;//default is 1
 
     fApr.getTitleBarStyle = function () {
 
         if (fApr.focusedFrameOnly) {
             return {
-                titleBarClassNameDefault: 'jsframe-preset-style-material-focused',
-                titleBarClassNameFocused: 'jsframe-preset-style-material-focused'
+                titleBarClassNameDefault: ' ',
+                titleBarClassNameFocused: ' '
             };
         } else {
             return {
-                titleBarClassNameDefault: 'jsframe-preset-style-material-default',
-                titleBarClassNameFocused: 'jsframe-preset-style-material-focused'
+                titleBarClassNameDefault: ' ',
+                titleBarClassNameFocused: ' '
             };
         }
     };
 
     fApr.onInitialize = function () {
 
-
         var partsBuilder = fApr.getPartsBuilder();
 
+        var x = 0;
 
-        {
-            //configure close button appearance[begin]//////////////
+        for (var j in param.titleBar.buttons) {
 
-            var CROSS_MARK = '\u2573';
-
-            var cbApr = partsBuilder.buildTextButtonAppearance();
-
-            cbApr.width = 45;
-            cbApr.height = 28;
+            var buttonSrc = param.titleBar.buttons[j];
 
 
-            cbApr.borderRadius = 0;
-            cbApr.borderWidth = 0;
-
-            cbApr.borderColorDefault = '#c6c6c6';
-            cbApr.borderColorFocused = '#fc615c';
-            cbApr.borderColorHovered = cbApr.borderColorFocused;
-            cbApr.borderColorPressed = '#e64842';
-
-            cbApr.borderStyleDefault = 'solid';
-            cbApr.borderStyleFocused = cbApr.borderStyleDefault;
-            cbApr.borderStyleHovered = cbApr.borderStyleDefault;
-            cbApr.borderStylePressed = cbApr.borderStyleDefault;
-
-            //background
-            cbApr.backgroundColorDefault = 'white';
-            cbApr.backgroundColorFocused = 'white';
-            cbApr.backgroundColorHovered = '#e81123';
-            cbApr.backgroundColorPressed = '#f1707a';
+            var bt = partsBuilder.buildTextButtonAppearance();
 
             //caption
-            cbApr.caption = CROSS_MARK;
+            bt.fa = buttonSrc.fa;
 
-            cbApr.captionColorDefault = '#9b9a9b';
-            cbApr.captionColorFocused = 'black';
-            cbApr.captionColorHovered = 'white';
-            cbApr.captionColorPressed = 'white';
+            bt.width = param.titleBar.buttonWidth;
+            bt.height = param.titleBar.buttonHeight;
 
-            cbApr.captionShiftYpx = 1;
-            cbApr.captionFontRatio = 0.6;
+            bt.borderRadius = 0;
+            bt.borderWidth = 0;
 
-            var closeBtnEle = partsBuilder.buildTextButton(cbApr);
-            var eleLeft = 0;
-            var eleTop = -parseInt(fApr.titleBarHeight);
-            var eleAlign = 'RIGHT_TOP';
+            bt.borderColorDefault = '#c6c6c6';
+            bt.borderColorFocused = '#fc615c';
+            bt.borderColorHovered = bt.borderColorFocused;
+            bt.borderColorPressed = '#e64842';
 
-            // 'closeButton' is a special name
-            fApr.addFrameComponent('closeButton', closeBtnEle, eleLeft, eleTop, eleAlign);
-
-            //configure close button appearance[end]//////////////
-        }
-
-        {
-            //configure close button appearance[begin]//////////////
-
-            var MAXIMIZE_MARK = '\u2610';
-
-            var maxApr = partsBuilder.buildTextButtonAppearance();
-
-            maxApr.width = 45;
-            maxApr.height = 28;
-
-
-            maxApr.borderRadius = 0;
-            maxApr.borderWidth = 0;
-
-            maxApr.borderColorDefault = '#c6c6c6';
-            maxApr.borderColorFocused = '#fc615c';
-            maxApr.borderColorHovered = maxApr.borderColorFocused;
-            maxApr.borderColorPressed = '#e64842';
-
-            maxApr.borderStyleDefault = 'solid';
-            maxApr.borderStyleFocused = maxApr.borderStyleDefault;
-            maxApr.borderStyleHovered = maxApr.borderStyleDefault;
-            maxApr.borderStylePressed = maxApr.borderStyleDefault;
+            bt.borderStyleDefault = 'solid';
+            bt.borderStyleFocused = bt.borderStyleDefault;
+            bt.borderStyleHovered = bt.borderStyleDefault;
+            bt.borderStylePressed = bt.borderStyleDefault;
 
             //background
-            maxApr.backgroundColorDefault = 'white';
-            maxApr.backgroundColorFocused = 'white';
-            maxApr.backgroundColorHovered = '#e5e5e5';
-            maxApr.backgroundColorPressed = '#cccccc';
+            bt.backgroundColorDefault = 'transparent';
+            bt.backgroundColorFocused = 'transparent';
+            bt.backgroundColorHovered = 'transparent';
+            bt.backgroundColorPressed = 'transparent';
 
-            //caption
-            maxApr.caption = MAXIMIZE_MARK;
+            var colors = getSubColor(param.titleBar.buttonColor);
+            bt.captionColorDefault = param.titleBar.buttonColor;
+            bt.captionColorFocused = param.titleBar.buttonColor;
+            bt.captionColorHovered = colors.hovered;
+            bt.captionColorPressed = colors.pressed;
 
-            maxApr.captionColorDefault = '#9b9a9b';
-            maxApr.captionColorFocused = 'black';
-            maxApr.captionColorHovered = 'black';
-            maxApr.captionColorPressed = 'black';
+            bt.captionShiftYpx = 0;
+            bt.captionFontRatio = 1;
 
-            maxApr.captionShiftYpx = 1;
-            maxApr.captionFontRatio = 0.55;
+            var closeBtnEle = partsBuilder.buildTextButton(bt);
 
-            var maxBtnEle = partsBuilder.buildTextButton(maxApr);
-            var eleLeft = -46;
-            var eleTop = -parseInt(fApr.titleBarHeight);
+            if (buttonSrc.visible) {
+                closeBtnEle.style.display = 'flex';
+            } else {
+                x += param.titleBar.buttonWidth;
+                closeBtnEle.style.display = 'none';
+            }
+
+            var titleBarHeight = parseInt(fApr.titleBarHeight);
+
+            var eleLeft = x;
+
+            //compute vertical center
+            var eleTop = -titleBarHeight + (titleBarHeight - bt.height) / 2;
+
             var eleAlign = 'RIGHT_TOP';
 
-            // 'closeButton' is a special name
-            fApr.addFrameComponent('maximizeButton', maxBtnEle, eleLeft, eleTop, eleAlign);
+            fApr.addFrameComponent(buttonSrc.name, closeBtnEle, eleLeft, eleTop, eleAlign);
 
-            //configure close button appearance[end]//////////////
-        }
+            x += -param.titleBar.buttonWidth;
 
-        {
-            //configure close button appearance[begin]//////////////
-
-            var MINIMIZE_MARK = '\uff3f';
-
-            var minApr = partsBuilder.buildTextButtonAppearance();
-
-            minApr.width = 45;
-            minApr.height = 28;
-
-
-            minApr.borderRadius = 0;
-            minApr.borderWidth = 0;
-
-            minApr.borderColorDefault = '#c6c6c6';
-            minApr.borderColorFocused = '#fc615c';
-            minApr.borderColorHovered = minApr.borderColorFocused;
-            minApr.borderColorPressed = '#e64842';
-
-            minApr.borderStyleDefault = 'solid';
-            minApr.borderStyleFocused = minApr.borderStyleDefault;
-            minApr.borderStyleHovered = minApr.borderStyleDefault;
-            minApr.borderStylePressed = minApr.borderStyleDefault;
-
-            //background
-            minApr.backgroundColorDefault = 'white';
-            minApr.backgroundColorFocused = 'white';
-            minApr.backgroundColorHovered = '#e5e5e5';
-            minApr.backgroundColorPressed = '#cccccc';
-
-            //caption
-            minApr.caption = MINIMIZE_MARK;
-
-            minApr.captionColorDefault = '#9b9a9b';
-            minApr.captionColorFocused = 'black';
-            minApr.captionColorHovered = 'black';
-            minApr.captionColorPressed = 'black';
-
-            minApr.captionShiftYpx = -2;
-            minApr.captionFontRatio = 0.3;
-
-            var minBtnEle = partsBuilder.buildTextButton(minApr);
-            var eleLeft = -92;
-            var eleTop = -parseInt(fApr.titleBarHeight);
-            var eleAlign = 'RIGHT_TOP';
-
-            // 'closeButton' is a special name
-            fApr.addFrameComponent('minimizeButton', minBtnEle, eleLeft, eleTop, eleAlign);
-
-            //configure close button appearance[end]//////////////
-        }
-        {
-            //configure close button appearance[begin]//////////////
-
-
-            var deminApr = partsBuilder.buildTextButtonAppearance();
-
-            deminApr.width = 45;
-            deminApr.height = 28;
-
-
-            deminApr.borderRadius = 0;
-            deminApr.borderWidth = 0;
-
-            deminApr.borderColorDefault = '#c6c6c6';
-            deminApr.borderColorFocused = '#fc615c';
-            deminApr.borderColorHovered = deminApr.borderColorFocused;
-            deminApr.borderColorPressed = '#e64842';
-
-            deminApr.borderStyleDefault = 'solid';
-            deminApr.borderStyleFocused = deminApr.borderStyleDefault;
-            deminApr.borderStyleHovered = deminApr.borderStyleDefault;
-            deminApr.borderStylePressed = deminApr.borderStyleDefault;
-
-            //background
-            deminApr.backgroundColorDefault = 'white';
-            deminApr.backgroundColorFocused = 'white';
-            deminApr.backgroundColorHovered = '#e5e5e5';
-            deminApr.backgroundColorPressed = '#cccccc';
-
-            //caption
-            deminApr.caption ='\u25A3';
-
-            deminApr.captionColorDefault = '#9b9a9b';
-            deminApr.captionColorFocused = 'black';
-            deminApr.captionColorHovered = 'black';
-            deminApr.captionColorPressed = 'black';
-
-            deminApr.captionShiftYpx = 1;
-            deminApr.captionFontRatio = 0.6;
-
-            var deminBtnEle = partsBuilder.buildTextButton(deminApr);
-            var eleLeft = -92;
-            var eleTop = -parseInt(fApr.titleBarHeight);
-            var eleAlign = 'RIGHT_TOP';
-
-            deminBtnEle.style.display = 'none';
-
-            // 'closeButton' is a special name
-            fApr.addFrameComponent('deminimizeButton', deminBtnEle, eleLeft, eleTop, eleAlign);
-
-            //configure close button appearance[end]//////////////
-        }
-        {
-            //configure close button appearance[begin]//////////////
-
-            var RESTORE_MARK = '\u274F';
-
-            var rbApr = partsBuilder.buildTextButtonAppearance();
-
-            rbApr.width = 45;
-            rbApr.height = 28;
-
-
-            rbApr.borderRadius = 0;
-            rbApr.borderWidth = 0;
-
-            rbApr.borderColorDefault = '#c6c6c6';
-            rbApr.borderColorFocused = '#fc615c';
-            rbApr.borderColorHovered = rbApr.borderColorFocused;
-            rbApr.borderColorPressed = '#e64842';
-
-            rbApr.borderStyleDefault = 'solid';
-            rbApr.borderStyleFocused = rbApr.borderStyleDefault;
-            rbApr.borderStyleHovered = rbApr.borderStyleDefault;
-            rbApr.borderStylePressed = rbApr.borderStyleDefault;
-
-            //background
-            rbApr.backgroundColorDefault = 'white';
-            rbApr.backgroundColorFocused = 'white';
-            rbApr.backgroundColorHovered = '#e5e5e5';
-            rbApr.backgroundColorPressed = '#cccccc';
-
-            //caption
-            rbApr.caption = RESTORE_MARK;
-
-            rbApr.captionColorDefault = '#9b9a9b';
-            rbApr.captionColorFocused = 'black';
-            rbApr.captionColorHovered = 'black';
-            rbApr.captionColorPressed = 'black';
-
-            rbApr.captionShiftYpx = 1;
-            rbApr.captionFontRatio = 0.55;
-
-            var restoreBtnEle = partsBuilder.buildTextButton(rbApr);
-            var eleLeft = -46;
-            var eleTop = -parseInt(fApr.titleBarHeight);
-            var eleAlign = 'RIGHT_TOP';
-
-            restoreBtnEle.style.display = 'none';
-
-            // 'closeButton' is a special name
-            fApr.addFrameComponent('restoreButton', restoreBtnEle, eleLeft, eleTop, eleAlign);
-
-            //configure close button appearance[end]//////////////
         }
 
 
@@ -355,6 +218,51 @@ function getStyle(fApr) {
     //
 
     return fApr;
+}
+
+
+function getSubColor(color) {
+
+    var canvas = document.createElement('canvas');
+    canvas.height = 1;
+    canvas.width = 1;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, 1, 1);
+    var colorData = ctx.getImageData(0, 0, 1, 1).data;
+
+    var r = colorData[0];
+    var g = colorData[1];
+    var b = colorData[2];
+    var alpha = colorData[3] / 255;
+    var alpha2 = alpha * 0.85;
+    var alpha3 = alpha * 0.75;
+
+    var ret = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha2 + ')';
+    var ret2 = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha2 + ')';
+    var ret3 = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha3 + ')';
+    return {src: ret, hovered: ret2, pressed: ret3};
+}
+
+function isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+function objectAssign(target, ...sources) {
+    if (!sources.length) return target;
+    const source = sources.shift();
+
+    if (isObject(target) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!target[key]) Object.assign(target, {[key]: {}});
+                objectAssign(target[key], source[key]);
+            } else {
+                Object.assign(target, {[key]: source[key]});
+            }
+        }
+    }
+    return objectAssign(target, ...sources);
 }
 
 

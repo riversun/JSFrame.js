@@ -37,15 +37,15 @@ export {
 var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
-// var presetStyleYosemite = require('./PresetStyleYosemite.js');
-// var presetStyleRedstone = require('./PresetStyleRedstone.js');
-// var presetStylePopup = require('./PresetStylePopup.js');
 // var presetStyleToast = require('./PresetStyleToast.js');
 // var presetStyleMaterial = require('./PresetStyleMaterial.js');
 
 var presetStyles = {
     'yosemite': require('./PresetStyleYosemite.js'),
     'redstone': require('./PresetStyleRedstone.js'),
+    'popup': require('./PresetStylePopup.js'),
+    'toast': require('./PresetStyleToast.js'),
+    'material': require('./PresetStyleMaterial.js'),
 };
 
 
@@ -87,6 +87,8 @@ function CFrameAppearance() {
     this.titleBarColorFocused = '#d3e1ee';
     this.titleBarCaptionColorDefault = '';
     this.titleBarCaptionColorFocused = '';
+    this.titleBarCaptionTextShadow = "0 1px 0 rgba(255,255,255,.7)";
+    this.titleBarCaptionTextAlign = 'center';
 
     this.titleBarBorderBottomDefault = '1px solid rgba(0,0,0,0.2)';
     this.titleBarBorderBottomFocused = null;
@@ -764,6 +766,9 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
     me.titleBarCaptionFontWeight = appearance.titleBarCaptionFontWeight;
     me.titleBarBorderBottomDefault = appearance.titleBarBorderBottomDefault;
     me.titleBarBorderBottomFocused = appearance.titleBarBorderBottomFocused;
+    me.titleBarCaptionTextShadow = appearance.titleBarCaptionTextShadow;
+    me.titleBarCaptionTextAlign = appearance.titleBarCaptionTextAlign;
+
     //Title bar width adjustment value
     me.titleAdjustWidth = 2;
 
@@ -827,8 +832,11 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
         me.titleBar.style.color = me.titleBarCaptionColorDefault;
         me.titleBar.style.fontSize = me.titleBarCaptionFontSize;
         me.titleBar.style.fontWeight = me.titleBarCaptionFontWeight;
-        me.titleBar.style.textShadow = "0 1px 0 rgba(255,255,255,.7)";
-        me.titleBar.style.textAlign = 'center';
+        me.titleBar.style.textShadow = me.titleBarCaptionTextShadow;
+        me.titleBar.style.textAlign = me.titleBarCaptionTextAlign;
+        // me.titleBar.style.textShadow = "0 1px 0 rgba(255,255,255,.7)";
+        // me.titleBar.style.textAlign = 'center';
+
         me.titleBar.style.lineHeight = me.titleBar.style.height;
 
 
@@ -2700,6 +2708,7 @@ JSFrame.prototype.create = function (model) {
     var height = model.height;
     var appearance = model.appearance;
     var appearanceName = model.appearanceName;
+    var appearanceParam = model.appearanceParam;
     var style = model.style;
 
     var minWidth = model.minWidth;
@@ -2712,7 +2721,7 @@ JSFrame.prototype.create = function (model) {
     var urlLoaded = model.urlLoaded;
 
     if (appearanceName) {
-        appearance = this.createPresetStyle(appearanceName);
+        appearance = this.createPresetStyle(appearanceName, {appearanceParam: appearanceParam});
     }
 
 
@@ -2861,37 +2870,29 @@ JSFrame.prototype.createWindowEventHelper = function (model) {
     model.verticalAlign = me.vAlign;
     model.horizontalAlign = me.hAlign;
 
-    const wndEventHelper = new WindowEventHelper(model);
+    var wndEventHelper = new WindowEventHelper(model);
     return wndEventHelper;
 }
 
-JSFrame.prototype.createPresetStyle = function (presetName, focusedFrameOnly) {
+JSFrame.prototype.createPresetStyle = function (presetName, param) {
 
     var me = this;
     var apr = me.createFrameAppearance();
-    if (focusedFrameOnly) {
-        apr.focusedFrameOnly = focusedFrameOnly;
+    if (param && param.focusedFrameOnly) {
+        apr.focusedFrameOnly = param.focusedFrameOnly;
     }
 
     if (presetStyles[presetName]) {
         var styleObj = presetStyles[presetName];
-        return styleObj.getStyle(apr);
+        var appearanceParam = null;
+
+        if (param && param.appearanceParam) {
+            appearanceParam = param.appearanceParam;
+        }
+
+        return styleObj.getStyle(apr, appearanceParam);
     }
-    // if (presetName == 'yosemite' && typeof(presetStyleYosemite) !== 'undefined') {
-    //     return presetStyleYosemite.getStyle(apr);
-    // }
-    // if (presetName == 'redstone' && typeof(presetStyleRedstone) !== 'undefined') {
-    //     return presetStyleRedstone.getStyle(apr);
-    // }
-    // if (presetName == 'popup' && typeof(presetStylePopup) !== 'undefined') {
-    //     return presetStylePopup.getStyle(apr);
-    // }
-    // if (presetName == 'toast' && typeof(presetStyleToast) !== 'undefined') {
-    //     return presetStyleToast.getStyle(apr);
-    // }
-    // if (presetName == 'material' && typeof(presetStyleMaterial) !== 'undefined') {
-    //     return presetStyleToast.getStyle(apr);
-    // }
+
     console.error('Preset appearance "' + presetName + '" not found.');
     return apr;
 };
@@ -3223,6 +3224,7 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
 
     var backgroundBoxShadow = btnAppearance.backgroundBoxShadow;
 
+    var fa = btnAppearance.fa;
 
     //caption
     var caption = btnAppearance.caption;
@@ -3271,8 +3273,8 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
     //added for preventing bootstrap.css pollution
     divElement.style.boxSizing = 'content-box';
     divElement.style.fontFamily = 'sans-serif';
-    divElement.onmousedown = function (e) {
 
+    divElement.onmousedown = function (e) {
         divElement._isMouseDown = true;
         divElement._handleFocusDrawing('onmousedown');
     };
@@ -3281,13 +3283,12 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
         divElement._isMouseDown = false;
         divElement._handleFocusDrawing('onmouseout');
     };
-    divElement.onmouseover = function (e) {
 
+    divElement.onmouseover = function (e) {
         divElement._handleHoverDrawing();
     };
 
     divElement.onmouseup = function (e) {
-
         divElement._isMouseDown = false;
         divElement._handleFocusDrawing('onmouseup');
     };
@@ -3297,7 +3298,6 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
      * The parent notifies that the parent's frame got focus
      */
     divElement._onTakeFocus = function () {
-
         divElement._hasFrameFocus = true;
         divElement._handleFocusDrawing('_onTakeFocus');
     };
@@ -3452,19 +3452,26 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
         divElement.appendChild(btnImageDefault);
     }
     else if (childMode && caption) {
+
         var span = document.createElement('span');
         //span.style.position='absolute';
         span.style.width = '100%';
-
         span.style.marginTop = captionShiftYpx + 'px';
         span.style.display = 'inline-block';
         span.style.textAlign = 'center';
-
         span.style.fontFamily = "sans-serif";
-
-
         span.appendChild(document.createTextNode(caption));
+        divElement.appendChild(span);
 
+    } else if (childMode && fa) {
+
+        var span = document.createElement('span');
+        span.style.width = '100%';
+        span.style.marginTop = captionShiftYpx + 'px';
+        span.style.display = 'inline-block';
+        span.style.textAlign = 'center';
+        span.style.fontFamily = "sans-serif";
+        span.innerHTML = '<i class="' + fa + '"></i>';
         divElement.appendChild(span);
     } else if (!childMode && caption) {
         divElement.style.paddingTop = captionShiftYpx + "px";
@@ -3507,7 +3514,7 @@ function CTextButtonAppearance() {
     this.backgroundColorPressed = this.backgroundColorDefault;
 
     //caption
-    this.caption = crossMark0;
+    this.caption = null;
     this.captionColorDefault = 'white';
     this.captionColorFocused = this.captionColorDefault;
     this.captionColorHovered = null;

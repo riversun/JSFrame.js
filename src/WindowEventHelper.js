@@ -82,8 +82,10 @@ WindowEventHelper.prototype.doMaximize = function (model) {
     //Remember the status of the window before maximizing the window size
     me.saveCurrentWindowStats('maximize_mode');
 
+    me.hideTitleBar = model ? model.hideTitleBar : false;
 
     if (me.hideTitleBar) {
+
         //Hide only the currently visible FrameComponent
         //ウィンドウのモードを変更する前の今の状態で可視状態にあるフレームコンポーネント（閉じるボタン類）を不可視にする
         //(タイトルバー非表示の場合には最大化するときのアニメーションでフレームコンポーネントを見せないようにする)
@@ -108,7 +110,7 @@ WindowEventHelper.prototype.doMaximize = function (model) {
     frame.setMovable(false);
     frame.setResizable(false);
 
-    me.hideTitleBar = model ? model.hideTitleBar : false;
+
 
     if (model && model.restoreKey) {
         me.restoreKey = model.restoreKey;
@@ -387,6 +389,7 @@ WindowEventHelper.prototype.doHide = function (model) {
 
     me.renderHideMode({
         animation: me.animationEnabled,
+        duration: (model && model.duration) ? model.duration : null,
         callback: (model && model.callback) ? model.callback : null,
         align: (model && model.align) ? model.align : null
     });
@@ -477,7 +480,7 @@ WindowEventHelper.prototype.renderHideMode = function (model) {
     if (model && model.animation) {
         me.animateFrame({
             toAlpha: 0,
-            duration: me.animationDuration,
+            duration: model.duration ? model.duration : me.animationDuration,
             frame: frame,
             from: from,
             to: to,
