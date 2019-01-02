@@ -194,10 +194,10 @@ CFrameAppearance.prototype.initialize = function () {
  * @returns {CFrameComponent}
  *
  */
-CFrameAppearance.prototype.addFrameComponent = function (id, myDomElement, x, y, align) {
+CFrameAppearance.prototype.addFrameComponent = function (id, myDomElement, x, y, align, extra) {
 
     //(id, frame, htmlElement, x, y, align)
-    var frameComponent = new CFrameComponent(id, myDomElement, x, y, align);
+    var frameComponent = new CFrameComponent(id, myDomElement, x, y, align, extra);
 
     if (myDomElement._onTakeFocus && myDomElement._onReleaseFocus) {
         //if this DOM element has special method for focus
@@ -378,6 +378,7 @@ CBeanFrame.prototype.onBodyClicked = function (e) {
     if (left < clickX && clickX < (left + width) && top < clickY && (clickY < top + height)) {
         //- clicked internal area of this frame
     } else {
+
         //- clicked external area of this frame
         if (me.externalAreaClickedListener) {
             me.externalAreaClickedListener();
@@ -1162,6 +1163,22 @@ CFrame.prototype.showAllVisibleFrameComponents = function () {
     }
 };
 
+
+CFrame.prototype.hideFrameComponentChildMenus = function () {
+    var me = this;
+
+    var compMap = me.frameComponentMap;
+    for (var key in  compMap) {
+        if (compMap.hasOwnProperty(key)) {
+            var comp = compMap[key];
+            if (comp.childMenu) {
+                comp.childMenu.style.display = 'none';
+            }
+        }
+    }
+};
+
+
 CFrame.prototype.setTitle = function (str) {
     var me = this;
     me.title = str;
@@ -1267,7 +1284,7 @@ CFrame.prototype.close = function (e) {
     var parentCanvas = this.parentObject.parentCanvas;
     var cframeObj = this.parentObject;
 
-    console.log('CFrame#close "' + me.title + '(@' + me.getName() + ')' + '" @' + me.windowId);
+    console.log('CFrame#close "' + cframeObj.title + '(@' + cframeObj.getName() + ')' + '" @' + cframeObj.windowId);
 
     var windowId = cframeObj.id;
     cframeObj.closeInternally(e, parentCanvas, windowId);
@@ -1735,11 +1752,24 @@ CIfFrame.prototype.on = function (id, eventType, callbackFunc) {
         //Since we want to specify only one handler for frame components at the same time,
         // use an event handler instead of an event listener
         component['on' + eventType] = function (e) {
+
+
+            var childMenuEle = document.getElementById(id + '_child_menu');
+            if (childMenuEle && eventType === 'click') {
+                if (childMenuEle.style.display == 'flex') {
+                    childMenuEle.style.display = 'none';
+                } else {
+                    childMenuEle.style.display = 'flex';
+                }
+            }
+
+
             callbackFunc(me, e,
                 {
                     type: 'frameComponent',
                     id: id,
-                    eventType: eventType
+                    eventType: eventType,
+                    child: childMenuEle
                 });
         };
     }
@@ -1836,14 +1866,7 @@ CIfFrame.prototype.handleReleasingFocus = function (e) {
 
     return me;
 };
-CIfFrame.prototype.disableTransparent = function (e) {
-    var me = this;
-    // me.transparence.style.width = '0px';
-    // me.transparence.style.height = '0px';
 
-    me.transparence.style.pointerEvents = 'none';
-
-};
 CIfFrame.prototype.handleTakingFocus = function (e) {
     var me = this;
     me._hasFocus = true;
@@ -2353,6 +2376,10 @@ CIfFrame.prototype.setControl = function (model) {
     if (model) {
         model.frame = me;
         me.control = me.jsFrame.createWindowEventHelper(model);
+
+        me.control.setupDefaultEvents(model);
+
+
     }
 
 }
@@ -2721,7 +2748,8 @@ JSFrame.prototype.create = function (model) {
     var urlLoaded = model.urlLoaded;
 
     if (appearanceName) {
-        appearance = this.createPresetStyle(appearanceName, {appearanceParam: appearanceParam});
+        appearance = this.createPresetStyle(appearanceName,
+            {appearanceParam: appearanceParam});
     }
 
 
@@ -3043,7 +3071,7 @@ JSFrame.prototype.showToast = function (model) {
  * @param align relative alignment in the frame
  * @constructor
  */
-function CFrameComponent(id, htmlElement, x, y, align) {
+function CFrameComponent(id, htmlElement, x, y, align, extra) {
     var me = this;
 
     me.id = id;
@@ -3062,6 +3090,10 @@ function CFrameComponent(id, htmlElement, x, y, align) {
 
     me.htmlElement = htmlElement;
     me.htmlElement.style.zIndex = 50;
+
+    if (extra && extra.childMenu) {
+        me.childMenu = extra.childMenu;
+    }
 
 }
 

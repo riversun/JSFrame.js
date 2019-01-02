@@ -12,7 +12,6 @@ function WindowEventHelper(model) {
 
     this.keyListener = null;
 
-
     this.minimizeButton = null;
     this.maximizeButton = null;
     this.demaximizeButton = null;
@@ -29,6 +28,10 @@ function WindowEventHelper(model) {
     }
     if (model.demaximizeButton) {
         this.demaximizeButton = model.demaximizeButton;
+    }
+
+    if (model.hideButton) {
+        this.hideButton = model.hideButton;
     }
 
     if (model.horizontalAlign) {
@@ -111,7 +114,6 @@ WindowEventHelper.prototype.doMaximize = function (model) {
     frame.setResizable(false);
 
 
-
     if (model && model.restoreKey) {
         me.restoreKey = model.restoreKey;
     }
@@ -191,6 +193,10 @@ WindowEventHelper.prototype.renderMaximizedMode = function (model) {
             }
 
             window.addEventListener('keydown', me.keyListener);
+            //add keylistener for inside the iframe
+            if (frame.iframe) {
+                frame.iframe.contentWindow.addEventListener('keydown', me.keyListener);
+            }
         }
 
         me.windowMode = 'maximized';
@@ -612,7 +618,11 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
 
         if (me.keyListener) {
             //タイトルバー無し最大化状態から戻すためのキーリスナーは削除する
+
             window.removeEventListener('keydown', me.keyListener);
+            if (frame.iframe) {
+                frame.iframe.contentWindow.removeEventListener('keydown', me.keyListener);
+            }
             me.keyListener = null;
         }
 
@@ -682,5 +692,80 @@ WindowEventHelper.prototype.animateFrame = function (model) {
             model['callback']();
         });
 };
+//----------------------------------------------------------------------------------------------------------------------
+WindowEventHelper.prototype.setupDefaultEvents = function (model) {
+    var me = this;
 
+
+    if (me.maximizeButton) {
+        //イベントはオーバーライドされる
+        me.frame.on(me.maximizeButton, 'click', (_frame, evt) => {
+            //ウィンドウを最大化する
+            _frame.control.doMaximize({
+                //true:最大化したときにタイトルバーを隠す
+                hideTitleBar: (model.maximizeWithoutTitleBar === true) ? true : false,
+                //最大化するときのアニメーション時間
+                duration: 100,
+                //タイトルバーを隠すときはボタンで復帰できないので変わりにキー入力を使いたい場合はキーを指定できる
+                restoreKey: model.restoreKey ? model.restoreKey : 'Escape',
+                //最大化から復帰するまでのアニメーション時間（タイトルバーを隠すときはここで指定可能)
+                restoreDuration: 100,
+                //ウィンドウを最大化終了を受け取るコールバック関数
+                callback: (frame, info) => {
+                },
+                //最大化から戻ったときに呼び出されるコールバック(タイトルバーが無い場合)
+                restoreCallback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+                },
+            });
+        });
+    }
+
+
+    if (me.demaximizeButton) {
+        me.frame.on(me.demaximizeButton, 'click', (_frame, evt) => {
+            //ウィンドウを最大化状態から復帰する
+            _frame.control.doDemaximize(
+                {
+                    // duration: 100,
+                    // callback: (frame, info) => {}
+                });
+        });
+    }
+
+    if (me.minimizeButton) {
+        me.frame.on(me.minimizeButton, 'click', (_frame, evt) => {
+
+            //'minimizeButton'が押されたときに、最小化したい場合
+            _frame.control.doMinimize({
+                // duration: 100,
+                // callback: (frame, info) => {}
+            });
+
+        });
+    }
+
+    if (me.deminimizeButton) {
+        me.frame.on(me.deminimizeButton, 'click', (_frame, evt) => {
+            _frame.control.doDeminimize({
+                // duration: 100,
+                // callback: (frame, info) => {}
+            });
+        });
+    }
+    if (me.hideButton) {
+        me.frame.on(me.hideButton, 'click', (_frame, evt) => {
+            _frame.control.doHide({
+                align: 'CENTER_BOTTOM'
+            });
+        });
+    }
+
+};
+
+WindowEventHelper.prototype.method = function () {
+
+};
 module.exports = WindowEventHelper;

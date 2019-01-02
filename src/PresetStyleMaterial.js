@@ -33,6 +33,11 @@ function getStyle(fApr, userParam) {
             color: 'transparent',
             width: 0,
             radius: 6,
+
+        },
+        control: {
+            maximizeWithoutTitleBar: false,
+            restoreKey: 'Escape',
         },
         titleBar: {
             color: 'white',
@@ -70,7 +75,8 @@ function getStyle(fApr, userParam) {
                     visible: false
                 }
 
-            ]
+            ],
+            buttonsOnLeft: [],
         },
 
 
@@ -80,9 +86,8 @@ function getStyle(fApr, userParam) {
 
     if (userParam) {
         //param=Object.assign({},srcParam, userParam);
-
         objectAssign(srcParam, userParam);
-        console.log(srcParam);
+
     }
 
 
@@ -119,7 +124,7 @@ function getStyle(fApr, userParam) {
     fApr.frameBorderStyle = 'solid';
 
     //window shadow
-    fApr.frameBoxShadow = null;
+    fApr.frameBoxShadow = param.border.shadow;//'2px 2px 10px  rgba(0, 0, 0, 0.5)';
 
     fApr.frameBackgroundColor = 'transparent';
 
@@ -144,80 +149,124 @@ function getStyle(fApr, userParam) {
 
     fApr.onInitialize = function () {
 
-        var partsBuilder = fApr.getPartsBuilder();
-
-        var x = 0;
-
-        for (var j in param.titleBar.buttons) {
-
-            var buttonSrc = param.titleBar.buttons[j];
-
-
-            var bt = partsBuilder.buildTextButtonAppearance();
-
-            //caption
-            bt.fa = buttonSrc.fa;
-
-            bt.width = param.titleBar.buttonWidth;
-            bt.height = param.titleBar.buttonHeight;
-
-            bt.borderRadius = 0;
-            bt.borderWidth = 0;
-
-            bt.borderColorDefault = '#c6c6c6';
-            bt.borderColorFocused = '#fc615c';
-            bt.borderColorHovered = bt.borderColorFocused;
-            bt.borderColorPressed = '#e64842';
-
-            bt.borderStyleDefault = 'solid';
-            bt.borderStyleFocused = bt.borderStyleDefault;
-            bt.borderStyleHovered = bt.borderStyleDefault;
-            bt.borderStylePressed = bt.borderStyleDefault;
-
-            //background
-            bt.backgroundColorDefault = 'transparent';
-            bt.backgroundColorFocused = 'transparent';
-            bt.backgroundColorHovered = 'transparent';
-            bt.backgroundColorPressed = 'transparent';
-
-            var colors = getSubColor(param.titleBar.buttonColor);
-            bt.captionColorDefault = param.titleBar.buttonColor;
-            bt.captionColorFocused = param.titleBar.buttonColor;
-            bt.captionColorHovered = colors.hovered;
-            bt.captionColorPressed = colors.pressed;
-
-            bt.captionShiftYpx = 0;
-            bt.captionFontRatio = 1;
-
-            var closeBtnEle = partsBuilder.buildTextButton(bt);
-
-            if (buttonSrc.visible) {
-                closeBtnEle.style.display = 'flex';
-            } else {
-                x += param.titleBar.buttonWidth;
-                closeBtnEle.style.display = 'none';
-            }
-
-            var titleBarHeight = parseInt(fApr.titleBarHeight);
-
-            var eleLeft = x;
-
-            //compute vertical center
-            var eleTop = -titleBarHeight + (titleBarHeight - bt.height) / 2;
-
-            var eleAlign = 'RIGHT_TOP';
-
-            fApr.addFrameComponent(buttonSrc.name, closeBtnEle, eleLeft, eleTop, eleAlign);
-
-            x += -param.titleBar.buttonWidth;
-
-        }
-
+        alignButtons(fApr, param, false);
+        alignButtons(fApr, param, true);
 
     };
+
     //
 
     return fApr;
+}
+
+function alignButtons(fApr, param, fromLeft) {
+    var partsBuilder = fApr.getPartsBuilder();
+    var rbtX = 0;
+    var buttons;
+
+    if (fromLeft) {
+        buttons = param.titleBar.buttonsOnLeft;
+
+    } else {
+        buttons = param.titleBar.buttons;
+    }
+
+    for (var rbtIdx in buttons) {
+
+        var rbtSrc = buttons[rbtIdx];
+
+        var rbt = partsBuilder.buildTextButtonAppearance();
+
+        //caption
+        rbt.fa = rbtSrc.fa;
+
+        rbt.width = param.titleBar.buttonWidth;
+        rbt.height = param.titleBar.buttonHeight;
+
+        rbt.borderRadius = 0;
+        rbt.borderWidth = 0;
+
+        rbt.borderColorDefault = '#c6c6c6';
+        rbt.borderColorFocused = '#fc615c';
+        rbt.borderColorHovered = rbt.borderColorFocused;
+        rbt.borderColorPressed = '#e64842';
+
+        rbt.borderStyleDefault = 'solid';
+        rbt.borderStyleFocused = rbt.borderStyleDefault;
+        rbt.borderStyleHovered = rbt.borderStyleDefault;
+        rbt.borderStylePressed = rbt.borderStyleDefault;
+
+        //background
+        rbt.backgroundColorDefault = 'transparent';
+        rbt.backgroundColorFocused = 'transparent';
+        rbt.backgroundColorHovered = 'transparent';
+        rbt.backgroundColorPressed = 'transparent';
+
+        var colors = getSubColor(param.titleBar.buttonColor);
+        rbt.captionColorDefault = param.titleBar.buttonColor;
+        rbt.captionColorFocused = param.titleBar.buttonColor;
+        rbt.captionColorHovered = colors.hovered;
+        rbt.captionColorPressed = colors.pressed;
+
+        rbt.captionShiftYpx = 0;
+        rbt.captionFontRatio = 1;
+
+        var rbtEle = partsBuilder.buildTextButton(rbt);
+
+        if (rbtSrc.visible) {
+            rbtEle.style.display = 'flex';
+        } else {
+            if (fromLeft) {
+                rbtX -= param.titleBar.buttonWidth;
+            } else {
+                rbtX += param.titleBar.buttonWidth;
+            }
+            rbtEle.style.display = 'none';
+        }
+
+        var titleBarHeight = parseInt(fApr.titleBarHeight);
+
+        var rbtEleLeft = rbtX;
+
+        //compute vertical center
+
+        var rbtEleTop = -titleBarHeight + (titleBarHeight - rbt.height) / 2;
+
+        var rbtEleAlign;
+        if (fromLeft) {
+            rbtEleAlign = 'LEFT_TOP';
+        } else {
+            rbtEleAlign = 'RIGHT_TOP';
+        }
+
+        var ndiv;
+        if (rbtSrc.childMenuHTML) {
+
+            ndiv = document.createElement('div');
+            ndiv.id = rbtSrc.name + '_child_menu';
+
+            ndiv.innerHTML = rbtSrc.childMenuHTML;
+            ndiv.style.position = 'absolute';
+            ndiv.style.width = (rbtSrc.childMenuWidth ? rbtSrc.childMenuWidth : 200) + 'px';
+            ndiv.style.top = (parseInt(rbtEle.style.top, 10) + parseInt(rbtEle.style.height, 10) / 2 + titleBarHeight / 2) + 'px';
+            ndiv.style.left = rbtEle.style.left;
+            ndiv.style.display = 'none';
+
+            rbtEle.appendChild(ndiv);
+        }
+
+
+        fApr.addFrameComponent(rbtSrc.name, rbtEle, rbtEleLeft, rbtEleTop, rbtEleAlign, {childMenu: ndiv});
+
+        if (fromLeft) {
+            rbtX += param.titleBar.buttonWidth;
+        } else {
+            rbtX += -param.titleBar.buttonWidth;
+        }
+
+    }
+
+
 }
 
 
