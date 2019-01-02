@@ -1318,7 +1318,7 @@ CFrame.prototype.closeInternally = function (e, parentCanvas, windowId) {
 
     //added for modal window
     if (me.modalBackgroundWindowId) {
-        this.parentCanvas.removeBean(me.modalBackgroundWindowId);
+        parentCanvas.removeBean(me.modalBackgroundWindowId);
         me.modalBackgroundWindowId = null;
     }
 
