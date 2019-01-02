@@ -6,7 +6,7 @@ var CALIGN = require('./CCommon.js');
 function WindowEventHelper(model) {
 
     this.windowMode = 'default';
-
+    this.styleDisplay='flex';
     this.horizontalAlign = 'left';
     this.verticalAlign = 'top';
 
@@ -17,6 +17,9 @@ function WindowEventHelper(model) {
     this.demaximizeButton = null;
     this.deminimizeButton = null;
 
+    if(model.styleDisplay){
+        this.styleDisplay=model.styleDisplay;
+    }
     if (model.minimizeButton) {
         this.minimizeButton = model.minimizeButton;
     }
@@ -105,7 +108,7 @@ WindowEventHelper.prototype.doMaximize = function (model) {
             frame.hideFrameComponent(me.maximizeButton);
         }
         if (me.demaximizeButton) {
-            frame.showFrameComponent(me.demaximizeButton);
+            frame.showFrameComponent(me.demaximizeButton,me.styleDisplay);
         }
     }
 
@@ -247,7 +250,7 @@ WindowEventHelper.prototype.doDemaximize = function (model) {
 
     } else {
         if (me.maximizeButton) {
-            frame.showFrameComponent(me.maximizeButton);
+            frame.showFrameComponent(me.maximizeButton,me.styleDisplay);
         }
         if (me.demaximizeButton) {
             frame.hideFrameComponent(me.demaximizeButton);
@@ -322,7 +325,7 @@ WindowEventHelper.prototype.renderMinimizedMode = function (model) {
         }
 
         if (me.deminimizeButton) {
-            frame.showFrameComponent(me.deminimizeButton);
+            frame.showFrameComponent(me.deminimizeButton,me.styleDisplay);
         }
 
         if (model.callback) {
@@ -362,7 +365,7 @@ WindowEventHelper.prototype.doDeminimize = function (model) {
     }
 
     if (me.minimizeButton) {
-        frame.showFrameComponent(me.minimizeButton);
+        frame.showFrameComponent(me.minimizeButton,me.styleDisplay);
     }
     if (me.deminimizeButton) {
         frame.hideFrameComponent(me.deminimizeButton);
@@ -697,9 +700,12 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
     var me = this;
 
 
+
     if (me.maximizeButton) {
+
         //イベントはオーバーライドされる
         me.frame.on(me.maximizeButton, 'click', (_frame, evt) => {
+
             //ウィンドウを最大化する
             _frame.control.doMaximize({
                 //true:最大化したときにタイトルバーを隠す

@@ -94,6 +94,10 @@ function getStyle(fApr) {
         imageMaximize.src = img_data_maximize_hovered;
         imageMaximize.setAttribute('style', img_style);
 
+        var imageMaximize2 = document.createElement('img');
+        imageMaximize2.src = img_data_maximize_hovered;
+        imageMaximize2.setAttribute('style', img_style);
+
         var imageMinimize = document.createElement('img');
         imageMinimize.src = img_data_minimize_hovered;
         imageMinimize.setAttribute('style', img_style);
@@ -184,12 +188,15 @@ function getStyle(fApr) {
             mbApr.imageFocused = imgTransparent;
 
             var minimizeBtnEle = partsBuilder.buildButton(mbApr);
+            var deminimizeBtnEle = partsBuilder.buildButton(mbApr);
+            deminimizeBtnEle.style.display='none';
             var eleLeft = 24;
             var eleTop = -18;
             var eleAlign = 'LEFT_TOP';
 
 
             fApr.addFrameComponent('minimizeButton', minimizeBtnEle, eleLeft, eleTop, eleAlign);
+            fApr.addFrameComponent('deminimizeButton', deminimizeBtnEle, eleLeft, eleTop, eleAlign);
 
             //configure minimize button appearance[end]//////////////
         }
@@ -228,12 +235,18 @@ function getStyle(fApr) {
             zbApr.imageFocused = imgTransparent;
 
             var zoomBtnEle = partsBuilder.buildButton(zbApr);
+            var dezoomBtnEle = partsBuilder.buildButton(zbApr);
+            dezoomBtnEle.style.display='none';
+
+
             var eleLeft = 40;
             var eleTop = -18;
             var eleAlign = 'LEFT_TOP';
 
 
             fApr.addFrameComponent('zoomButton', zoomBtnEle, eleLeft, eleTop, eleAlign);
+            fApr.addFrameComponent('dezoomButton', dezoomBtnEle, eleLeft, eleTop, eleAlign);
+
 
             //configure zoom button appearance[end]//////////////
         }

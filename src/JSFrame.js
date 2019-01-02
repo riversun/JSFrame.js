@@ -1116,11 +1116,15 @@ CFrame.prototype.removeFrameComponentById = function (frameComponentId) {
     delete me.frameComponentMap[frameComponentId];
 };
 
-CFrame.prototype.showFrameComponent = function (frameComponentId) {
+CFrame.prototype.showFrameComponent = function (frameComponentId, display) {
     var me = this;
     var comp = me.getFrameComponentElement(frameComponentId);
     if (comp) {
-        comp.style.display = "flex";
+        if (display) {
+            comp.style.display = display;
+        } else {
+            comp.style.display = "flex";
+        }
     }
     return me;
 };
@@ -1744,11 +1748,7 @@ CIfFrame.prototype.on = function (id, eventType, callbackFunc) {
     var me = this;
     var component = me.getFrameComponentElement(id);
     if (component) {
-
-        // component.addEventListener(eventType, function (e) {
-        //     callbackFunc(me, e);
-        // });
-
+        
         //Since we want to specify only one handler for frame components at the same time,
         // use an event handler instead of an event listener
         component['on' + eventType] = function (e) {
@@ -2376,7 +2376,6 @@ CIfFrame.prototype.setControl = function (model) {
     if (model) {
         model.frame = me;
         me.control = me.jsFrame.createWindowEventHelper(model);
-
         me.control.setupDefaultEvents(model);
 
 

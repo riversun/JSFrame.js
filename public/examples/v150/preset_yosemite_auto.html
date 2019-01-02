@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js yosemite</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+</head>
+<body style="background: url('http://upload.wikimedia.org/wikipedia/commons/d/d6/Half_Dome_from_Glacier_Point%2C_Yosemite_NP_-_Diliff.jpg') 50% no-repeat fixed; background-size: cover;">
+<script src="../../jsframe.js"></script>
+<script>
+    function start() {
+
+        const jsFrame = new JSFrame();
+
+        const frames = [];
+        for (let i = 0; i < 3; i++) {
+            const frame = jsFrame.create({
+                name: `Win${i}`,
+                title: `Win${i} - Yosemite style`,
+                left: 20 + (320 + 20) * i, top: 50, width: 320, height: 220, minWidth: 200, minHeight: 110,
+                appearanceName: 'yosemite',
+                style: {
+                    backgroundColor: 'rgba(255,255,255,0.8)',
+                    overflow:'auto'
+
+                },
+
+                html: '<div style="padding:10px;">Your contents here.</div>'
+            }).show();
+
+
+            frame.setControl({
+                styleDisplay:'inline',
+                maximizeButton: 'zoomButton',
+                demaximizeButton: 'dezoomButton',
+                minimizeButton: 'minimizeButton',
+                deminimizeButton: 'deminimizeButton',
+                hideButton: 'closeButton',
+                animation: true,
+                animationDuration: 150,
+
+            });
+
+            frame.control.on('hid', (frame, info) => {
+                frame.closeFrame();
+            });
+
+
+
+
+            frames.push(frame);
+        }
+        frames[0].requestFocus();
+    }
+
+    start();
+</script>
+<div style="color:#666666"><a href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : Preset style
+    yosemite
+</div>
+<div style="font-size: 12px; color: white; position: fixed; right: 10px; bottom: 10px">
+    Photo by Tiago Fioreze License: CC-BY-SA 3.0
+</div>
+</body>
+</html>

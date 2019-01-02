@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!--
+
+-->
+<html>
+<head>
+    <title>JsFrame.js window control</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/4/40/Mont_Blanc_depuis_Chamonix.JPG') 50% no-repeat fixed; background-size: cover;">
+
+<div style="color:#f5f5f5;text-shadow: 2px 2px 1px #333333;"><a
+        href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : Preset style redstone
+</div>
+
+
+<div
+        style="font-size: 12px; color: white; position: fixed; right: 10px; bottom: 10px">
+    Photo by Aiguille License: CC0
+</div>
+<script src="../../jsframe.js"></script>
+<script>
+
+    const jsFrame = new JSFrame({
+        horizontalAlign: 'left',
+        verticalAlign: 'top',
+    });
+
+    function rest() {
+        var frame = jsFrame.getWindowByName('Win0');
+        frame.control.doDehide();
+    }
+
+    function start() {
+
+        const frame = jsFrame.create({
+            name: `Win`,
+            title: `Win - Win10 style`,
+            left: 20, top: 40, width: 320, height: 220, minWidth: 200, minHeight: 110,
+            appearanceName: 'material',
+            style: {
+                backgroundColor: 'rgba(255,255,255,0.8)',
+                overflow: 'auto'
+            },
+
+            url: 'iframe_content03.html',
+        }).show();
+
+
+        frame.setControl({
+            maximizeButton: 'maximizeButton',
+            demaximizeButton: 'restoreButton',
+            minimizeButton: 'minimizeButton',
+            deminimizeButton: 'deminimizeButton',
+            animation: true,
+            animationDuration: 200,
+
+        });
+
+
+        frame.on('maximizeButton', 'click', (_frame, evt) => {
+            _frame.control.doMaximize({
+                hideTitleBar: false,
+                duration: 200,
+                restoreKey: 'Escape',
+                restoreDuration: 100,
+                callback: (frame, info) => {
+                    frame.requestFocus();
+                    frame.disableTransparent();
+                },
+                restoreCallback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+                },
+            });
+        });
+
+        frame.on('restoreButton', 'click', (_frame, evt) => {
+            _frame.control.doDemaximize(
+                {
+                    duration: 200,
+                    callback: (frame, info) => {
+                        jsFrame.showToast({
+                            text: frame.getName() + ' ' + info.eventType
+                        });
+                    }
+                });
+        });
+
+        frame.on('minimizeButton', 'click', (_frame, evt) => {
+
+            _frame.control.doMinimize({
+                duration: 200,
+                callback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+                }
+            });
+
+        });
+        frame.on('deminimizeButton', 'click', (_frame, evt) => {
+            _frame.control.doDeminimize({
+                duration: 200,
+                callback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+                }
+            });
+        });
+
+        frame.on('closeButton', 'click', (_frame, evt) => {
+            _frame.control.doHide({
+                duration: 100,
+                align: 'CENTER_BOTTOM',
+                callback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+                    _frame.closeFrame();
+                }
+            })
+        });
+    }
+
+    start();
+</script>
+</body>
+</html>
