@@ -6,7 +6,7 @@ var CALIGN = require('./CCommon.js');
 function WindowEventHelper(model) {
 
     this.windowMode = 'default';
-    this.styleDisplay='flex';
+    this.styleDisplay = 'flex';
     this.horizontalAlign = 'left';
     this.verticalAlign = 'top';
 
@@ -17,8 +17,8 @@ function WindowEventHelper(model) {
     this.demaximizeButton = null;
     this.deminimizeButton = null;
 
-    if(model.styleDisplay){
-        this.styleDisplay=model.styleDisplay;
+    if (model.styleDisplay) {
+        this.styleDisplay = model.styleDisplay;
     }
     if (model.minimizeButton) {
         this.minimizeButton = model.minimizeButton;
@@ -108,7 +108,7 @@ WindowEventHelper.prototype.doMaximize = function (model) {
             frame.hideFrameComponent(me.maximizeButton);
         }
         if (me.demaximizeButton) {
-            frame.showFrameComponent(me.demaximizeButton,me.styleDisplay);
+            frame.showFrameComponent(me.demaximizeButton, me.styleDisplay);
         }
     }
 
@@ -250,7 +250,7 @@ WindowEventHelper.prototype.doDemaximize = function (model) {
 
     } else {
         if (me.maximizeButton) {
-            frame.showFrameComponent(me.maximizeButton,me.styleDisplay);
+            frame.showFrameComponent(me.maximizeButton, me.styleDisplay);
         }
         if (me.demaximizeButton) {
             frame.hideFrameComponent(me.demaximizeButton);
@@ -325,7 +325,7 @@ WindowEventHelper.prototype.renderMinimizedMode = function (model) {
         }
 
         if (me.deminimizeButton) {
-            frame.showFrameComponent(me.deminimizeButton,me.styleDisplay);
+            frame.showFrameComponent(me.deminimizeButton, me.styleDisplay);
         }
 
         if (model.callback) {
@@ -365,7 +365,7 @@ WindowEventHelper.prototype.doDeminimize = function (model) {
     }
 
     if (me.minimizeButton) {
-        frame.showFrameComponent(me.minimizeButton,me.styleDisplay);
+        frame.showFrameComponent(me.minimizeButton, me.styleDisplay);
     }
     if (me.deminimizeButton) {
         frame.hideFrameComponent(me.deminimizeButton);
@@ -700,11 +700,10 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
     var me = this;
 
 
-
     if (me.maximizeButton) {
 
         //イベントはオーバーライドされる
-        me.frame.on(me.maximizeButton, 'click', (_frame, evt) => {
+        me.frame.on(me.maximizeButton, 'click', function (_frame, evt) {
 
             //ウィンドウを最大化する
             _frame.control.doMaximize({
@@ -717,10 +716,10 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
                 //最大化から復帰するまでのアニメーション時間（タイトルバーを隠すときはここで指定可能)
                 restoreDuration: 100,
                 //ウィンドウを最大化終了を受け取るコールバック関数
-                callback: (frame, info) => {
+                callback: function (frame, info) {
                 },
                 //最大化から戻ったときに呼び出されるコールバック(タイトルバーが無い場合)
-                restoreCallback: (frame, info) => {
+                restoreCallback: function (frame, info) {
                     jsFrame.showToast({
                         text: frame.getName() + ' ' + info.eventType
                     });
@@ -731,7 +730,7 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
 
 
     if (me.demaximizeButton) {
-        me.frame.on(me.demaximizeButton, 'click', (_frame, evt) => {
+        me.frame.on(me.demaximizeButton, 'click', function (_frame, evt) {
             //ウィンドウを最大化状態から復帰する
             _frame.control.doDemaximize(
                 {
@@ -742,7 +741,7 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
     }
 
     if (me.minimizeButton) {
-        me.frame.on(me.minimizeButton, 'click', (_frame, evt) => {
+        me.frame.on(me.minimizeButton, 'click', function (_frame, evt) {
 
             //'minimizeButton'が押されたときに、最小化したい場合
             _frame.control.doMinimize({
@@ -754,7 +753,7 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
     }
 
     if (me.deminimizeButton) {
-        me.frame.on(me.deminimizeButton, 'click', (_frame, evt) => {
+        me.frame.on(me.deminimizeButton, 'click', function (_frame, evt) {
             _frame.control.doDeminimize({
                 // duration: 100,
                 // callback: (frame, info) => {}
@@ -762,7 +761,7 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
         });
     }
     if (me.hideButton) {
-        me.frame.on(me.hideButton, 'click', (_frame, evt) => {
+        me.frame.on(me.hideButton, 'click', function (_frame, evt) {
             _frame.control.doHide({
                 align: 'CENTER_BOTTOM'
             });
@@ -771,7 +770,7 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
 
 };
 
-WindowEventHelper.prototype.method = function () {
-
-};
+// WindowEventHelper.prototype.method = function () {
+//
+// };
 module.exports = WindowEventHelper;
