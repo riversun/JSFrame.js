@@ -394,13 +394,16 @@ WindowEventHelper.prototype.doHide = function (model) {
     //Remember the stats of the window before maximizing the window
     me.saveCurrentWindowStats('hide_mode');
 
+
     frame.setResizable(false);
 
     me.renderHideMode({
+        silent: model.silent,
         animation: me.animationEnabled,
         duration: (model && model.duration) ? model.duration : null,
         callback: (model && model.callback) ? model.callback : null,
-        align: (model && model.align) ? model.align : null
+        align: (model && model.align) ? model.align : null,
+        offset: model.offset
     });
 };
 
@@ -415,6 +418,10 @@ WindowEventHelper.prototype.renderHideMode = function (model) {
 
     var from = me.getCurrentWindowStats();
 
+    var offset = {x: 0, y: 0};
+    if (model.offset) {
+        offset = model.offset;
+    }
 
     var left = 0;
     var top = 0;
@@ -457,6 +464,11 @@ WindowEventHelper.prototype.renderHideMode = function (model) {
         else if (CALIGN.RIGHT_BOTTOM == align) {
             left = from.left + from.width;
             top = from.top + from.height;
+
+        }
+        else if ('ABSOLUTE' == align) {
+            left = offset.x;
+            top = offset.y;
         }
 
     }
@@ -465,13 +477,14 @@ WindowEventHelper.prototype.renderHideMode = function (model) {
         left: left,
         top: top,
         width: 0,
+        //minimum height must be titleBarHeight
         height: ri.titleBarHeight
     };
 
     var funcDoRender = function () {
         var forceSetSize = true;
         frame.setSize(to.width, to.height, forceSetSize);
-        frame.hide();
+        //frame.hide();
 
         me.windowMode = 'hid';
 
@@ -488,6 +501,7 @@ WindowEventHelper.prototype.renderHideMode = function (model) {
 
     if (model && model.animation) {
         me.animateFrame({
+            fromAlpha: model.silent ? 0 : 1.0,
             toAlpha: 0,
             duration: model.duration ? model.duration : me.animationDuration,
             frame: frame,
@@ -516,6 +530,7 @@ WindowEventHelper.prototype.doDehide = function (model) {
 
     me.restoreWindow(
         {
+            duration: (model && model.duration) ? model.duration : null,
             restorePosition: true,
             restoreMode: 'hide_mode',
             animation: me.animationEnabled,
@@ -586,7 +601,6 @@ WindowEventHelper.prototype.restoreWindow = function (model) {
     var me = this;
     var frame = me.frame;
     var to = me.loadWindowStats(model.restoreMode);
-
     //現在の状態を一時保存する
     //me.saveCurrentWindowStats('temp');
     var crr = me.getCurrentWindowStats();//loadWindowStats('temp');
@@ -675,6 +689,9 @@ WindowEventHelper.prototype.animateFrame = function (model) {
     var me = this;
     var needRequestFocusAfterAnimation = false;
 
+
+    var fromAlpha = !isNaN(model.fromAlpha) ? model.fromAlpha : 1.0;
+
     var from = model.from;
     var to = model.to;
 
@@ -688,7 +705,7 @@ WindowEventHelper.prototype.animateFrame = function (model) {
         .fromHeight(from.height)
         .toWidth(to.width)
         .toHeight(to.height)
-        .fromAlpha(1.0)
+        .fromAlpha(fromAlpha)
         .toAlpha((model.toAlpha == 0) ? 0 : 1.0)
         .start(0, needRequestFocusAfterAnimation)
         .then(function (animatorObj) {

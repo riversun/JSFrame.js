@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!--
+
+-->
+<html>
+<head>
+    <title>JsFrame.js material</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <style type="text/css">
+        .style_a {
+            box-shadow: 2px 3px 16px rgba(0, 0, 0, .6);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            font-size: 25px;
+            text-align: center;
+            vertical-align: middle;
+            color: white;
+            background: #4784d4;
+            position: fixed;
+            right: 20px;
+            bottom: 20px
+        }
+    </style>
+</head>
+<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Chidori_Canal.jpg/1920px-Chidori_Canal.jpg') 50% no-repeat fixed; background-size: cover;">
+
+
+<div style="color:#f5f5f5;text-shadow: 2px 2px 1px #333333;"><a
+        href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> Example : ChatBot UI
+</div>
+
+<script src="../../jsframe.js"></script>
+<script>
+
+    class Demo {
+
+
+        constructor() {
+
+            this.jsFrame = new JSFrame({
+                horizontalAlign: 'right',
+                verticalAlign: 'bottom',
+            });
+
+            window.alert = function (msg) {
+                this.jsFrame.showToast({
+                    text: msg, align: 'center'
+                });
+            };
+
+
+            this.btn = {
+                right: 20, bottom: 20, size: 60, fontSize: 25
+            };
+            
+            const frmWidth = 300;
+            const frmHeight = 500;
+
+            const showChatBtn = document.createElement('div')
+            showChatBtn.id = 'bt_chat';
+            showChatBtn.className = 'style_a btn-primary';
+            showChatBtn.innerHTML = '<i class="fas fa-comment-alt"></i>';
+            showChatBtn.onclick = this.showChatWindow.bind(this);
+
+            const style = showChatBtn.style;
+            style.right = this.btn.right + 'px';
+            style.bottom = this.btn.bottom + 'px';
+            style.width = this.btn.size + 'px';
+            style.height = this.btn.size + 'px';
+            style.lineHeight = this.btn.size + 'px';
+            style.fontSize = this.btn.fontSize + 'px';
+
+            const frmTitleHeight = 40;
+
+            const frmLeft = -(this.btn.right + frmWidth);
+            const frmTop = -(this.btn.bottom + this.btn.size + frmHeight);
+
+
+            this.minimizedPos = {
+                x: frmLeft + frmWidth,
+                y: frmTop + frmHeight - frmTitleHeight
+            };
+
+
+            this.frame = this.jsFrame.create({
+                name: `ChatWindow`,
+                title: `Material style`,
+                left: frmLeft,
+                top: frmTop,
+                width: frmWidth,
+                height: frmHeight,
+                minWidth: 200,
+                minHeight: 110,
+                appearanceName: 'material',
+                appearanceParam: {
+                    border: {
+                        shadow: '2px 2px 10px  rgba(0, 0, 0, 0.5)',
+                        width: 0,
+                        radius: 6,
+                    },
+                    titleBar: {
+                        color: 'white',
+                        background: '#4784d4',
+                        leftMargin: 40,
+                        height: frmTitleHeight,
+                        fontSize: 14,
+                        buttonWidth: 36,
+                        buttonHeight: 16,
+                        buttonColor: 'white',
+                        buttons: [
+                            {
+                                fa: 'fas fa-times',
+                                name: 'closeButton',
+                                visible: true
+                            },
+                        ],
+                    },
+                },
+                style: {
+                    backgroundColor: 'rgba(255,255,255,0.8)',
+                    overflow: 'auto'
+                },
+                url: 'iframe_content03.html',
+            }).show();
+
+
+            this.frame.setControl({
+                animation: true,
+                animationDuration: 150,
+                maximizeWithoutTitleBar: true,
+                restoreKey: 'Escape',
+
+            });
+
+            this.frame.control.doHide({
+                silent: true,
+                duration: 0,
+                align: 'ABSOLUTE',
+                offset:  this.minimizedPos,
+            });
+            
+
+            console.log(this.minimizedPos);
+
+            document.body.appendChild(showChatBtn);
+
+
+        }
+
+        showChatWindow() {
+            const me = this;
+            const frame = this.jsFrame.getWindowByName('ChatWindow');
+            frame.control.doDehide({
+                duration: 1200,
+                callback: (frame, info) => {
+                    this.setChatButtonVisible(false);
+                }
+            });
+        }
+
+        setChatButtonVisible(isShow) {
+            const chatButton = document.querySelector('#bt_chat');
+            if (isShow) {
+                chatButton.style.display = 'inline';
+            } else {
+                chatButton.style.display = 'inline';
+            }
+        }
+
+        createFrame02() {
+
+
+
+
+            this.frame.on('closeButton', 'click', (_frame, evt) => {
+                //ウィンドウを非表示状態に遷移する
+                _frame.control.doHide({
+                    duration: 1200,
+                    offset: this.minimizedPos,
+                    //非表示にするときのアニメーションの終点
+                    align: 'ABSOLUTE',
+                    callback: (frame, info) => {
+                        this.setChatButtonVisible(true);
+                    }
+                })
+            });
+
+
+        }
+    }
+
+    new Demo().createFrame02();
+
+
+</script>
+
+</body>
+</html>

@@ -75,6 +75,7 @@ CSimpleLayoutAnimator.prototype.get = function () {
  */
 CSimpleLayoutAnimator.prototype.setDuration = function (durationMillis) {
     var me = this;
+    
     me.durationMillis = durationMillis;
     return me;
 };
@@ -245,7 +246,7 @@ CSimpleLayoutAnimator.prototype.start = function (waitMillis, requestFocusEnable
 
 
         var numOfSteps = parseInt(me.fps * (me.durationMillis / 1000));
-
+        if(numOfSteps==0){numOfSteps=1;}
 
         var deltaWidth = (me._toWidth - fromWidth) / numOfSteps;
         var deltaHeight = (me._toHeight - fromHeight) / numOfSteps;
