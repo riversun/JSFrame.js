@@ -9,8 +9,11 @@ It is an independent and lightweight multi-window library for javascript.
 - You can create [multi-window](https://riversun.github.io/jsframe/examples/v150/preset_win10.html) apps.
 
 # DEMO
-https://riversun.github.io/jsframe/examples/v150/preset_yosemite.html
+https://riversun.github.io/jsframe/examples/v150/preset_yosemite_auto.html
+https://riversun.github.io/jsframe/examples/v150/preset_material.html
 https://riversun.github.io/jsframe/examples/v150/preset_win10.html
+https://riversun.github.io/jsframe/examples/v150/chatbot_ui.html
+
 
 [![ex00](https://riversun.github.io/jsframe/capture/img_01_yosemite.png)](https://riversun.github.io/jsframe/examples/ex00/index.html)
 

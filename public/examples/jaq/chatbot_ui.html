@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<!--
+    Example of chatbot UI
+-->
+<html>
+<head>
+    <title>JsFrame.js ChatBot UI Example</title>
+    <meta charset="utf-8">
+    <meta name="description" content="JSFrame  chatbot UI example">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <style type="text/css">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        .btn-chat {
+            box-shadow: 2px 3px 16px rgba(0, 0, 0, .6);
+            border-radius: 50%;
+            text-align: center;
+            vertical-align: middle;
+            position: fixed;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: transform 0.2s linear, opacity 0.5s;
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        .btn-on {
+            opacity: 1;
+        }
+
+        .btn-chat:hover {
+            color: #fff;
+            background-color: #0069d9;
+            border-color: #0062cc;
+            transform: scale(1.0);
+
+        }
+
+    </style>
+</head>
+<body style="overflow: hidden;background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Tokyo_Tower_Afterglow_3.JPG/1280px-Tokyo_Tower_Afterglow_3.JPG') 50% no-repeat fixed; background-size: cover;">
+
+
+<div style="color:#f5f5f5;text-shadow: 2px 2px 1px #333333;"><a
+        href="https://github.com/riversun/JSFrame.js">JSFrame.js</a> ChatBot UI Frame
+</div>
+
+<script src="../../jsframe.js"></script>
+<script>
+
+    class ChatUI {
+
+        constructor() {
+
+            this.jsFrame = new JSFrame({
+                horizontalAlign: 'right',
+                verticalAlign: 'bottom',
+            });
+
+            this.initParam = {
+                btnRight: 20,
+                btnBottom: 20,
+                btnSize: 60,
+                btnFontSize: 25,
+                frmWidth: 300,
+                frmHeight: 500,
+                frmHeightMin: 300,
+                frmWidthMin: 200,
+                frmTitleHeight: 40,
+            };
+
+            this.frameName = 'chat_window';
+            this.buttonId = 'chat_wakeup';
+
+        }
+
+        /**
+         * Build chat start button
+         */
+        buildChatButton() {
+
+            const p = this.initParam;
+            const btnRight = p.btnRight;
+            const btnBottom = p.btnBottom;
+            const btnSize = p.btnSize;
+            const btnFontSize = p.btnFontSize;
+
+            const showChatBtn = document.createElement('div')
+            showChatBtn.id = this.buttonId;
+            showChatBtn.className = 'btn-chat';
+            showChatBtn.innerHTML = '<i class="fas fa-comment-alt"></i>';
+            showChatBtn.onclick = this.showChatWindow.bind(this);
+
+            const style = showChatBtn.style;
+            style.right = btnRight + 'px';
+            style.bottom = btnBottom + 'px';
+            style.width = btnSize + 'px';
+            style.height = style.width;
+            style.lineHeight = style.width;
+            style.fontSize = btnFontSize + 'px';
+
+            document.body.appendChild(showChatBtn);
+        }
+
+        /**
+         * Makes the chat button visible or invisible.
+         * @param isVisible
+         */
+        setChatButtonVisible(isVisible) {
+            const chatButton = document.querySelector(`#${this.buttonId}`);
+            if (isVisible) {
+                //chatButton.style.display = 'inline';
+                chatButton.classList.add('btn-on');
+            } else {
+                //chatButton.style.display = 'none';
+                chatButton.classList.remove('btn-on');
+
+            }
+        }
+
+        /*
+        *  Create chat window
+        */
+        buildChatWindow() {
+
+            const p = this.initParam;
+            const frmWidth = p.frmWidth;
+            const frmHeight = p.frmHeight;
+            const frmHeightMin = p.frmHeightMin;
+            const frmWidthMin = p.frmWidthMin;
+            const frmTitleHeight = p.frmTitleHeight;
+            const frmLeft = -(p.btnRight + frmWidth);
+            const frmTop = -(p.btnBottom + p.btnSize + frmHeight);
+
+            /**
+             * Coordinate(left,top) where the window is minimzied
+             * @type {{x: number, y: number}}
+             */
+            const vanishingPoint = {
+                x: frmLeft + frmWidth,
+                y: frmTop + frmHeight - frmTitleHeight
+            };
+
+            //Create chat window
+            this.frame = this.jsFrame.create({
+                name: this.frameName,
+                title: `JSFrame Chat`,
+                left: frmLeft,
+                top: frmTop,
+                width: frmWidth,
+                height: frmHeight,
+                minWidth: frmWidthMin,
+                minHeight: frmHeightMin,
+                appearanceName: 'material',
+                appearanceParam: {
+                    border: {
+                        shadow: '2px 2px 10px  rgba(0, 0, 0, 0.5)',
+                        width: 0,
+                        radius: 6,
+                    },
+                    titleBar: {
+                        color: 'white',
+                        background: '#4784d4',
+                        leftMargin: 40,
+                        height: frmTitleHeight,
+                        fontSize: 14,
+                        buttonWidth: 36,
+                        buttonHeight: 16,
+                        buttonColor: 'white',
+                        buttons: [
+                            {
+                                fa: 'fas fa-times',
+                                name: 'hideButton',
+                                visible: true
+                            },
+                        ],
+                        buttonsOnLeft: [
+                            {
+                                fa: 'fas fa-comment-alt',
+                                name: 'icon',
+                                visible: true
+                            },
+                        ],
+                    },
+                },
+                style: {
+                    backgroundColor: 'rgba(255,255,255,0.8)',
+                    overflow: 'auto'
+                },
+                html: 'Chat UI Here',
+                //url: // Chat URL here
+            });
+
+            //Enable helper to act on window's common operations(maximization/minimization and something)
+            this.frame.setControl({
+                animation: true,
+                animationDuration: 200,
+            });
+
+            //Set click event when the close button is clicked
+            this.frame.on('hideButton', 'click', (_frame, evt) => {
+                _frame.control.doHide({
+                    offset: vanishingPoint,
+                    align: 'ABSOLUTE',
+                    callback: (frame, info) => {
+                        this.setChatButtonVisible(true);
+                    }
+                })
+            });
+
+            //Minimize the window first to memory the  initial window position and size.
+            this.frame.control.doHide({
+                silent: true,//means invisible action
+                duration: 0,
+                align: 'ABSOLUTE',//need to set the offset point where window is minimized
+                offset: vanishingPoint,
+            });
+
+        }
+
+        showChatWindow() {
+            const frame = this.jsFrame.getWindowByName(this.frameName);
+
+            //Open minimized window
+            frame.control.doDehide({
+                callback: (frame, info) => {
+                    this.setChatButtonVisible(false);
+                }
+            });
+        }
+
+        build() {
+            this.buildChatButton();
+            this.buildChatWindow();
+            this.setChatButtonVisible(true);
+        }
+
+
+    }
+
+    new ChatUI().build();
+
+
+</script>
+
+</body>
+</html>
