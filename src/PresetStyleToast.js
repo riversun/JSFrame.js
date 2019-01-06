@@ -68,6 +68,22 @@ function getStyle(fApr) {
 
     fApr.pullUpDisabled = false;
 
+    fApr.getTitleBarStyle = function () {
+
+        if (fApr.focusedFrameOnly) {
+            return {
+                titleBarClassNameDefault: ' ',
+                titleBarClassNameFocused: ' '
+            };
+        } else {
+            return {
+                titleBarClassNameDefault: ' ',
+                titleBarClassNameFocused: ' '
+            };
+        }
+    };
+
+
     fApr.onInitialize = function () {
 
 
