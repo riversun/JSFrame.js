@@ -218,6 +218,82 @@ https://riversun.github.io/jsframe/examples/v150/toast.html
 
 [![toast](https://riversun.github.io/jsframe/capture/toastc.gif)](https://riversun.github.io/jsframe/examples/v150/toast.html)
 
+
+## Settings for preset 'material'
+
+You can use [font-awesome](https://fontawesome.com/icons?d=gallery&m=free) for titlebar icons.
+
+[![toast](https://riversun.github.io/jsframe/capture/img_06_material.png)](https://riversun.github.io/jsframe/examples/v150/preset_material.html)
+
+For material, describe the settings using **appearanceParam** as below.
+
+```js
+{
+name: `Win2`,
+title: `Material style`,
+left: 360, top: 40, width: 320, height: 220, minWidth: 200, minHeight: 110,
+appearanceName: 'material',
+appearanceParam: {
+    border: {
+        shadow: '2px 2px 10px  rgba(0, 0, 0, 0.5)',
+        width: 0,
+        radius: 6,
+    },
+    titleBar: {
+        color: 'white',
+        background: '#4784d4',
+        leftMargin: 40,
+        height: 30,
+        fontSize: 14,
+        buttonWidth: 36,
+        buttonHeight: 16,
+        buttonColor: 'white',
+        buttons: [ // buttons on the right
+            {
+		//Set font-awesome fonts(https://fontawesome.com/icons?d=gallery&m=free)
+                fa: 'fas fa-times',//code of font-awesome
+                name: 'closeButton',
+                visible: true // visibility when window is created.
+            },
+            {
+                fa: 'fas fa-expand-arrows-alt',
+                name: 'maximizeButton',
+                visible: true
+            },
+            {
+                fa: 'fas fa-compress-arrows-alt',
+                name: 'minimizedButton',
+                visible: false
+            },
+        ],
+        buttonsOnLeft: [ //buttons on the left
+            {
+                //Set font-awesome fonts(https://fontawesome.com/icons?d=gallery&m=free)
+                fa: 'fas fa-bars',
+                name: 'menu',
+                visible: true,
+                //html to show when this button is clicked.
+                childMenuHTML: '<div class="list-group">' +
+                    '  <div name="menu1" class="list-group-item list-group-item-action py-2">Menu Item 01</div>' +
+                    '  <div name="menu2" class="list-group-item list-group-item-action py-2">Menu Item 02</div>' +
+                    '  <div name="menu3" class="list-group-item list-group-item-action py-2">Menu Item 03</div>' +
+                    '</div>',
+                childMenuWidth: 300
+            },
+        ],
+    },
+},
+style: {
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    overflow: 'hidden',
+    width: '100%',
+},
+
+html: 'something'
+}
+```
+
+
 ## Window operation
 
 **Close window**
@@ -244,14 +320,88 @@ frame.requestFocus();
 var frame = jsFrame.getWindowByName('my-window');
 ```
 
-# Examples
-All examples are included in the project. You can modify,customize example after cloning the project
+
+
+## Window operation helper
+
+Setting frame#setControl enables the mode to automatically change the window size when the button on the title bar is pressed.
+
+```js
+frame.setControl({
+        maximizeButton: 'maximizeButton',//Name of the button on framecomponent to maximize when pressed.
+        demaximizeButton: 'restoreButton',//Name of the button on framecomponent to de-maximize when pressed.
+        maximizeWithoutTitleBar: true,//If true,hide the title bar and maximize the content part.
+        restoreKey: 'Escape',//If maximizeWithoutTitleBar is true,de-maximize the window when the key specified here is pushed.
+        minimizeButton: 'minimizeButton',//Name of the button on framecomponent to minimize when pressed.
+        deminimizeButton: 'deminimizeButton',//Name of the button on framecomponent to de-minimize when pressed.
+        hideButton: 'closeButton',//Name of the button on framecomponent to hide when pressed.
+        animation: true,//If true,execute animation during window size changing
+        animationDuration: 150,//Duration of animation
+    });
+```
+
+**DEMO**
+https://riversun.github.io/jsframe/examples/v150/window_control.html
+
+
+### Handling events for window operation events.
+
+```js
+frame.control.on('maximized', (frame, info) => {
+           jsFrame.showToast({
+               text: 'Press "ESC" to minimize.', align: 'center'
+           });
+       });
+```
+
+<table>
+<tr><td>EventType</td><td>Description</td></tr>
+<tr><td>maximized</td><td>Called when maximazation is finished.</td></tr>
+<tr><td>demaximized</td><td>Called when de-maximazation is finished.</td></tr>
+<tr><td>minimized</td><td>Called when minimization is finished.</td></tr>
+<tr><td>deminimized</td><td>Called when de-minimization is finished.</td></tr>
+<tr><td>hid</td><td>Called when hiding is finished.</td></tr>
+<tr><td>dehided</td><td>Called when de-hiding is finished.</td></tr>
+</table>       
+
+### Do sizing operation manually
+You can write window size operation manually like below
+
+```js
+
+        frame.on('maximizeButton', 'click', (_frame, evt) => {
+
+            _frame.control.doMaximize({
+                hideTitleBar: false,
+                duration: 200,
+                restoreKey: 'Escape',
+                restoreDuration: 100,
+                callback: (frame, info) => {
+                    frame.requestFocus();
+                },
+                restoreCallback: (frame, info) => {
+                    jsFrame.showToast({
+                        text: frame.getName() + ' ' + info.eventType
+                    });
+                },
+            });
+        });
+```        
+
+
+## JSFrame initialization parameters
+
+```js
+this.jsFrame = new JSFrame({
+    fixed:true,//(Default)If true, it will be fixed to the screen even if the contents (background) scrolls.
+    parentElement:document.body,//Set element to attach jsFrame.
+    horizontalAlign: 'right',// If 'right' is set, the anchor is set at the right edge.If you specify the position of frame with 'left' in this mode, Make the value negative.Default is 'left'
+    verticalAlign: 'bottom',//If 'bottom' is set, the anchor is set at the bottom edge.Default is 'bottom'
+});
 
 ```
-git clone https://github.com/riversun/JSFrame.js.git
-```
 
-## Window initialization parameters
+## Frame creation initialization parameters
 
 ```js
 const frame = jsFrame.create(
@@ -278,6 +428,13 @@ const frame = jsFrame.create(
 
     });
 ```    
+
+# Examples
+All examples are included in the project. You can modify,customize example after cloning the project
+
+```
+git clone https://github.com/riversun/JSFrame.js.git
+```
 
 # Classese and Methods/Members
 ### org.riversun.JSFrame class
