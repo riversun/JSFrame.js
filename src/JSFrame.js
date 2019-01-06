@@ -33,7 +33,7 @@ var CALIGN = require('./CCommon.js');
 
 export {
     WindowEventHelper
-}
+};
 var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
@@ -87,7 +87,7 @@ function CFrameAppearance() {
     this.titleBarColorFocused = '#d3e1ee';
     this.titleBarCaptionColorDefault = '';
     this.titleBarCaptionColorFocused = '';
-    this.titleBarCaptionTextShadow = "0 1px 0 rgba(255,255,255,.7)";
+    this.titleBarCaptionTextShadow = '0 1px 0 rgba(255,255,255,.7)';
     this.titleBarCaptionTextAlign = 'center';
 
     this.titleBarBorderBottomDefault = '1px solid rgba(0,0,0,0.2)';
@@ -398,7 +398,7 @@ CBeanFrame.prototype.onmouseDown = function (e) {
 
     if (e.button == 0) {
 
-        //added 20181225 for modal background window
+        // for modal background window
         if (refCBeanFrame.pullUpDisabled) {
             return false;
         } else {
@@ -476,10 +476,8 @@ function CCanvas(parentElement, canvasId, left, top, width, height) {
     me.parentElement = parentElement;
     me.beanList = new Array();
 
-    //20180724[start]
     me.beanIdName = {};//key:beanId value:beanName
     me.beanNameId = {};//key:beanName value:beanId
-    //20180724[end]
 
     me.eventData = new EventData();
 
@@ -494,21 +492,21 @@ function CCanvas(parentElement, canvasId, left, top, width, height) {
 
 
     me.canvasElement = document.createElement(DEF.CANVAS.HTML_ELEMENT);
-    //Added 2018/7/16
+
     me.canvasElement.style.zIndex = 2000;
     me.canvasElement.id = me.id;
-    me.canvasElement.style.boxSizing = "border-box";
+    me.canvasElement.style.boxSizing = 'border-box';
     me.canvasElement.style.position = 'absolute';
     me.canvasElement.style.left = parseInt(left) + 'px';
     me.canvasElement.style.top = parseInt(top) + 'px';
-    //20180722(画面の下に透明部分ができてしまうので、調整値をいれた)
+    //Added an adjustment value.Because transparent part appears at the bottom of the screen,
     me.canvasElement.style.width = (parseInt(width) + DEF.CANVAS.WIDTH_ADJUST_20180722) + 'px';
     me.canvasElement.style.height = (parseInt(height) + DEF.CANVAS.HEIGHT_ADJUST_20180722) + 'px';
     me.canvasElement.style.backgroundColor = 'transparent';
     me.canvasElement.style.borderStyle = 'none';
     me.canvasElement.style.margin = '0px';
     me.canvasElement.style.borderWidth = '0px';
-    me.canvasElement.style.borderColor = "transparent";
+    me.canvasElement.style.borderColor = 'transparent';
 
     //Add the Canvas's html element into the canvas's parent html element
     me.parentElement.appendChild(me.canvasElement);
@@ -664,20 +662,16 @@ CCanvas.prototype.addBean = function (bean) {
 
     var beanList = me.beanList;
 
-    //20180724[start]
     var beanIdName = me.beanIdName;//key:beanId value:beanName
     var beanNameId = me.beanNameId; //key:beanName value:beanId
-    //20180724[end]
+
 
     beanList[bean.id] = bean;
 
-    //20180724[start]
     if (bean.property.name) {
         beanNameId[bean.property.name] = bean.id;
         beanIdName[bean.id] = bean.property.name;
     }
-    //20180724[end]
-
 
     //In this usage case the 'length' property is invalid ..
     var num = 0;
@@ -807,8 +801,6 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
         me.titleBar.style.boxSizing = 'border-box';
         me.titleBar.style.top = '0px';
         me.titleBar.style.left = '0px';
-        //20180722
-        //20180722(画面の右と下に透明部分ができてしまうので、調整値をいれた)
         me.titleBar.style.width = (w_width - me.titleAdjustWidth + DEF.CANVAS.WIDTH_ADJUST_20180722) + 'px';
         me.titleBar.style.userSelect = 'none';
 
@@ -818,8 +810,6 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
             var titleBarAdjust = 0;
 
             if (me.titleBarBorderBottomDefault) {
-                //titleBarAdjust = -1;
-                //タイトルバーがずれてしまう
                 titleBarAdjust = 0;
             }
 
@@ -997,7 +987,7 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
             markerRD.htmlElement.style.display = 'flex';
             markerDD.htmlElement.style.display = 'flex';
             markerRR.htmlElement.style.display = 'flex';
-            markerRD.htmlElement.style.cursor = 'se-resize'
+            markerRD.htmlElement.style.cursor = 'se-resize';
             markerDD.htmlElement.style.cursor = 'n-resize';
             markerRR.htmlElement.style.cursor = 'w-resize';
         } else {
@@ -1123,7 +1113,7 @@ CFrame.prototype.showFrameComponent = function (frameComponentId, display) {
         if (display) {
             comp.style.display = display;
         } else {
-            comp.style.display = "flex";
+            comp.style.display = 'flex';
         }
     }
     return me;
@@ -1133,7 +1123,7 @@ CFrame.prototype.hideFrameComponent = function (frameComponentId) {
     var me = this;
     var comp = me.getFrameComponentElement(frameComponentId);
     if (comp) {
-        comp.style.display = "none";
+        comp.style.display = 'none';
     }
     return me;
 };
@@ -1491,7 +1481,7 @@ CFrame.prototype.setSize = function (width, height, force) {
 
 CFrame.prototype.getWindowId = function () {
     var me = this;
-    return me.windowId
+    return me.windowId;
 };
 
 CFrame.prototype.getName = function () {
@@ -1550,10 +1540,10 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
      *  and the size can be adjusted smoothly.
      *  true is recommended.
      */
+    //Change history
     //20181226
     //Changed to false.
     // So it becomes necessary to click twice to react when you call the #setSize,I changed the value to false.
-
     //20181231
     //I found the way that iframe will be changed the size smoothly.so the final answer is true.
     this.overrayTransparentScreenOnResize = true;
@@ -1653,13 +1643,13 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
         me.dframe.style.visibility = 'hidden';
         me.dframe.style.position = 'absolute';
         me.dframe.style.left = '0px';
-        me.dframe.style.boxSizing = "content-box";
+        me.dframe.style.boxSizing = 'content-box';
 
         me.dframe.style.top = '0px';
         me.dframe.style.width = '100%';
         me.dframe.style.height = '100%';
         //me.dframe.style.borderStyle="solid";
-        me.dframe.style.backgroundColor = "white";
+        me.dframe.style.backgroundColor = 'white';
 
 
         if (useIframe) {
@@ -1696,9 +1686,7 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
         me.transparence.style.borderStyle = 'none';
         me.transparence.style.cursor = 'default';
 
-        //20181231
         me.transparence.style.pointerEvents = 'none';
-
         me.canvas.canvasElement.style.backgroundColor = appearance.frameBackgroundColor;
 
 
@@ -1748,7 +1736,7 @@ CIfFrame.prototype.on = function (id, eventType, callbackFunc) {
     var me = this;
     var component = me.getFrameComponentElement(id);
     if (component) {
-        
+
         //Since we want to specify only one handler for frame components at the same time,
         // use an event handler instead of an event listener
         component['on' + eventType] = function (e) {
@@ -1785,7 +1773,7 @@ CIfFrame.prototype.on = function (id, eventType, callbackFunc) {
         });
     }
 
-}
+};
 
 
 CIfFrame.prototype.adjustFrameBorderRadius = function () {
@@ -1852,7 +1840,7 @@ CIfFrame.prototype.handleReleasingFocus = function (e) {
     //handling for child frameComponents
     for (var frameComponentId in me.frameComponentMap) {
         var frameComponent = me.frameComponentMap[frameComponentId];
-        frameComponent.handleReleasingFocus()
+        frameComponent.handleReleasingFocus();
     }
 
     //border bottom
@@ -1903,7 +1891,7 @@ CIfFrame.prototype.handleTakingFocus = function (e) {
     //handling for child frameComponents
     for (var frameComponentId in me.frameComponentMap) {
         var frameComponent = me.frameComponentMap[frameComponentId];
-        frameComponent.handleTakingFocus()
+        frameComponent.handleTakingFocus();
     }
 
 
@@ -1978,7 +1966,7 @@ CFrame.prototype.showModal = function (onCloseListener) {
 
 
     modalBackgroundFrame.setTitle('').getFrameView().innerHTML = '<div class="jsframe-modal-window-background"></div>';
-    modalBackgroundFrame.getFrameView().style.backgroundColor = "rgba(0,0,0,0.0)";
+    modalBackgroundFrame.getFrameView().style.backgroundColor = 'rgba(0,0,0,0.0)';
     modalBackgroundFrame.show();
 
     me.show();
@@ -1986,7 +1974,7 @@ CFrame.prototype.showModal = function (onCloseListener) {
     if (onCloseListener) {
         me.setOnCloseFrameListener(onCloseListener);
     }
-}
+};
 
 
 CIfFrame.prototype.hide = function () {
@@ -2141,7 +2129,7 @@ CIfFrame.prototype.resize = function (deltaLeft, deltaTop, deltaWidth, deltaHeig
     for (var frameComponentId in refCIfFrame.frameComponentMap) {
         var frameComponent = refCIfFrame.frameComponentMap[frameComponentId];
         //update alignment of frameComponent corresponding to moving window edge for resize
-        frameComponent.updateAlign()
+        frameComponent.updateAlign();
     }
 
 
@@ -2209,7 +2197,7 @@ CIfFrame.prototype.resizeDirect = function (width, height, byUser) {
     for (var frameComponentId in refCIfFrame.frameComponentMap) {
         var frameComponent = refCIfFrame.frameComponentMap[frameComponentId];
         //update alignment of frameComponent corresponding to moving window edge for resize
-        frameComponent.updateAlign()
+        frameComponent.updateAlign();
     }
 
 
@@ -2350,38 +2338,28 @@ CIfFrame.prototype.setScrolling = function (str) {
 
 CIfFrame.prototype.getScrolling = function (str) {
     var me = this;
-    return me.iframe.scrolling
+    return me.iframe.scrolling;
 };
 
 
 CIfFrame.prototype.setResizable = function (enabled) {
     var me = this;
-
     me.resizable = enabled;
-
-    //added 20181227
     me.enableMarkers(enabled);
-    // if (!enabled) {
-    //     me.removeMarkers2();
-    // }
     return me;
 };
 
 
 CIfFrame.prototype.setControl = function (model) {
     var me = this;
-    //
-    // this.jsFrame
 
     if (model) {
         model.frame = me;
         me.control = me.jsFrame.createWindowEventHelper(model);
         me.control.setupDefaultEvents(model);
-
-
     }
 
-}
+};
 
 /**
  * end of CIFrame class
@@ -2409,10 +2387,10 @@ function CWindowManager(parentElement, canvasId, left, top, width, height) {
     CWindowManager.superConstructor.call(this, parentElement, canvasId, left, top, width, height);
     var me = this;
 
-    document.body.addEventListener("click", function (evt) {
+    document.body.addEventListener('click', function (evt) {
         for (var windowId in me.beanList) {
             var beanFrame = me.beanList[windowId];
-            beanFrame.onBodyClicked(evt)
+            beanFrame.onBodyClicked(evt);
         }
 
     });
@@ -2427,7 +2405,6 @@ CWindowManager.prototype.getWindow = function (windowId) {
 CWindowManager.prototype.addWindow = function (window) {
     var me = this;
 
-    //20180724
     var windowId = window.getWindowId();
     var name = window.getName();
     me.beanIdName[windowId] = name;
@@ -2436,7 +2413,7 @@ CWindowManager.prototype.addWindow = function (window) {
     me.addBean(window);
 };
 
-//20180724 if contains window named specified name
+//if contains window named specified name
 CWindowManager.prototype.containsWindowName = function (name) {
     var me = this;
 
@@ -2448,7 +2425,6 @@ CWindowManager.prototype.containsWindowName = function (name) {
     }
 };
 
-//20180724
 CWindowManager.prototype.getWindowByName = function (name) {
     var me = this;
     var windowId = me.beanNameId[name];
@@ -2567,14 +2543,13 @@ CWindowManager.prototype.removeBean = function (windowId) {
     //Delete the bean object in the associative array.
     delete beanList[windowId];
 
-    //20180724[start]
+
     var beanName = me.beanIdName[windowId];
     if (beanName) {
         //-if bean name exist
         delete me.beanIdName[windowId];
         delete me.beanNameId[beanName];
     }
-    //20180724[end]
 
 
     //focus on last focused window after removing
@@ -2850,12 +2825,12 @@ JSFrame.prototype.createFrame = function (left, top, width, height, appearance, 
 
 };
 
-//20180724 just Wrapped windowmanager#containsWindowName
+
 JSFrame.prototype.containsWindowName = function (windowName) {
     var me = this;
     return me.windowManager.containsWindowName(windowName);
 };
-//20180724 just Wrapped windowmanager#getWindowByName
+
 JSFrame.prototype.getWindowByName = function (windowName) {
     var me = this;
     return me.windowManager.getWindowByName(windowName);
@@ -2899,7 +2874,7 @@ JSFrame.prototype.createWindowEventHelper = function (model) {
 
     var wndEventHelper = new WindowEventHelper(model);
     return wndEventHelper;
-}
+};
 
 JSFrame.prototype.createPresetStyle = function (presetName, param) {
 
@@ -3210,7 +3185,8 @@ CDomPartsBuilder.prototype.buildTextButtonAppearance = function () {
 CDomPartsBuilder.prototype.buildButton = function (btnAppearance) {
     var me = this;
     return me.buildTextButton(btnAppearance);
-}
+};
+
 /**
  *
  * @param size
@@ -3490,7 +3466,7 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
         span.style.marginTop = captionShiftYpx + 'px';
         span.style.display = 'inline-block';
         span.style.textAlign = 'center';
-        span.style.fontFamily = "sans-serif";
+        span.style.fontFamily = 'sans-serif';
         span.appendChild(document.createTextNode(caption));
         divElement.appendChild(span);
 
@@ -3501,11 +3477,11 @@ CDomPartsBuilder.prototype.buildTextButton = function (btnAppearance) {
         span.style.marginTop = captionShiftYpx + 'px';
         span.style.display = 'inline-block';
         span.style.textAlign = 'center';
-        span.style.fontFamily = "sans-serif";
+        span.style.fontFamily = 'sans-serif';
         span.innerHTML = '<i class="' + fa + '"></i>';
         divElement.appendChild(span);
     } else if (!childMode && caption) {
-        divElement.style.paddingTop = captionShiftYpx + "px";
+        divElement.style.paddingTop = captionShiftYpx + 'px';
         divElement.appendChild(document.createTextNode(caption));
     }
 

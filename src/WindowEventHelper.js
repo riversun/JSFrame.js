@@ -787,7 +787,4 @@ WindowEventHelper.prototype.setupDefaultEvents = function (model) {
 
 };
 
-// WindowEventHelper.prototype.method = function () {
-//
-// };
 module.exports = WindowEventHelper;
