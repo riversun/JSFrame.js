@@ -17,29 +17,31 @@
 <script src="../../jsframe.js"></script>
 <script>
 
+    const jsFrame = new JSFrame();
+    
     function showToast01() {
-        const jsFrame = new JSFrame();
+
         jsFrame.showToast({
             html: 'Default toast',
         });
     }
 
     function showToast02() {
-        const jsFrame = new JSFrame();
+
         jsFrame.showToast({
             align: 'center', html: 'Toast displayed in the center'
         });
     }
 
     function showToast03() {
-        const jsFrame = new JSFrame();
+
         jsFrame.showToast({
             align: 'top', html: 'Toast displayed at the top',
         });
     }
 
     function showToast04() {
-        const jsFrame = new JSFrame();
+
         jsFrame.showToast({
             width: 260,
             height: 100,
