@@ -31,9 +31,6 @@ require('./JSFrame.css');
 var WindowEventHelper = require('./WindowEventHelper.js');
 var CALIGN = require('./CCommon.js');
 
-export {
-    WindowEventHelper
-};
 var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
@@ -2621,7 +2618,7 @@ function CMarkerWindow(windowId, left, top, width, height, zindex, usage) {
  * FrameManager class
  * @constructor
  */
-export function JSFrame(model) {
+export default function JSFrame(model) {
 
     var me = this;
 
@@ -3540,5 +3537,3 @@ function CTextButtonAppearance() {
 
 
 Object.freeze(DEF);
-
-    

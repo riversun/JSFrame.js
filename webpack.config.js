@@ -17,7 +17,7 @@ module.exports = (env, argv) => {
             port: 8080,
         },
         entry: {
-            jsframe: './src/jsframe.js',
+            jsframe: './src/index.js',
         },
         output: {
             path: path.join(__dirname, "dist"),
