@@ -2,6 +2,7 @@ const packageJson = require('./package.json');
 const version = packageJson.version;
 const path = require("path");
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = (env, argv) => {
 
@@ -20,7 +21,7 @@ module.exports = (env, argv) => {
         },
         output: {
             path: path.join(__dirname, "dist"),
-            filename: argv.mode === 'production' ? `[name]-${version}.min.js` : `[name].js`,
+            filename: argv.mode === 'production' ? `[name].min.js` : `[name].js`,
             libraryTarget: 'umd'
         },
         optimization: {
@@ -41,6 +42,9 @@ module.exports = (env, argv) => {
                 },
             ],
         },
+        plugins: [
+            new webpack.BannerPlugin(`[name] v${version} Copyright (c) 2019 Tom Misawa`)
+        ]
     };
 
     if (argv.mode !== 'production') {
