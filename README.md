@@ -22,13 +22,13 @@ It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
 
 # install
 
-**using npm**
+## using npm
 
 ```shell
-npm install jsframe.js
+npm install jsframe.js --save
 ```
 
-**use as below**
+## using with script tag
 
 ```html
 <script src="https://riversun.github.io/jsframe/jsframe.js"></script>
@@ -428,6 +428,29 @@ const frame = jsFrame.create(
 
     });
 ```    
+
+# using npm module with webpack
+
+After install **jsframe.js** , you can use it like below.
+
+```js
+import {JSFrame} from 'jsframe';
+```
+
+You can add an alias in your webpack config like this:
+
+```js
+module.exports = {
+    ...
+    resolve: {
+        alias: {
+            'jsframe': 'jsframe.js/dist/jsframe.min.js',
+        }
+    },
+    ...
+};
+
+```
 
 # Examples
 All examples are included in the project. You can modify,customize example after cloning the project
