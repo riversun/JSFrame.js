@@ -1,4 +1,7 @@
 # Overview
+[![npm version](https://badge.fury.io/js/jsframe.js.svg)](https://badge.fury.io/js/jsframe.js)
+[![](https://data.jsdelivr.com/v1/package/npm/jsframe.js/badge)](https://www.jsdelivr.com/package/npm/jsframe.js)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ###  What is '**JsFrame.js**' like?
 It is an independent and lightweight multi-window library for javascript.
@@ -8,8 +11,6 @@ It is an independent and lightweight multi-window library for javascript.
 - You can create a [toast](https://riversun.github.io/jsframe/examples/v150/toast.html).
 - You can create [multi-window](https://riversun.github.io/jsframe/examples/v150/preset_win10.html) apps.
 
-[![npm version](https://badge.fury.io/js/jsframe.js.svg)](https://badge.fury.io/js/jsframe.js)
-[![](https://data.jsdelivr.com/v1/package/npm/jsframe.js/badge)](https://www.jsdelivr.com/package/npm/jsframe.js)
 
 # DEMO
 https://riversun.github.io/jsframe/examples/v150/preset_yosemite_auto.html
