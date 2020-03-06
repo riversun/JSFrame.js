@@ -1,5 +1,7 @@
 src
 test
+public
 gulpfile.js
 node_modules
 .DS_Store
+.idea/
