@@ -1,6 +1,6 @@
 {
   "name": "jsframe.js",
-  "version": "1.5.15",
+  "version": "1.5.16",
   "description": "It is an independent lightweight multi-window library for javascript.\r - Create various popup windows.\r - Styling the appearance flexibly.",
   "main": "lib/jsframe.min.js",
   "scripts": {
@@ -33,7 +33,6 @@
     "babel-loader": "^8.0.4",
     "css-loader": "^2.0.2",
     "style-loader": "^0.23.1",
-    "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
