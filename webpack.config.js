@@ -1,7 +1,7 @@
 const packageJson = require('./package.json');
 const version = packageJson.version;
 const path = require("path");
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = (env, argv) => {
@@ -20,16 +20,23 @@ module.exports = (env, argv) => {
             jsframe: './src/index.js',
         },
         output: {
-            path: path.join(__dirname, "dist"),
+            path: path.join(__dirname, "lib"),
             filename: argv.mode === 'production' ? `[name].min.js` : `[name].js`,
             libraryTarget: 'umd'
         },
         optimization: {
-            minimizer: [
-                new UglifyJSPlugin({
-                    uglifyOptions: {compress: {drop_console: true}},
-                }),
-            ],
+            minimizer: [new TerserPlugin({
+                //extractComments: true,
+                //cache: true,
+                //parallel: true,
+                //sourceMap: true,
+                terserOptions: {
+                    compress: {
+                        drop_console: true,
+                    },
+                }
+
+            })],
         },
         module: {
             rules: [
@@ -43,7 +50,7 @@ module.exports = (env, argv) => {
             ],
         },
         plugins: [
-            new webpack.BannerPlugin(`[name] v${version} Copyright (c) 2019 Tom Misawa`)
+            new webpack.BannerPlugin(`[name] v${version} Copyright (c) 2019-2020 Tom Misawa`)
         ]
     };
 
