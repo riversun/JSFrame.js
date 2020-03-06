@@ -31,7 +31,7 @@ npm install jsframe.js --save
 ## using with script tag
 
 ```html
-<script src="https://riversun.github.io/jsframe/jsframe.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsframe.js@1.5.15/lib/jsframe.min.js"></script>
 ```
 
 # Quick Start
