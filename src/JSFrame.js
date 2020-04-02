@@ -2607,9 +2607,10 @@ export default function JSFrame(model) {
     parentElement = document.body;
   }
 
-
-  document.onmouseup = mouseUp;
-  document.onmousemove = mouseMove;
+  document.addEventListener('mouseup', mouseUp);
+  document.addEventListener('mousemove', mouseMove);
+  //document.onmouseup = mouseUp;
+  //document.onmousemove = mouseMove;
 
 
   me.windowManager = new CWindowManager(parentElement, 'windowManager_' + me.generateUUID(), 0, 0, 0, 0);
@@ -3365,7 +3366,7 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
       divElement.appendChild(btnImageHovered);
     }
   };
-  divElement.style.padding='0px';
+  divElement.style.padding = '0px';
 
   divElement.style.textAlign = 'center';
   divElement.style.fontSize = (height * captionFontRatio) + 'px';
