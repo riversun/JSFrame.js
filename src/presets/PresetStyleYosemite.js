@@ -85,7 +85,7 @@ function getStyle(fApr, userParam) {
     var img_data_1dot_transparent = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABBJREFUeNpi+P//PwNAgAEACPwC/tuiTRYAAAAASUVORK5CYII=';
     var img_width = 10;
     var img_height = 10;
-    var img_style = `margin:0px;padding:0px;width:${img_width}px;height:${img_height}px`;
+    var img_style = 'margin:0px;padding:0px;width:' + img_width + 'px;height:' + img_height + 'px';
 
     var imageMaximize = document.createElement('img');
     imageMaximize.src = img_data_maximize_hovered;

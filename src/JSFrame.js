@@ -2101,6 +2101,8 @@ CIfFrame.prototype.resize = function(deltaLeft, deltaTop, deltaWidth, deltaHeigh
       }
     }
   }
+
+
 };//resize
 
 CIfFrame.prototype.resizeDirect = function(width, height, byUser) {
@@ -2563,7 +2565,7 @@ function CMarkerWindow(windowId, left, top, width, height, zindex, usage) {
  * FrameManager class
  * @constructor
  */
-export default function JSFrame(model) {
+function JSFrame(model) {
 
   var me = this;
 
@@ -2627,8 +2629,6 @@ export default function JSFrame(model) {
     var globalMouseX = e.pageX;
     var globalMouseY = e.pageY;
   }
-
-
 }
 
 JSFrame.prototype.getDomPartsBuilder = function() {
@@ -3472,3 +3472,5 @@ function CTextButtonAppearance() {
 
 
 Object.freeze(DEF);
+
+module.exports = JSFrame;
