@@ -1333,6 +1333,23 @@ CFrame.prototype.setTitleBarTextColor = function(str) {
   me.titleBar.style.color = str;
 };
 
+/**
+ * Set window position with anchor
+ * @param {number} x
+ * @param {number} y
+ * @param {string} anchor anchor means the position of the window with respect to which the position is specified.<br>
+ *   The following values can be specified for the anchor
+ LEFT_TOP
+ CENTER_TOP
+ RIGHT_TOP
+ LEFT_CENTER
+ CENTER_CENTER
+ RIGHT_CENTER
+ LEFT_BOTTOM
+ CENTER_BOTTOM
+ RIGHT_BOTTOM
+ * @returns {CFrame}
+ */
 CFrame.prototype.setPosition = function(x, y, anchor) {
   var me = this;
 
@@ -1616,12 +1633,6 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
     me.iframe.style.width = '100%';
     me.iframe.style.height = '100%';
 
-
-    //DEBUGG
-    //me.iframe.style.overflow = 'hidden';
-    //me.iframe.scrolling = 'auto';
-
-
     me.dframe.style.visibility = 'hidden';
     me.dframe.style.position = 'absolute';
     me.dframe.style.left = '0px';
@@ -1633,13 +1644,10 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
     //me.dframe.style.borderStyle="solid";
     me.dframe.style.backgroundColor = 'white';
 
-
     if (useIframe) {
       me.iframe.style.visibility = 'visible';
       me.dframe.style.visibility = 'hidden';
     } else {
-
-
       me.iframe.style.visibility = 'hidden';
       me.dframe.style.visibility = 'visible';
     }
@@ -1647,12 +1655,12 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
 
   me.setUseIframe(appearance.useIframe);
 
-  //If it is IE, set the canvasElement of the canvas which is the parent of the iframe to transparent.
+  // If it is IE, set the canvasElement of the canvas which is the parent of the iframe to transparent.
 
   if (me.overrayTransparentScreenEnabled || me.overrayTransparentScreenOnResize) {
     //Create a transparent screen.
     me.transparence = document.createElement('span');
-    //me.transparence.style.backgroundImage = 'url(img/img_baron_tp.gif)';
+    // me.transparence.style.backgroundImage = 'url(img/img_baron_tp.gif)';
 
     me.transparence.style.position = 'absolute';
     me.transparence.style.left = '0px';
@@ -1692,13 +1700,13 @@ CIfFrame.prototype.setHTML = function(html) {
 };
 
 /**
- * find DOM Element in the frame by querySelector<br>
+ * Find DOM Element in the frame by querySelector<br>
  *  Examples<br>
  *      frame.$("#my_id_name");
  *      frame.$(".my_class_name");
  *      frame.$("div>img");
  *      frame.$("input[type='submit]");
- * @param q
+ * @param {string} q selector query
  * @returns {Node}
  */
 CIfFrame.prototype.$ = function(q) {
@@ -1716,6 +1724,39 @@ CIfFrame.prototype.$ = function(q) {
   }
 };
 
+/**
+ * Sets an event listener for the window itself or elements in the contents of the window.
+ It is possible to register multiple listeners to the same event type.
+
+ * @param {string} id
+ If the "id" is prefixed with "#",
+ an event listener can be set to a DOM element (eventTarget) identified by the id in the content.<br>
+ This is the same behavior as the usual eventTarget#addEventListener.<br>
+ <br>
+ In addition to the DOM element in the content, the following special names are reserved for the "id"<br>
+ "closeButton" ... close button.<br>
+ "minimizeButton" ... Minimize Button<br>
+ "zoomButton"...zoom button.<br>
+ "restoreButton" ... the button that restores the window size.<br>
+ "deminimizeButton" ... the button to return from the minimized state.<br>
+ <br>
+ You can also receive events such as window resizing, moving, and focusing.
+ In this case, specify the following as "id"<br>
+ "frame" or "window".<br>
+ <br>
+ You can specify a frameComponent name that is uniquely defined by addFrameComponent.
+ (Generic buttons such as closeButton are one of the frame components.
+ * @param {string} eventType The element in the content (HTML) of a window whose "id" starts with "#"
+ * can be the same as the eventType(https://developer.mozilla.org/en-US/docs/Web/API/Event/type) used by the normal addEventListener.<br>
+ <br>
+ If the "id" is a frame or a window, the following can be used<br>
+ "move"... When a window is moved, it fires.<br>
+ "resize"... Fires when the window is resized.<br>
+ "focus"... "focus" means got focus. It fires when the window is in focus.<br>
+ "blur"... "blur" means lost focus.It fires when the window loses focus.<br>
+ <br>
+ * @param {function} callbackFunc
+ */
 CIfFrame.prototype.on = function(id, eventType, callbackFunc) {
   var me = this;
   var component = me.getFrameComponentElement(id);
@@ -1811,6 +1852,9 @@ CIfFrame.prototype.adjustFrameBorderRadius = function() {
 
 CIfFrame.prototype.handleReleasingFocus = function(e) {
   var me = this;
+
+  var focused = me._hasFocus;
+
   me._hasFocus = false;
 
   me.titleBar.style.backgroundColor = me.titleBarColorDefault;
@@ -1849,11 +1893,17 @@ CIfFrame.prototype.handleReleasingFocus = function(e) {
   //update style class
   me.titleBar.className = me.titleBarClassNameDefault;
 
+  if (focused) {
+    me.eventEmitter.emit('blur', { target: me });
+  }
+
+
   return me;
 };
 
 CIfFrame.prototype.handleTakingFocus = function(e) {
   var me = this;
+  var focused = me._hasFocus;
   me._hasFocus = true;
   me._hasFocus = Date.now();
 
@@ -1891,9 +1941,13 @@ CIfFrame.prototype.handleTakingFocus = function(e) {
     frameComponent.handleTakingFocus();
   }
 
-
   //update style class
   me.titleBar.className = me.titleBarClassNameFocused;
+
+  if (!focused) {
+    me.eventEmitter.emit('focus', { target: me });
+  }
+
   return me;
 };
 
