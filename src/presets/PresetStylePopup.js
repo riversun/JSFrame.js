@@ -126,7 +126,7 @@ function getStyle(fApr) {
 
   return fApr;
 
-  return fApr;
+
 }
 
 
