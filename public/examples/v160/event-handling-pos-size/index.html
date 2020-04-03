@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js example - Handling move and resize events</title>
+    <meta charset="utf-8">
+    <style>
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Handling move and resize events</span>
+</h2>
+
+<div id="message" style="z-index: 1000;pointer-events: none;font-size:12px;color:#666666;position: fixed; left: 10px; top: 60px;width:640px;padding:10px;border: 1px solid #666666;border-radius:10px">
+    Please move and resize window.
+</div>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px;">
+
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+    const jsFrame = new JSFrame();
+    // Create window
+    const frame = jsFrame.create({
+      title: 'Window',
+      name: 'Window-01',
+      left: 10, top: 120, width: 320, height: 220,
+      movable: true,// Enable to be moved  by mouse
+      resizable: true,// Enable to be resized by mouse
+      html: '<div id="message" style="padding:10px;font-size:20px;color:darkgray;">Please move me!<br>Resize me!</div>'
+    });
+
+    const eventListener = (data) => {
+      const box = document.querySelector('#message');
+
+      const frame = data.target;
+      const eventType = data.eventType;
+      const size = data.size;
+      const position = data.pos;
+      const windowName = frame.getName();
+
+      box.innerHTML = `
+windowName:<b>${windowName}</b>
+eventType:<b>${eventType}</b>
+anchor:<b>${position.anchor}</b>
+position:<b>(${position.x},${position.y})</b>
+size=<b>(${size.width}x${size.height})</b>`;
+    };
+
+    // register resize event
+    frame.on('frame', 'resize', eventListener);
+
+    // register move event
+    frame.on('frame', 'move', eventListener);
+
+    // Multiple listeners can be registered for a single eventType
+    frame.on('frame', 'move', (data) => {
+      console.log(`pos=${JSON.stringify(data.pos)} size=${JSON.stringify(data.size)}`)
+    });
+
+    frame.show();
+  }
+
+  start();
+</script>
+</body>
+</html>

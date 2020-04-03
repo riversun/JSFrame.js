@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Set window position and size</title>
+    <meta charset="utf-8">
+    <style>
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Set window position and size</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+    const jsFrame = new JSFrame();
+    const frame01 = jsFrame.createFrame().setTitle("My window");
+
+    //Set size with #setSize method
+    frame01.setSize(320, 240);
+
+    //Set position with #setPosition method
+    const x = window.innerWidth / 2;
+    const y = window.innerHeight / 2;
+    const anchor = 'CENTER_CENTER';
+
+    // Anchor means the position of the window with respect to which the position is specified.
+    // The following values can be specified for the anchor
+    // LEFT_TOP
+    // CENTER_TOP
+    // RIGHT_TOP
+    // LEFT_CENTER
+    // CENTER_CENTER
+    // RIGHT_CENTER
+    // LEFT_BOTTOM
+    // CENTER_BOTTOM
+    // RIGHT_BOTTOM
+    frame01.setPosition(x, y, anchor);
+    frame01.setHTML(`
+<div style="padding:10px;font-size:20px;color:darkgray;">
+    You can specify the position and size of the window using:<br>
+    <ul>
+        <li>#setPosition</li>
+        <li>#setSize</li>
+    </ul>
+</div>
+`);
+    frame01.show();
+  }
+
+  start();
+</script>
+</body>
+</html>

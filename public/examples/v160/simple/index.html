@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js example - Create a window with content written in HTML</title>
+    <meta charset="utf-8">
+    <style>
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Create a window with content written in HTML</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+    const jsFrame = new JSFrame();
+    // Create window
+    const frame = jsFrame.create({
+      title: 'Window',
+      left: 20, top: 60, width: 320, height: 220,
+      movable: true,// Enable to be moved  by mouse
+      resizable: true,// Enable to be resized by mouse
+      html: '<div id="my_element" style="padding:10px;font-size:20px;color:darkgray;">Contents will change in 5s</div>'
+    });
+
+    // Show window
+    frame.show();
+
+    setTimeout(() => {
+      // Change contents after 1 second
+      // Use $ selector to access to content of frame
+      // frame.$('#my_element') represents an element inside the window.
+
+      // set HTML with innerHTML
+      frame.$('#my_element').innerHTML = '<span style="color:palevioletred">Contents changed!</span><br>';
+
+      // append HTML with insertAdjacentHTML
+      frame.$('#my_element').insertAdjacentHTML('beforeend', '<span style="color:dodgerblue">You can move and resize me!</span>');
+
+    }, 5000);
+  }
+
+  start();
+</script>
+</body>
+</html>

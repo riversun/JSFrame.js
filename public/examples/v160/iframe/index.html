@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JsFrame.js example - Using an iframe for window content</title>
+    <meta charset="utf-8">
+    <meta name="description" content="A javascript popup/floating window library.">
+</head>
+<style>
+    h2 {
+        border-bottom: 1px solid #bbb;
+        font-weight: 100;
+        margin: 0 0 0.8em 0;
+        padding: 0 0 0.2em 0;
+    }
+
+    h2 span {
+        color: #666666;
+        white-space: nowrap;
+    }
+
+    a {
+        color: #6aa0d0;
+        text-decoration: none;
+    }
+
+    h2 a {
+        font-weight: 300;
+        margin: 0 10px 0 0;
+        white-space: nowrap;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Using an iframe for window content</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  const jsFrame = new JSFrame();
+
+  function start() {
+
+    const frame01 = jsFrame.create({
+      title: 'Window1',
+      name: 'window01',
+      left: 20, top: 60, width: 320, height: 160,
+      //URL to display in iframe
+      url: 'iframe_content01.html',
+
+      // If you specify "urlLoaded",
+      // you can specify a callback when the iframe content is finished loading
+      urlLoaded: (frame) => {
+        // You can use the on method to register an event listener for an element in an iframe
+        frame.on('#my_button_01', 'click', (_frame, evt) => {
+          // In this case, frame and _frame refer to the same object.
+          showToast(`Clicked ${_frame.getName()}'s ${evt.target.id}`);
+        });
+
+        frame.on('#my_button_02', 'click', (_frame, evt) => {
+          _frame.closeFrame();
+          showToast(`${_frame.getName()} closed by clicking ${evt.target.id}`);
+        });
+      }
+    });
+    frame01.show();
+
+    const frame02 = jsFrame.create({
+      title: 'Window2',
+      name: 'window02',
+      left: 360, top: 60, width: 320, height: 160,
+    });
+
+    // You can also call #setUrl to show page specified by 'url' in iframe.
+    // #setUrl returns Promise.Promise will be resolved(you'll get callback) after loading iframe.
+    frame02.setUrl('iframe_content02.html')
+      .then((frame, evt) => {
+        frame.on('#my_button_04', 'click', (_frame, evt) => {
+          showToast(`Clicked ${_frame.getName()}'s ${evt.target.id}`);
+        });
+        frame.show();
+      });
+
+    const frame03 = jsFrame.create({
+      title: 'Window3',
+      name: 'window03',
+      left: 20, top: 240, width: 320, height: 320,
+      // When this option is enabled,
+      // transparent screens are displayed to realize smooth scrolling,
+      // so if there are buttons or the like, it may stop responding unless you click twice
+      smoothResizeOnIframe: true,
+    });
+    //You can also call #setUrl to show page specified by 'url' in iframe.
+    //#setUrl returns Promise.Promise will be resolved(you'll get callback) after loading iframe.
+    frame03.setUrl('iframe_content03.html')
+      .then((frame, evt) => {
+        frame.show();
+      });
+  }
+
+  function showToast(str) {
+    jsFrame.showToast({
+      html: str, align: 'top'
+    });
+  }
+
+  start();
+
+</script>
+
+</body>
+</html>

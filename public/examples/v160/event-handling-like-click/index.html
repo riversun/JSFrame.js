@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Handling of content click events, etc.</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 10px;
+        }
+
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Handling of content click events, etc.</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+
+<script>
+  function start() {
+
+    const jsFrame = new JSFrame();
+    const frames = [];
+
+    const innerHTML = `<div class="container">
+    <div class="py-5 text-center">
+        <h2>My contents</h2>
+        <p class="lead">Your contents here</p>
+        <div class="col-12 text-center">
+            <button id="my_button_01" type="button" class="btn btn-primary">Button 1</button>
+            <button id="my_button_02" type="button" class="btn btn-secondary">Button 2</button>
+            <button id="my_button_03" type="button" class="btn btn-success">Button 3</button>
+        </div>
+    </div>
+</div>`;
+
+
+    for (let i = 0; i < 2; i++) {
+
+      const frame = jsFrame.create({
+        appearanceName: 'yosemite',
+        name: `MyWindow${i}`,
+        title: `Window${i}`,
+        left: 20 + 440 * i, top: 80, width: 400, height: 300,
+        minWidth: 160, minHeight: 100,
+        style: {
+          backgroundColor: 'rgba(255,255,255,0.9)',
+          overflow: 'auto'
+        },
+        html: innerHTML
+      });
+
+      //set event listener
+      frame.on('minimizeButton', 'click', (_frame, evt) => {
+        const size = _frame.getSize();
+        _frame.setSize(size.width - 20, size.height - 20);
+        jsFrame.showToast({
+          html: `Minimize button clicked`,
+          align: 'top'
+        });
+      });
+
+      frame.on('zoomButton', 'click', (_frame, evt) => {
+        const size = _frame.getSize();
+        _frame.setSize(size.width + 20, size.height + 20);
+        jsFrame.showToast({
+          html: `Zoom button clicked`,
+          align: 'top'
+        });
+      });
+
+      frame.on('closeButton', 'click', (_frame, evt) => {
+        _frame.closeFrame();
+        jsFrame.showToast({
+          html: `Close button clicked`,
+          align: 'top'
+        });
+      });
+
+      const htmlButtonListener = (_frame, evt) => {
+        const jsFrame = new JSFrame();
+        jsFrame.showToast({
+          html: `Clicked ${_frame.getName()}'s ${evt.target.id}`,
+          align: 'top'
+        });
+      };
+
+      //You can get DOM element in the HTML by selector format
+      frame.on('#my_button_01', 'click', htmlButtonListener);
+      frame.on('#my_button_02', 'click', htmlButtonListener);
+      frame.on('#my_button_03', 'click', htmlButtonListener);
+      frame.show();
+      frames.push(frame);
+    }
+
+    frames[0].requestFocus();
+  }
+
+  start();
+</script>
+</body>
+</html>
