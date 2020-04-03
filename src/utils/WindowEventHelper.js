@@ -1,7 +1,7 @@
 'use strict';
 
 var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
-var CALIGN = require('./CCommon.js');
+var CALIGN = require('../CCommon.js');
 
 function WindowEventHelper(model) {
 

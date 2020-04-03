@@ -1,6 +1,6 @@
 {
   "name": "jsframe.js",
-  "version": "1.5.16",
+  "version": "1.6.0",
   "description": "It is an independent lightweight multi-window library for javascript.\r - Create various popup windows.\r - Styling the appearance flexibly.",
   "main": "lib/jsframe.min.js",
   "scripts": {
@@ -37,5 +37,8 @@
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
+  },
+  "dependencies": {
+    "@riversun/event-emitter": "^1.2.1"
   }
 }

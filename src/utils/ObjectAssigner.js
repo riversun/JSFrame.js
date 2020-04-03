@@ -1,4 +1,3 @@
-
 var _typeof =
     typeof Symbol === "function" && typeof Symbol.iterator === "symbol"
         ? function (obj) {
