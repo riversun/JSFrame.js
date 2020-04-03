@@ -4,7 +4,7 @@ require('./JSFrame.css');
 
 var WindowEventHelper = require('./utils/WindowEventHelper.js');
 var CALIGN = require('./CCommon.js');
-
+var EventEmitter = require('@riversun/event-emitter');
 var CSimpleLayoutAnimator = require('./utils/CSimpleLayoutAnimator.js');
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
@@ -303,7 +303,24 @@ function CBeanFrame(beanId, left, top, width, height, zindex, w_border_width, ap
   // (If it is 0, it can not move in Y direction)
   me.htmlElement.argY = 1;
   me.externalAreaClickedListener = null;
+
+  me.onMoveListener = null;
 }
+
+CBeanFrame.prototype.getWindowType = function() {
+  return 'CBeanFrame';
+};
+
+CBeanFrame.prototype.setOnMoveListener = function(listener) {
+  var me = this;
+  me.onMoveListener = listener;
+};
+CBeanFrame.prototype._onMove = function(e) {
+  var me = this;
+  if (me.onMoveListener) {
+    me.onMoveListener(e);
+  }
+};
 
 /**
  * Set whether the frame can be moved while dragging with the mouse
@@ -361,10 +378,17 @@ CBeanFrame.prototype.onBodyClicked = function(e) {
 };
 CBeanFrame.prototype.onmouseDown = function(e) {
 
-  //This 'this' means a htmlElement
+  // Typically, if you mouse down on the title portion, the onmousedown fires to move the window.
+  // Mousing down the bottom of the window, the left side of the window,
+  // or the bottom of the window will fire the onmouseDown of the window itself (CBeanFrame)
+  // as well as the onmouseDown of the CMarkerWindow for resizing.
+  // Each mousedown element is set to a currentObject as being selected,
+  // whether it's a window or a marker.
+
+  // this means htmlElement of CBeanFrame object
   var refHtmlElement = this;
 
-  //Retrieve CBeanFrame
+  //Retrieve CBeanFrame object itself
   var refCBeanFrame = refHtmlElement.parent;
 
   if (e.button == 0) {
@@ -373,8 +397,9 @@ CBeanFrame.prototype.onmouseDown = function(e) {
     if (refCBeanFrame.pullUpDisabled) {
       return false;
     } else {
+      // Set the current CBeanFrame to be selected(=currentObject) among other CBeanFrames in the parent canvas.
       refHtmlElement.parentCanvas.currentObject = refHtmlElement;
-      //Bring the current bean to the top
+      // Bring the current bean to the top
       refHtmlElement.parentCanvas.pullUp(refCBeanFrame.id);
     }
 
@@ -383,6 +408,7 @@ CBeanFrame.prototype.onmouseDown = function(e) {
   }
 
   if (refHtmlElement.parentCanvas.currentObject) {
+
     refHtmlElement.parentCanvas.offsetX = e.pageX - parseInt(refHtmlElement.parentCanvas.currentObject.style.left, 10);
     refHtmlElement.parentCanvas.offsetY = e.pageY - parseInt(refHtmlElement.parentCanvas.currentObject.style.top, 10);
   }
@@ -533,8 +559,13 @@ CCanvas.prototype.mouseMove = function(e) {
       deltaY = (parseInt(newObjTopPx, 10) - parseInt(oldObjTopPx, 10));
       me.currentObject.style.left = (parseInt(me.currentObject.style.left) + deltaX * me.currentObject.argX) + 'px';
       me.currentObject.style.top = (parseInt(me.currentObject.style.top) + deltaY * me.currentObject.argY) + 'px';
-    }
 
+      var parentObject = me.currentObject.parent;
+      if (parentObject && parentObject._onMove) {
+        parentObject._onMove();
+      }
+
+    }
     me.eventData.deltaX = deltaX;
     me.eventData.deltaY = deltaY;
 
@@ -1644,6 +1675,8 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
     me.canvas.canvasElement.appendChild(me.transparence);
   }
 
+  me.eventEmitter = new EventEmitter();
+
 }
 
 
@@ -1711,6 +1744,19 @@ CIfFrame.prototype.on = function(id, eventType, callbackFunc) {
           child: childMenuEle
         });
     };
+  }
+
+  if (id === 'frame' || id === 'window') {
+
+    if (eventType === 'move' && !me.eventEmitter.hasListenerFuncs('move')) {
+      me.setOnMoveListener(function(e) {
+        //refCIfFrame.eventEmitter.emit('resize',);
+        me.eventEmitter.emit('move', me._getCurrentSizePos());
+      });
+    }
+
+
+    me.eventEmitter.on(eventType, callbackFunc);
   }
 
   var domElement = me.$(id);
@@ -2026,6 +2072,8 @@ CIfFrame.prototype.resize = function(deltaLeft, deltaTop, deltaWidth, deltaHeigh
     return null;
   }
 
+  var prevSize = refCIfFrame.getSize();
+
 
   //Resize processing should be overridden directly rather than adopting a decorator pattern because it has better performance.
   var tmpLeft = parseInt(refCIfFrame.htmlElement.style.left, 10);
@@ -2102,8 +2150,20 @@ CIfFrame.prototype.resize = function(deltaLeft, deltaTop, deltaWidth, deltaHeigh
     }
   }
 
+  var crrSize = refCIfFrame.getSize();
+  if (prevSize.width !== crrSize.width || prevSize.height !== crrSize.height) {
+    refCIfFrame.eventEmitter.emit('resize', refCIfFrame._getCurrentSizePos());
+  }
+
 
 };//resize
+
+CIfFrame.prototype._getCurrentSizePos = function() {
+  var me = this;
+  var crrSize = me.getSize();
+  var crrPos = me.getPosition();
+  return { target: me, pos: crrPos, size: crrSize };
+};
 
 CIfFrame.prototype.resizeDirect = function(width, height, byUser) {
 
@@ -2388,7 +2448,6 @@ CWindowManager.prototype.getWindowByName = function(name) {
 CWindowManager.prototype.windowMouseMove = function(e) {
   var me = this;
   if (me.currentObject == null) {
-
     return null;
   }
 
@@ -2552,6 +2611,9 @@ function CMarkerWindow(windowId, left, top, width, height, zindex, usage) {
   me.htmlElement.style.borderStyle = 'none';
   me.htmlElement.style.zIndex = 1;
 
+  me.getWindowType = function() {
+    return 'CMarkerWindow';
+  }
 }
 
 /**
@@ -2611,9 +2673,6 @@ function JSFrame(model) {
 
   document.addEventListener('mouseup', mouseUp);
   document.addEventListener('mousemove', mouseMove);
-  //document.onmouseup = mouseUp;
-  //document.onmousemove = mouseMove;
-
 
   me.windowManager = new CWindowManager(parentElement, 'windowManager_' + me.generateUUID(), 0, 0, 0, 0);
   //me.windowManager = new CWindowManager(document.body, 'windowManager_' + me.generateUUID(), 0, 0, 0, 0);
