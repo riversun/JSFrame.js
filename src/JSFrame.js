@@ -1652,7 +1652,10 @@ CIfFrame.prototype.adjustFrameBorderRadius = function() {
 
   if (parseInt(me.frameBorderRadius, 10) > 0) {
 
-    var innerBorderRadius = me.getFrameInnerBorderRadius(me, me._hasFocus);
+    var borderData = me.getFrameInnerBorderRadius(me, me._hasFocus);
+    var frameAppearance = borderData.frameAppearance;
+    var innerBorderRadius = borderData.innerBorderRadius;
+    var titleBarHeight = parseInt(frameAppearance.titleBarHeight, 10);
 
     if (me.showTitleBar) {
 
@@ -1675,6 +1678,14 @@ CIfFrame.prototype.adjustFrameBorderRadius = function() {
     }
 
     if (me.dframe) {
+      if (titleBarHeight === 0) {
+        if (!me.dframe.style.borderTopRightRadius) {
+          me.dframe.style.borderTopRightRadius = innerBorderRadius;
+        }
+        if (!me.dframe.style.borderTopLeftRadius) {
+          me.dframe.style.borderTopLeftRadius = innerBorderRadius;
+        }
+      }
       me.dframe.style.borderBottomRightRadius = innerBorderRadius;
       me.dframe.style.borderBottomLeftRadius = innerBorderRadius;
     }
@@ -2647,6 +2658,7 @@ JSFrame.prototype.create = function(model) {
 
   if (style) {
     var frameView = frame.getFrameView();
+
     for (var name in style) {
       if (style.hasOwnProperty(name)) {
         frameView.style[name] = style[name];

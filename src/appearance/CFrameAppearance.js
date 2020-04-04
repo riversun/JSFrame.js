@@ -56,7 +56,6 @@ function CFrameAppearance() {
 
   this._partsBuilder = null;
 
-
   this.frameComponents = [];
 
   this.frameHeightAdjust = 1;
@@ -64,12 +63,18 @@ function CFrameAppearance() {
   this.getFrameInnerBorderRadius = function(ref, hasFocus) {
 
     if (!ref) {
-      return;
+      return null;
     }
     if (hasFocus) {
-      return (parseInt(ref.frameBorderRadius, 10) - parseInt(ref.frameBorderWidthFocused, 10)) + 'px';
+      return {
+        frameAppearance: me,
+        innerBorderRadius: (parseInt(ref.frameBorderRadius, 10) - parseInt(ref.frameBorderWidthFocused, 10)) + 'px'
+      };
     }
-    return (parseInt(ref.frameBorderRadius, 10) - parseInt(ref.frameBorderWidthDefault, 10)) + 'px';
+    return {
+      frameAppearance: me,
+      innerBorderRadius: (parseInt(ref.frameBorderRadius, 10) - parseInt(ref.frameBorderWidthDefault, 10)) + 'px'
+    };
   };
 
 
