@@ -20,6 +20,15 @@ var presetStyles = {
 
 var DEF = {};
 
+// true:Support mouse on mouse-enabled devices
+var MOUSE_ENABLED = true;
+
+// true:Support touch on touch-enabled devices
+var TOUCH_ENABLED = true;
+
+//true:Allow the window to be moved only in the case of one finger
+// (the window cannot be moved in the case of two or more fingers)
+var TOUCH_MOVE_ONLY_WITH_ONE_FINGER = true;
 
 /**
  * Inheritance function
@@ -115,9 +124,24 @@ function CBeanFrame(beanId, left, top, width, height, zindex, w_border_width, ap
   //Refer parents to each other.(sougo-sansho)
   me.htmlElement.parent = me;
 
-  //Note that 'mouseDown' is mapped to 'onmousedown' of htmlElement,
-  //so when 'onmouseDown' fires ,the 'this' will indicate 'htmlElement'
-  me.htmlElement.onmousedown = me.onmouseDown;
+  if (MOUSE_ENABLED) {
+    //Note that 'mouseDown' is mapped to 'onmousedown' of htmlElement,
+    //so when 'onmouseDown' fires ,the 'this' will indicate 'htmlElement'
+    me.htmlElement.onmousedown = me.onmouseDown;
+  }
+
+  if (TOUCH_ENABLED) {
+    if ('ontouchstart' in window) {
+      var funcOnTouchStart = function(evt) {
+        // The "mousedown" event happens right after "touchstart" event,
+        // but I don't call #preventdefault because #preventdefault prevents "onclick".
+        // So, perform #preventdefault only for "touchmove"
+        // evt.preventDefault();
+        me.onmouseDown.bind(this)(evt);
+      };
+      me.htmlElement.ontouchstart = funcOnTouchStart;
+    }
+  }
 
   //Type name of this class
   me.htmlElement.typeName = DEF.CBEAN.TYPE_NAME;
@@ -180,14 +204,17 @@ CBeanFrame.prototype.setParentCanvas = function(parentCanvas) {
   var me = this;
   me.parentCanvas = parentCanvas;
   me.htmlElement.parentCanvas = me.parentCanvas;
+  return me;
 };
 CBeanFrame.prototype.setOnExternalAreaClickedListener = function(listener) {
   var me = this;
   me.externalAreaClickedListener = listener;
+  return me;
 };
 CBeanFrame.prototype.onBodyClicked = function(e) {
 
   var me = this;
+
   var clickX = e.pageX;
   var clickY = e.pageY;
 
@@ -209,7 +236,7 @@ CBeanFrame.prototype.onBodyClicked = function(e) {
 
 
 };
-CBeanFrame.prototype.onmouseDown = function(e) {
+CBeanFrame.prototype.onmouseDown = function(evt) {
 
   // Typically, if you mouse down on the title portion, the onmousedown fires to move the window.
   // Mousing down the bottom of the window, the left side of the window,
@@ -221,17 +248,36 @@ CBeanFrame.prototype.onmouseDown = function(e) {
   // this means htmlElement of CBeanFrame object
   var refHtmlElement = this;
 
+  var e = evt;
+
+  if (TOUCH_ENABLED) {
+    if (evt.type === 'touchstart') {
+      var changedTouches = evt.changedTouches;
+      if (TOUCH_MOVE_ONLY_WITH_ONE_FINGER) {
+        var touches = evt.touches;
+        if (touches.length === 1) {
+          e = changedTouches[0];
+        } else {
+          return true;
+        }
+      } else {
+        e = changedTouches[0];
+      }
+    }
+  }
+
   //Retrieve CBeanFrame object itself
   var refCBeanFrame = refHtmlElement.parent;
 
-  if (e.button == 0) {
-
+  if (e.button == 0 || evt.type === 'touchstart') {
     // for modal background window
     if (refCBeanFrame.pullUpDisabled) {
       return false;
     } else {
+
       // Set the current CBeanFrame to be selected(=currentObject) among other CBeanFrames in the parent canvas.
       refHtmlElement.parentCanvas.currentObject = refHtmlElement;
+
       // Bring the current bean to the top
       refHtmlElement.parentCanvas.pullUp(refCBeanFrame.id);
     }
@@ -343,11 +389,25 @@ function CCanvas(parentElement, canvasId, left, top, width, height) {
 }
 
 
-CCanvas.prototype.mouseMove = function(e) {
+CCanvas.prototype.mouseMove = function(evt) {
 
   var me = this;
-
-
+  var e = evt;
+  if (TOUCH_ENABLED) {
+    if (evt.type === 'touchmove') {
+      var changedTouches = evt.changedTouches;
+      if (TOUCH_MOVE_ONLY_WITH_ONE_FINGER) {
+        var touches = evt.touches;
+        if (touches.length === 1) {
+          e = changedTouches[0];
+        } else {
+          return true;
+        }
+      } else {
+        e = changedTouches[0];
+      }
+    }
+  }
   if (me.currentObject) {
 
     //eventData.isMoved=true;The presence of event data means that it has moved.
@@ -361,7 +421,6 @@ CCanvas.prototype.mouseMove = function(e) {
 
     var absoluteMouseX = e.pageX;
     var absoluteMouseY = e.pageY;
-
 
     //Take the snapshot before updating the location.
     var oldObjLeftPx = me.currentObject.style.left;
@@ -412,7 +471,6 @@ CCanvas.prototype.mouseMove = function(e) {
 
 CCanvas.prototype.mouseUp = function(e) {
   var me = this;
-
   me.currentObject = null;
   me.mouseDownSource = null;
 };
@@ -727,8 +785,24 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
   me.canvas.canvasElement.style.backgroundColor = DEF.CFRAME.CANVAS_ELEMENT_BGCOLOR;
   me.canvas.canvasElement.style.cursor = 'default';
 
-  //Handling the omousedown event that occurred in Canvas which is a child element of CFrame
-  me.canvas.canvasElement.onmousedown = me.canvasMouseDown;
+  if (MOUSE_ENABLED) {
+    //Handling the omousedown event that occurred in Canvas which is a child element of CFrame
+    me.canvas.canvasElement.onmousedown = me.canvasMouseDown;
+  }
+
+  if (TOUCH_ENABLED) {
+    if ('ontouchstart' in window) {
+      var funcOnTouchStart = function(evt) {
+        // The "mousedown" event happens right after "touchstart" event,
+        // but I don't call #preventdefault because #preventdefault prevents "onclick" (like button on titlebar).
+        // So, perform #preventdefault only for "touchmove"
+        // evt.preventDefault();
+        var touchStartEvent = evt.changedTouches[0];
+        me.canvasMouseDown.bind(this)(touchStartEvent);
+      };
+      me.canvas.canvasElement.ontouchstart = funcOnTouchStart;
+    }
+  }
 
   //Set the canvas as a reference to the parent of the canvas html element canvasElement.
   me.canvas.canvasElement.parentCFrame = me;
@@ -2181,14 +2255,33 @@ CIfFrame.prototype.setUrl = function(url) {
     me.iframe.src = url;
 
     me.iframe.onload = function() {
+      var funcOnMouseMove = function(e) {
 
-      //mouse move
-      me.iframe.contentWindow.document.onmousemove = function(e) {
+        var clientX = e.pageX;
+        var clientY = e.pageY;
+
+        if (TOUCH_ENABLED) {
+          if (e.type === 'touchmove') {
+            var changedTouches = e.changedTouches;
+            if (TOUCH_MOVE_ONLY_WITH_ONE_FINGER) {
+              var touches = e.touches;
+              if (touches.length === 1) {
+                clientX = changedTouches[0].pageX;
+                clientY = changedTouches[0].pageY;
+              } else {
+                return true;
+              }
+            } else {
+              clientX = changedTouches[0].pageX;
+              clientY = changedTouches[0].pageY;
+            }
+          }
+        }
         var frameLeft = me.getLeft();
         var frameTop = me.getTop();
-
         var eventFromIframe = document.createEvent('MouseEvents');
-        eventFromIframe.initMouseEvent('mousemove', true, false, window, e.detail, e.screenX, e.screenY, (e.pageX + frameLeft), (e.pageY + frameTop),
+        // Processing to make it look like mouse move even if you are moving by touch
+        eventFromIframe.initMouseEvent('mousemove', true, false, window, e.detail, e.screenX, e.screenY, (clientX + frameLeft), (clientY + frameTop),
           e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, null);
 
         //smooth dragging during iframe mode
@@ -2198,14 +2291,28 @@ CIfFrame.prototype.setUrl = function(url) {
           me.onMouseMoveOnIframe(eventFromIframe);
         }
       };
+      me.iframe.contentWindow.document.onmousemove = funcOnMouseMove;
+      me.iframe.contentWindow.document.ontouchmove = funcOnMouseMove;
+
 
       //mouse up
-      me.iframe.contentWindow.document.onmouseup = function(e) {
+      var funcOnMouseUp = function(e) {
+
+        var clientX = e.pageX;
+        var clientY = e.pageY;
+
+        if (TOUCH_ENABLED) {
+          if (e.type === 'touchend') {
+            var changedTouches = e.changedTouches;
+            clientX = changedTouches[0].pageX;
+            clientY = changedTouches[0].pageY;
+          }
+        }
         var frameLeft = me.getLeft();
         var frameTop = me.getTop();
-
         var eventFromIframe = document.createEvent('MouseEvents');
-        eventFromIframe.initMouseEvent('mouseup', true, false, window, e.detail, e.screenX, e.screenY, (e.pageX + frameLeft), (e.pageY + frameTop),
+        // Processing to make it look like mouse up even if you mouseup by touch
+        eventFromIframe.initMouseEvent('mouseup', true, false, window, e.detail, e.screenX, e.screenY, (clientX + frameLeft), (clientY + frameTop),
           e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, null);
 
         //smooth dragging during iframe mode
@@ -2215,15 +2322,12 @@ CIfFrame.prototype.setUrl = function(url) {
           me.onMouseUpOnIframe(eventFromIframe);
         }
       };
-
+      me.iframe.contentWindow.document.onmouseup = funcOnMouseUp;
+      me.iframe.contentWindow.document.ontouchend = funcOnMouseUp;
 
       resolve(me, me.iframe.contentWindow.document);
     };
-
-
   });
-
-
 };
 
 
@@ -2292,14 +2396,14 @@ inherit(CWindowManager, CCanvas);
 function CWindowManager(parentElement, canvasId, left, top, width, height) {
   CWindowManager.superConstructor.call(this, parentElement, canvasId, left, top, width, height);
   var me = this;
-
-  document.body.addEventListener('click', function(evt) {
+  // document.body.addEventListener('click', function(evt) {
+  document.addEventListener('click', function(evt) {
     for (var windowId in me.beanList) {
       var beanFrame = me.beanList[windowId];
       beanFrame.onBodyClicked(evt);
     }
-
   });
+
 }
 
 CWindowManager.prototype.getWindow = function(windowId) {
@@ -2344,6 +2448,7 @@ CWindowManager.prototype.getWindowByName = function(name) {
 
 //Wrapping the 'mouseMove' method of the parent class
 CWindowManager.prototype.windowMouseMove = function(e) {
+
   var me = this;
   if (me.currentObject == null) {
     return null;
@@ -2511,7 +2616,7 @@ function CMarkerWindow(windowId, left, top, width, height, zindex, usage) {
 
   me.getWindowType = function() {
     return 'CMarkerWindow';
-  }
+  };
 }
 
 /**
@@ -2555,6 +2660,15 @@ function JSFrame(model) {
     me.vAlign = model.verticalAlign;
   }
 
+  me.pullToRefresh = false;
+  if (model && typeof model.pullToRefresh === 'boolean') {
+    me.pullToRefresh = model.pullToRefresh;
+  }
+
+  me.touchActionManipulation = true;
+  if (model && typeof model.touchActionManipulation === 'boolean') {
+    me.touchActionManipulation = model.touchActionManipulation;
+  }
 
   if (!parentElement && isWindowManagerFixed) {
     var topParentDiv = document.createElement('div');
@@ -2569,13 +2683,50 @@ function JSFrame(model) {
     parentElement = document.body;
   }
 
-  document.addEventListener('mouseup', mouseUp);
-  document.addEventListener('mousemove', mouseMove);
+  if (MOUSE_ENABLED) {
+    document.addEventListener('mouseup', mouseUp);
+    document.addEventListener('mousemove', mouseMove);
+  }
+  if (TOUCH_ENABLED) {
+    if ('ontouchend' in window) {
+      var funcOnTouchEnd = function(evt) {
+        // The "mouseup" event happens right after "touchend" event,
+        // but I don't call #preventdefault because #preventdefault prevents "onclick".
+        // So, perform #preventdefault only for "touchmove"
+        // evt.preventDefault();
+        mouseUp.bind(this)(evt);
+      };
+      document.addEventListener('touchend', funcOnTouchEnd);
+    }
+
+    if ('ontouchmove' in window) {
+
+      // To remove the 300ms tap delay between touchend and click,
+      // To disable double-tap to zoom
+      if (me.touchActionManipulation) {
+        me.doEnableTouchActionManipulation();
+      }
+
+      if (!me.pullToRefresh) {
+        // The Android version of Chrome has a feature that refreshes the page by sliding downward
+        // while touching on the screen, but when this feature is enabled, the downward movement of the window is inhibited,
+        // so this feature can be explicitly turned off.
+        me.doDisablePullToRefresh();
+      }
+
+      var funcOnTouchMove = function(evt) {
+        // Call #preventDefault to prevent simultaneous ignition of mousemove
+        evt.preventDefault();
+        mouseMove.bind(this)(evt);
+      };
+      document.addEventListener('touchmove', funcOnTouchMove);
+    }
+  }
+
 
   me.windowManager = new CWindowManager(parentElement, 'windowManager_' + me.generateUUID(), 0, 0, 0, 0);
   //me.windowManager = new CWindowManager(document.body, 'windowManager_' + me.generateUUID(), 0, 0, 0, 0);
   me.domPartsBuilder = null;
-
 
   function mouseUp(e) {
     me.windowManager.windowMouseUp(e);
@@ -2583,11 +2734,38 @@ function JSFrame(model) {
 
   function mouseMove(e) {
     me.windowManager.windowMouseMove(e);
-    var globalMouseX = e.pageX;
-    var globalMouseY = e.pageY;
   }
 }
 
+JSFrame.prototype.doEnableTouchActionManipulation = function() {
+  var bodyStyle = document.documentElement.getAttribute('style');
+  if (!bodyStyle) {
+    bodyStyle = '';
+  } else {
+    if (!bodyStyle.endsWith(';')) {
+      bodyStyle += ';';
+    }
+  }
+  if (bodyStyle.indexOf('touch-action') === -1) {
+    bodyStyle += '-ms-touch-action: manipulation;touch-action: manipulation;';
+    document.documentElement.setAttribute('style', bodyStyle);
+  }
+};
+
+JSFrame.prototype.doDisablePullToRefresh = function() {
+  var bodyStyle = document.body.getAttribute('style');
+  if (!bodyStyle) {
+    bodyStyle = '';
+  } else {
+    if (!bodyStyle.endsWith(';')) {
+      bodyStyle += ';';
+    }
+  }
+  if (bodyStyle.indexOf('overscroll-behavior-y') === -1) {
+    bodyStyle += 'overscroll-behavior-y: contain;';
+    document.body.setAttribute('style', bodyStyle);
+  }
+};
 JSFrame.prototype.getDomPartsBuilder = function() {
   var me = this;
 
