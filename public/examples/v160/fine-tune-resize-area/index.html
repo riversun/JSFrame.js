@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Changing the resize area to adjust sensitivity by mouse or touch</title>
+    <meta charset="utf-8">
+    <style>
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Changing the resize area to adjust sensitivity by mouse or touch</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+    const jsFrame = new JSFrame();
+
+    {
+      //You can adjust the sensitivity when resizing with the mouse or touch.
+      const appearance1 = jsFrame.createFrameAppearance();
+
+      //Make the resize area visible for fine tuning
+      appearance1.resizeAreaVisible = true;
+
+      //The offset distance between the resize area and the window border.
+      appearance1.resizeAreaOffset = -10;// default is -10
+
+      //Thickness of the horizontal resizing area
+      appearance1.resizeAreaWidth = 20;// default is 20
+
+      //Thickness of the vertical resize area
+      appearance1.resizeAreaHeight = 20;// default is 20
+
+      const frame1 = jsFrame.create({
+        title: 'Window1',
+        name: 'Window-01',
+        left: 20, top: 60, width: 320, height: 220,
+        movable: true,
+        resizable: true,
+        html: '<div id="message" style="padding:10px;font-size:16px;color:darkgray;">You can adjust the sensitivity (fine-tune the size of the resizing area) when resizing with the mouse or touch.</div>',
+        appearance: appearance1
+      }).show();
+    }
+
+    {
+      const appearance2 = jsFrame.createFrameAppearance();
+      appearance2.resizeAreaVisible = true;
+      appearance2.resizeAreaOffset = 0;
+      appearance2.resizeAreaWidth = 20;
+      appearance2.resizeAreaHeight = 20;
+      const frame2 = jsFrame.create({
+        title: 'Window2',
+        name: 'Window-02',
+        left: 420, top: 60, width: 320, height: 220,
+        movable: true,
+        resizable: true,
+        html: '<div id="message" style="padding:10px;font-size:20px;color:darkgray;">You can adjust the sensitivity (fine-tune the size of the resizing area) when resizing with the mouse or touch.</div>',
+        appearance: appearance2
+      }).show();
+    }
+
+    {
+      const appearance3 = jsFrame.createFrameAppearance();
+      appearance3.resizeAreaVisible = true;
+      appearance3.resizeAreaOffset = 10;
+      appearance3.resizeAreaWidth = 40;
+      appearance3.resizeAreaHeight = 40;
+      const frame3 = jsFrame.create({
+        title: 'Window3',
+        name: 'Window-04',
+        left: 20, top: 320, width: 320, height: 220,
+        movable: true,
+        resizable: true,
+        html: '<div id="message" style="padding:10px;font-size:20px;color:darkgray;">You can adjust the sensitivity (fine-tune the size of the resizing area) when resizing with the mouse or touch.</div>',
+        appearance: appearance3
+      }).show();
+    }
+
+    {
+      const appearance4 = jsFrame.createFrameAppearance();
+      appearance4.resizeAreaVisible = false;
+      appearance4.resizeAreaOffset = -20;
+      appearance4.resizeAreaWidth = 40;
+      appearance4.resizeAreaHeight = 40;
+      const frame2 = jsFrame.create({
+        title: 'Window4',
+        name: 'Window-04',
+        left: 420, top: 320, width: 320, height: 220,
+        movable: true,
+        resizable: true,
+        html: '<div id="message" style="padding:10px;font-size:20px;color:darkgray;">You can adjust the sensitivity (fine-tune the size of the resizing area) when resizing with the mouse or touch.</div>',
+        appearance: appearance4
+      }).show();
+    }
+  }
+
+  start();
+</script>
+</body>
+</html>

@@ -337,6 +337,8 @@ function CCanvas(parentElement, canvasId, left, top, width, height) {
 
   var me = this;
 
+
+  me.enablePullUp = true;// true:Pull-up sorting to bring the window to the forefront by clicking to get focus.
   me.currentObject = null;
   me.onTopObject = null;
   me.offsetX = 0;
@@ -492,7 +494,9 @@ CCanvas.prototype.pullUp = function(targetBeanId) {
   //Bring the target object in front and set zindex to 1.
   var targetBean = beanList[targetBeanId];
 
-  me.pullUpSort(targetBean, tmpBeanArray, me.baseZIndex);
+  if (me.enablePullUp) {
+    me.pullUpSort(targetBean, tmpBeanArray, me.baseZIndex);
+  }
 
 
   //Remember the top object
@@ -782,6 +786,7 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
   //Create a canvas
   me.canvas = new CCanvas(me.htmlElement, me.myCanvasId, 0, canvasMoreHeight, w_width - canvasMoreSpacing, w_height - canvasMoreHeight - canvasMoreSpacing);
 
+  me.canvas.enablePullUp = false;
   me.canvas.canvasElement.style.backgroundColor = DEF.CFRAME.CANVAS_ELEMENT_BGCOLOR;
   me.canvas.canvasElement.style.cursor = 'default';
 
@@ -811,21 +816,30 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
   var tmpCanvasWidth = parseInt(me.canvas.canvasElement.style.width, 10);
   var tmpCanvasHeight = parseInt(me.canvas.canvasElement.style.height, 10);
 
-  var markerWidth = 16;
-  var markerHeight = 16;
+  var markerWidth = appearance.resizeAreaWidth;
+  var markerHeight = appearance.resizeAreaHeight;
 
   //Offset from marker edge
-  var edgeMargin = 16;
+  var edgeMargin = appearance.resizeAreaOffset;
+  var markerZIndex = 0;
+
+  var colorRD, colorDD, colorRR;
+
+  if (appearance.resizeAreaVisible) {
+    colorRD = 'rgba(255, 0, 0, 0.5)';
+    colorDD = 'rgba(0, 0, 255, 0.5)';
+    colorRR = 'rgba(0, 255, 0, 0.5)';
+  }
 
   //Lower right(R-D)
   var markerRD = new CMarkerWindow(
     me.myCanvasId + '_RD',
-    tmpCanvasWidth - markerWidth + edgeMargin,
-    tmpCanvasHeight - markerHeight + edgeMargin,
+    tmpCanvasWidth + edgeMargin,
+    tmpCanvasHeight + edgeMargin,
     markerWidth,
     markerHeight,
-    0,
-    'RD');
+    markerZIndex,
+    'RD', colorRD);
 
   markerRD.htmlElement.style.cursor = 'se-resize';//nw-resize';
 
@@ -839,11 +853,11 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
   var markerDD = new CMarkerWindow(
     me.myCanvasId + '_DD',
     0,
-    tmpCanvasHeight - markerHeight + edgeMargin,
-    tmpCanvasWidth - markerWidth + edgeMargin,
+    tmpCanvasHeight + edgeMargin,
+    tmpCanvasWidth + edgeMargin,
     markerHeight,
-    0,
-    'DD');
+    markerZIndex,
+    'DD', colorDD);
 
   markerDD.htmlElement.style.cursor = 'n-resize';
 
@@ -855,12 +869,12 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
   //Right(R-R)
   var markerRR = new CMarkerWindow(
     me.myCanvasId + '_RR',
-    tmpCanvasWidth - markerWidth + edgeMargin,
+    tmpCanvasWidth + edgeMargin,
     0,
     markerWidth,
-    tmpCanvasHeight - markerHeight + edgeMargin,
-    0,
-    'RR');
+    tmpCanvasHeight + edgeMargin,
+    markerZIndex,
+    'RR', colorRR);
 
   markerRR.htmlElement.style.cursor = 'w-resize';
 
@@ -2602,7 +2616,7 @@ inherit(CMarkerWindow, CBeanFrame);
  * @param usage
  * @constructor
  */
-function CMarkerWindow(windowId, left, top, width, height, zindex, usage) {
+function CMarkerWindow(windowId, left, top, width, height, zindex, usage, color) {
 
   var me = this;
 
@@ -2613,6 +2627,10 @@ function CMarkerWindow(windowId, left, top, width, height, zindex, usage) {
   me.htmlElement.isRangeLimited = false;
   me.htmlElement.style.borderStyle = 'none';
   me.htmlElement.style.zIndex = 1;
+  if (color) {
+    me.htmlElement.style.background = color;
+  }
+  //me.pullUpDisabled = true;
 
   me.getWindowType = function() {
     return 'CMarkerWindow';

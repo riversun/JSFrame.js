@@ -60,6 +60,11 @@ function CFrameAppearance() {
 
   this.frameHeightAdjust = 1;
 
+  this.resizeAreaWidth = 20;
+  this.resizeAreaHeight = 20;
+  this.resizeAreaOffset = 0;
+  this.resizeAreaVisible = false;
+
   this.getFrameInnerBorderRadius = function(ref, hasFocus) {
 
     if (!ref) {
