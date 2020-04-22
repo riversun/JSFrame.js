@@ -712,7 +712,9 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
       me.titleBar.style.height = (parseInt(me.titleBarHeight, 10) + 0) + 'px';
     }
 
-    me.titleBar.style.backgroundColor = me.titleBarColorDefault;
+    if (me.titleBarColorDefault) {
+      me.titleBar.style.background = me.titleBarColorDefault;
+    }
     me.titleBar.style.zIndex = 0;
 
     me.titleBar.style.color = me.titleBarCaptionColorDefault;
@@ -1469,6 +1471,7 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
   this.overrayTransparentScreenOnResize = true;
 
   this.titleBarColorFocused = appearance.titleBarColorFocused;
+
   this.titleBarColorDefault = appearance.titleBarColorDefault;
 
   this.titleBarCaptionColorDefault = appearance.titleBarCaptionColorDefault;
@@ -1789,7 +1792,12 @@ CIfFrame.prototype.handleReleasingFocus = function(e) {
 
   me._hasFocus = false;
 
-  me.titleBar.style.backgroundColor = me.titleBarColorDefault;
+  //update style class
+  me.titleBar.className = me.titleBarClassNameDefault;
+
+  if (me.titleBarColorDefault) {
+    me.titleBar.style.background = me.titleBarColorDefault;
+  }
   me.titleBar.style.color = me.titleBarCaptionColorDefault;
 
   //border color
@@ -1821,10 +1829,6 @@ CIfFrame.prototype.handleReleasingFocus = function(e) {
     me.titleBar.style.borderBottom = me.titleBarBorderBottomDefault;
   }
 
-
-  //update style class
-  me.titleBar.className = me.titleBarClassNameDefault;
-
   if (focused) {
     me.eventEmitter.emit('blur', { target: me });
   }
@@ -1847,7 +1851,12 @@ CIfFrame.prototype.handleTakingFocus = function(e) {
 
   }
 
-  me.titleBar.style.backgroundColor = me.titleBarColorFocused;
+  //update style class
+  me.titleBar.className = me.titleBarClassNameFocused;
+
+  if (me.titleBarColorFocused) {
+    me.titleBar.style.background = me.titleBarColorFocused;
+  }
   me.titleBar.style.color = me.titleBarCaptionColorFocused;
 
 
@@ -1873,8 +1882,6 @@ CIfFrame.prototype.handleTakingFocus = function(e) {
     frameComponent.handleTakingFocus();
   }
 
-  //update style class
-  me.titleBar.className = me.titleBarClassNameFocused;
 
   if (!focused) {
     me.eventEmitter.emit('focus', { target: me });

@@ -32,8 +32,8 @@ function CFrameAppearance() {
    */
   this.titleBarCaptionLeftMargin = '5px';
 
-  this.titleBarColorDefault = 'lightgray';
-  this.titleBarColorFocused = '#d3e1ee';
+  this.titleBarColorDefault = null;
+  this.titleBarColorFocused = null;
   this.titleBarCaptionColorDefault = '';
   this.titleBarCaptionColorFocused = '';
   this.titleBarCaptionTextShadow = '0 1px 0 rgba(255,255,255,.7)';

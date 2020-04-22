@@ -13,8 +13,8 @@ function getStyle(fApr) {
 
   fApr.titleBarHeight = '30px';
 
-  fApr.titleBarColorDefault = 'white';
-  fApr.titleBarColorFocused = 'white';
+  fApr.titleBarColorDefault = null;
+  fApr.titleBarColorFocused = null;
 
   fApr.titleBarBorderBottomDefault = 'solid 1px #aaaaaa';
   fApr.titleBarBorderBottomFocused = 'solid 1px #1883d7';
