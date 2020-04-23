@@ -102,7 +102,12 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
   divElement.style.left = '0px';
   divElement.style.width = (width) + 'px';
   divElement.style.height = (height) + 'px';
-  divElement.style.cursor = 'pointer';
+
+  if (btnAppearance.cursor) {
+    divElement.style.cursor = btnAppearance.cursor;
+  } else {
+    divElement.style.cursor = 'pointer';
+  }
   divElement.style.margin = '0px';
   divElement.style.padding = '0px';
   //added for preventing bootstrap.css pollution

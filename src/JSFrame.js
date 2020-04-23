@@ -951,8 +951,9 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
 
   me.caribValue = caribVal;
 
-  me.htmlElement.style.borderWidth = me.exBorderWidth + 'px';
-
+  if (me.exBorderWidth) {
+    me.htmlElement.style.borderWidth = me.exBorderWidth + 'px';
+  }
   me.htmlElement.style.width = (parseInt(me.htmlElement.style.width, 10) - caribVal) + 'px';
   me.htmlElement.style.height = (parseInt(me.htmlElement.style.height, 10) - caribVal + 1) + 'px';
   me.htmlElement.typeName = 'cwindow';
