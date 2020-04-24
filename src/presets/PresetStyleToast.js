@@ -1,6 +1,7 @@
 function getStyle(fApr) {
 
 
+
   fApr.showTitleBar = false;
   fApr.showCloseButton = true;
 
@@ -25,7 +26,6 @@ function getStyle(fApr) {
   fApr.frameBorderWidthDefault = '0px';
   fApr.frameBorderWidthFocused = '0px';
 
-
   //border color
   fApr.frameBorderColorDefault = 'transparent';
   fApr.frameBorderColorFocused = 'transparent';
@@ -35,7 +35,7 @@ function getStyle(fApr) {
 
 
   fApr.frameComponents = [];
-  fApr.frameHeightAdjust = 2;//default is 1
+  fApr.frameHeightAdjust = 1;//default is 1
 
   fApr.captionClor = 'darkgray';
 

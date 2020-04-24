@@ -970,12 +970,12 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
   }
 
   //TODO deprecation(because CIfFrame is extended this operation)
-  if (parseInt(appearance.frameBorderWidthDefault, 10) > 0) {
+  if (parseInt(appearance.frameBorderWidthDefault, 10) >= 0) {
     me.htmlElement.style.borderWidth = appearance.frameBorderWidthDefault;
     me.htmlElement.style.borderColor = appearance.frameBorderColorDefault;
 
   }
-  if (parseInt(appearance.frameBorderRadius, 10) > 0) {
+  if (parseInt(appearance.frameBorderRadius, 10) >= 0) {
     me.htmlElement.style.borderRadius = appearance.frameBorderRadius;
   }
 
