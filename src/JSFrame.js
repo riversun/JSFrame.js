@@ -2918,12 +2918,17 @@ JSFrame.prototype.createFrame = function(left, top, width, height, appearance, p
   me.windowManager.addWindow(frame);
 
 
+  // getTitleBarStyle is deprecated
   if (appearance.getTitleBarStyle) {
 
     var titleBarStyle = appearance.getTitleBarStyle();
     if (titleBarStyle) {
       frame.setTitleBarClassName(titleBarStyle.titleBarClassNameDefault, titleBarStyle.titleBarClassNameFocused);
     }
+  } else if (appearance.titleBarClassNameDefault && appearance.titleBarClassNameFocused) {
+    frame.setTitleBarClassName(appearance.titleBarClassNameDefault, appearance.titleBarClassNameFocused);
+  } else if (appearance.titleBarClassNameDefault) {
+    frame.setTitleBarClassName(appearance.titleBarClassNameDefault, appearance.titleBarClassNameDefault);
   }
 
   return frame;

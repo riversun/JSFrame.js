@@ -16,9 +16,11 @@ function CFrameAppearance() {
   this.titleBarCaptionFontSize = '12px';
   this.titleBarCaptionFontWeight = 'bold';
   this.titleBarHeight = '24px';
-
   this.useIframe = false;
   this.useFrame = true;
+
+  this.titleBarClassNameDefault=null;
+  this.titleBarClassNameFocused=null;
 
   this.setUseIFrame = function(value) {
     me.useIframe = value;

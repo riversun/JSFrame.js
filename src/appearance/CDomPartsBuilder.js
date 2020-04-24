@@ -15,10 +15,11 @@ CDomPartsBuilder.prototype.buildButton = function(btnAppearance) {
   return me.buildTextButton(btnAppearance);
 };
 
+
 /**
- *
- * @param size
- * @returns {HTMLElement}
+ * Creates an actual DOM element from the specified appearance
+ * @param btnAppearance
+ * @returns {HTMLDivElement}
  */
 CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
 
