@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - styling: thick title bar</title>
+    <meta charset="utf-8">
+    <style>
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>styling: thick title bar</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+
+    var jsFrame = new JSFrame();
+
+    // A frame appearance is a container in which parameters for the appearance of a window are defined.
+    // To change the appearance of the window, you can specify the Frame Appearance parameter.
+
+    jsFrame.create({
+      title: 'Rectangle window1',
+      left: 20, top: 80, width: 320, height: 220,
+      style: {
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        overflow: 'hidden'
+      },
+      appearance: getOriginalStyle(jsFrame.createFrameAppearance()),
+      html: '<div id="my_element" style="padding:10px;font-size:20px;color:darkgray;">Custom styled window</div>'
+    }).show();
+
+    jsFrame.create({
+      title: 'Rectangle window2',
+      left: 360, top: 80, width: 320, height: 220,
+      style: {
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        overflow: 'hidden'
+      },
+      appearance: getOriginalStyle(jsFrame.createFrameAppearance()),
+      html: '<div id="my_element" style="padding:10px;font-size:20px;color:darkgray;">Custom styled window</div>'
+    }).show();
+
+  }
+
+  /**
+   * Generate(populate values to object) the original look
+   * @param frameAppearance
+   * @returns {*}
+   */
+  function getOriginalStyle(frameAppearance) {
+
+    // Specifies parameters for the appearance of the window,
+    // such as the title bar and border.
+    frameAppearance.titleBarHeight = '60px';
+    frameAppearance.titleBarCaptionFontSize = '22px';
+    frameAppearance.titleBarCaptionFontWeight = 'bold';
+    frameAppearance.titleBarCaptionLeftMargin = '10px';
+    frameAppearance.titleBarCaptionColorDefault = 'gray';
+    frameAppearance.titleBarCaptionColorFocused = 'white';
+    frameAppearance.titleBarCaptionTextShadow = null;//'0 1px 0 rgba(255,255,255,.7)';
+    frameAppearance.titleBarColorDefault = 'black';
+    frameAppearance.titleBarColorFocused = 'black';
+    frameAppearance.titleBarBorderBottomDefault = null;
+    frameAppearance.titleBarBorderBottomFocused = null;
+    frameAppearance.frameBorderRadius = '0px';
+    frameAppearance.frameBorderWidthDefault = '1px';
+    frameAppearance.frameBorderWidthFocused = '1px';
+    frameAppearance.frameBorderColorDefault = 'black';
+    frameAppearance.frameBorderColorFocused = 'red';
+
+    // Disable default title bar class
+    frameAppearance.titleBarClassNameDefault = ' ';
+    frameAppearance.titleBarClassNameFocused = ' ';
+
+    frameAppearance.onInitialize = function() {
+
+      // Create an original "close button".
+      // Decide which part of the window the close button should be placed in, and
+      // To create an original button, we declare a class called Text Button,
+      // which we get using the helper class called Parts Builder
+      var partsBuilder = frameAppearance.getPartsBuilder();
+      var closeButtonApr = partsBuilder.buildTextButtonAppearance();
+      closeButtonApr.width = 40;
+      closeButtonApr.height = 40;
+      closeButtonApr.borderRadius = 0;
+      closeButtonApr.borderWidth = 0;
+      closeButtonApr.borderColorDefault = 'transparent';
+      closeButtonApr.borderColorFocused = 'transparent';
+      closeButtonApr.borderColorHovered = 'transparent';
+      closeButtonApr.borderColorPressed = 'transparent';
+      closeButtonApr.borderStyleDefault = '';
+      closeButtonApr.borderStyleFocused = closeButtonApr.borderStyleDefault;
+      closeButtonApr.borderStyleHovered = closeButtonApr.borderStyleDefault;
+      closeButtonApr.borderStylePressed = closeButtonApr.borderStyleDefault;
+      closeButtonApr.backgroundColorDefault = 'transparent';
+      closeButtonApr.backgroundColorFocused = 'transparent';
+      closeButtonApr.backgroundColorHovered = 'rgba(255, 0, 0, 0.2)';
+      closeButtonApr.backgroundColorPressed = 'rgba(255, 0, 0, 0.2)';
+      closeButtonApr.backgroundBoxShadow = null;
+      closeButtonApr.caption = '\u2716';// Using text to represent the close mark
+      closeButtonApr.captionColorDefault = 'gray';
+      closeButtonApr.captionColorFocused = 'white';
+      closeButtonApr.captionColorHovered = 'white';
+      closeButtonApr.captionColorPressed = 'white';
+      closeButtonApr.captionShiftYpx = 1;
+      closeButtonApr.captionFontRatio = 0.6;
+
+      // Specify the button appearance
+      // when the close button is created using the Part Builder.
+      var closeButtonEle = partsBuilder.buildTextButton(closeButtonApr);
+      var closeButtonAnchor = 'RIGHT_TOP';
+      var closeButtonX = -10;
+      var closeButtonY = -closeButtonApr.height / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+
+      // Give it a reserved name "closeButton" to indicate that this is a "close button".
+      frameAppearance.addFrameComponent('closeButton', closeButtonEle, closeButtonX, closeButtonY, closeButtonAnchor);
+    };
+    return frameAppearance;
+  }
+
+  start();
+</script>
+</body>
+</html>

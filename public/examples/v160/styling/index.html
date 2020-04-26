@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - xxxxxx</title>
+    <meta charset="utf-8">
+    <style>
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>xxxxxx</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+
+    const jsFrame = new JSFrame();
+
+    // A frame appearance is a container in which parameters for the appearance of a window are defined.
+    // To change the appearance of the window, you can specify the Frame Appearance parameter.
+    const appearance = jsFrame.createFrameAppearance();
+    jsFrame.create({
+      title: 'Popup style',
+      left: 20, top: 80, width: 320, height: 220,
+      style: {
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        overflow: 'hidden'
+      },
+      appearance: getOriginalStyle(appearance),
+      html: '<div id="my_element" style="padding:10px;font-size:20px;color:darkgray;">Popup style window</div>'
+    }).show();
+
+  }
+
+  /**
+   * Generate(populate values to object) the original look
+   * @param frameAppearance
+   * @returns {*}
+   */
+  function getOriginalStyle(frameAppearance) {
+
+    // Specifies parameters for the appearance of the window,
+    // such as the title bar and border.
+    frameAppearance.titleBarHeight = '0px';// no title bar
+    // frameAppearance.titleBarCaptionFontSize = '12px';
+    // frameAppearance.titleBarCaptionFontWeight = 'normal';
+    // frameAppearance.titleBarCaptionLeftMargin = '10px';
+    // frameAppearance.titleBarCaptionColorDefault = '#4d494d';
+    // frameAppearance.titleBarCaptionColorFocused = '#4d494d';
+    // frameAppearance.titleBarColorDefault = 'yellow';
+    // frameAppearance.titleBarColorFocused = 'yellow';
+    // frameAppearance.titleBarBorderBottomDefault = null;
+    // frameAppearance.titleBarBorderBottomFocused = null;
+    frameAppearance.frameBorderRadius = '6px';
+    frameAppearance.frameBorderWidthDefault = '1px';
+    frameAppearance.frameBorderWidthFocused = '1px';
+    frameAppearance.frameBorderColorDefault = '#ffffff';
+    frameAppearance.frameBorderColorFocused = '#666666';
+    frameAppearance.frameBorderStyle = 'solid';
+    frameAppearance.frameBoxShadow = '10px 10px 10px rgba(0, 0, 0, 0.2)';
+    frameAppearance.frameBorderStyle = 'solid';
+    frameAppearance.frameComponents = [];
+    frameAppearance.frameHeightAdjust = 1;
+
+    frameAppearance.onInitialize = function() {
+
+      // Create an original "close button".
+      // Decide which part of the window the close button should be placed in, and
+      // To create an original button, we declare a class called Text Button,
+      // which we get using the helper class called Parts Builder
+      var partsBuilder = frameAppearance.getPartsBuilder();
+      var buttonAppearance = partsBuilder.buildTextButtonAppearance();
+      buttonAppearance.width = 20;
+      buttonAppearance.height = 20;
+      buttonAppearance.borderRadius = 10;
+      buttonAppearance.borderWidth = 1;
+      buttonAppearance.borderColorDefault = '#cccccc';
+      buttonAppearance.borderColorFocused = '#cccccc';
+      buttonAppearance.borderColorHovered = '#dddddd';
+      buttonAppearance.borderColorPressed = '#eeeeee';
+      buttonAppearance.borderStyleDefault = 'solid';
+      buttonAppearance.borderStyleFocused = buttonAppearance.borderStyleDefault;
+      buttonAppearance.borderStyleHovered = buttonAppearance.borderStyleDefault;
+      buttonAppearance.borderStylePressed = buttonAppearance.borderStyleDefault;
+      buttonAppearance.backgroundColorDefault = 'white';
+      buttonAppearance.backgroundColorFocused = 'white';
+      buttonAppearance.backgroundColorHovered = '#eeeeee';
+      buttonAppearance.backgroundColorPressed = '#dddddd';
+      buttonAppearance.backgroundBoxShadow = '5px 5px 5px  rgba(0, 0, 0, 0.2)';
+      buttonAppearance.caption = '\u2716';// Using text to represent the close mark
+      buttonAppearance.captionColorDefault = 'black';
+      buttonAppearance.captionColorFocused = 'black';
+      buttonAppearance.captionColorHovered = 'red';
+      buttonAppearance.captionColorPressed = 'red';
+      //If you use captionShiftYpx, you can fine-tune the y-direction according to the drawing situation of the font.
+      buttonAppearance.captionShiftYpx = 1;
+      buttonAppearance.captionFontRatio = 0.6;
+
+      // Specify the button appearance
+      // when the close button is created using the Part Builder.
+      var closeButtonEle = partsBuilder.buildTextButton(buttonAppearance);
+      var anchor = 'RIGHT_TOP';
+      var x = 10;
+      var y = -12 - parseInt(frameAppearance.titleBarHeight);
+
+      // Give it a reserved name "closeButton" to indicate that this is a "close button".
+      frameAppearance.addFrameComponent('closeButton', closeButtonEle, x, y, anchor);
+    };
+    return frameAppearance;
+  }
+
+  start();
+</script>
+</body>
+</html>

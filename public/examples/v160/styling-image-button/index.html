@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - styling: Image buttons</title>
+    <meta charset="utf-8">
+    <style>
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .jsframe-win-classic-style-default {
+            background: -webkit-linear-gradient(left, #808080, #c0c0c0);
+            background: -moz-linear-gradient(left, #808080, #c0c0c0);
+            background: linear-gradient(left, #808080, #c0c0c0);
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+        }
+
+        .jsframe-win-classic-style-focused {
+            background: -webkit-linear-gradient(left, #0a246a, #a6caf0);
+            background: -moz-linear-gradient(left, #0a246a, #a6caf0);
+            background: linear-gradient(left, #0a246a, #a6caf0);
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+        }
+
+    </style>
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>styling: Image buttons</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+
+    const jsFrame = new JSFrame();
+
+    jsFrame.create({
+      title: 'Window2',
+      left: 360, top: 80, width: 320, height: 220,
+      style: {
+        backgroundColor: '#cccccc',
+        overflow: 'hidden'
+      },
+      appearance: getOriginalStyle(jsFrame.createFrameAppearance()),
+      html: '<div id="my_element" style="padding:10px;font-size:20px;color:black;">Window contents here</div>'
+    }).show();
+
+    jsFrame.create({
+      title: 'Window1',
+      left: 20, top: 80, width: 320, height: 220,
+      style: {
+        backgroundColor: '#cccccc',
+        overflow: 'hidden'
+      },
+      appearance: getOriginalStyle(jsFrame.createFrameAppearance()),
+      html: '<div id="my_element" style="padding:10px;font-size:20px;color:black;">Window contents here</div>'
+    }).show();
+
+  }
+
+  /**
+   * Generate(populate values to object) the original look
+   * @param frameAppearance
+   * @returns {*}
+   */
+  function getOriginalStyle(frameAppearance) {
+
+    // [whole title bar]
+    frameAppearance.titleBarHeight = '30px';
+    frameAppearance.titleBarClassNameDefault = 'jsframe-win-classic-style-default';
+    frameAppearance.titleBarClassNameFocused = 'jsframe-win-classic-style-focused';
+
+    // [title bar caption]
+    frameAppearance.titleBarCaptionFontSize = '14px';
+    frameAppearance.titleBarCaptionFontWeight = 'bold';
+
+    //To place the icon on the left, the title caption is also moved to the right
+    frameAppearance.titleBarCaptionLeftMargin = '32px';
+
+    frameAppearance.titleBarCaptionColorDefault = '#cccccc';
+    frameAppearance.titleBarCaptionColorFocused = 'white';
+    frameAppearance.titleBarBorderBottomDefault = null;
+    frameAppearance.titleBarBorderBottomFocused = null;
+    frameAppearance.titleBarCaptionTextShadow = null;
+
+    // [frame border]
+    frameAppearance.frameBorderRadius = '0px';
+    frameAppearance.frameBorderWidthDefault = '2px';
+    frameAppearance.frameBorderWidthFocused = '2px';
+    frameAppearance.frameBorderColorDefault = '#cecece';
+    frameAppearance.frameBorderColorFocused = '#cecece';
+    frameAppearance.frameBorderStyle = 'outset';
+    frameAppearance.frameBoxShadow = '2px 2px 2px rgba(0, 0, 0, 0.2)';
+
+    frameAppearance.onInitialize = function() {
+
+      const partsBuilder = frameAppearance.getPartsBuilder();
+
+      const imgWidth = 20;
+      const imgHeight = 20;
+
+
+      // [Create close button with image src]
+      const closeButtonApr = partsBuilder.buildImageButtonAppearance();
+      closeButtonApr.width = imgWidth;
+      closeButtonApr.height = imgHeight;
+      closeButtonApr.borderRadius = 0;
+      closeButtonApr.borderWidth = 0;
+      closeButtonApr.backgroundBoxShadow = '';
+      closeButtonApr.setSrc({
+        default: './icon_wc_close_default.png',
+        focused: './icon_wc_close_default.png',
+        hovered: './icon_wc_close_default.png',
+        pressed: './icon_wc_close_pressed.png',
+      });
+
+      // Creates an actual DOM element from the specified appearance
+      const closeButtonEle = partsBuilder.buildTextButton(closeButtonApr);
+
+      // Specifies an offset anchor for positioning a button element from the (right,top) of the window.
+      const closeButtonAnchor = 'RIGHT_TOP';
+      const closeButtonX = -5;
+      const closeButtonY = -imgWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      // Give it a reserved name "closeButton" to indicate that this is a "close button".
+      frameAppearance.addFrameComponent('closeButton', closeButtonEle, closeButtonX, closeButtonY, closeButtonAnchor);
+
+
+      // [Create maximize button with image src]
+
+      // If you specify an appearance as an argument, the property in appearance will be cloned,
+      // so you can skip setting the same value again with the clone effect if the property value is the same.
+      const maximizeButtonApr = partsBuilder.buildImageButtonAppearance(closeButtonApr);
+
+      maximizeButtonApr.setSrc({
+        default: './icon_wc_maximize_default.png',
+        focused: './icon_wc_maximize_default.png',
+        hovered: './icon_wc_maximize_default.png',
+        pressed: './icon_wc_maximize_pressed.png',
+      });
+      const maximizeButtonEle = partsBuilder.buildButton(maximizeButtonApr);
+      const maximizeButtonAnchor = 'RIGHT_TOP';
+      const maximizeButtonX = -28;
+      const maximizeButtonY = -imgWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      frameAppearance.addFrameComponent('maxButton', maximizeButtonEle, maximizeButtonX, maximizeButtonY, maximizeButtonAnchor);
+
+
+      // [Create minimize button with image src]
+      const minimizeButtonApr = partsBuilder.buildImageButtonAppearance(closeButtonApr);
+      minimizeButtonApr.setSrc({
+        default: './icon_wc_minimize_default.png',
+        focused: './icon_wc_minimize_default.png',
+        hovered: './icon_wc_minimize_default.png',
+        pressed: './icon_wc_minimize_pressed.png',
+      });
+      const minimizeButtonEle = partsBuilder.buildButton(minimizeButtonApr);
+      const minimizeButtonAnchor = 'RIGHT_TOP';
+      const minimizeButtonX = -48;
+      const minimizeButtonY = -imgWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      frameAppearance.addFrameComponent('minButton', minimizeButtonEle, minimizeButtonX, minimizeButtonY, minimizeButtonAnchor);
+
+
+      // [Create app icon with image src]
+      const appIconApr = partsBuilder.buildTextButtonAppearance(closeButtonApr);
+      appIconApr.cursor = 'default';
+      appIconApr.setSrc({
+        default: './icon_riversun_20.png',
+        focused: './icon_riversun_20.png',
+        hovered: './icon_riversun_20.png',
+        pressed: './icon_riversun_20.png',
+      });
+      const appIconEle = partsBuilder.buildButton(appIconApr);
+      const appIconAnchor = 'LEFT_TOP';
+      const appIconX = 5;
+      const appIconY = -imgWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      frameAppearance.addFrameComponent('appIcon', appIconEle, appIconX, appIconY, appIconAnchor);
+
+
+    };
+    return frameAppearance;
+  }
+
+  start();
+</script>
+</body>
+</html>
