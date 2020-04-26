@@ -4,6 +4,7 @@ require('./JSFrame.css');
 var EventEmitter = require('@riversun/event-emitter');
 var CALIGN = require('./CCommon.js');
 var WindowEventHelper = require('./utils/WindowEventHelper.js');
+var inherit = require('./utils/Inherit.js');
 var CFrameAppearance = require('./appearance/CFrameAppearance.js');
 var CDomPartsBuilder = require('./appearance/CDomPartsBuilder.js');
 var CSimpleLayoutAnimator = require('./utils/CSimpleLayoutAnimator.js');
@@ -30,31 +31,6 @@ var TOUCH_ENABLED = true;
 // (the window cannot be moved in the case of two or more fingers)
 var TOUCH_MOVE_ONLY_WITH_ONE_FINGER = true;
 
-/**
- * Inheritance function
- *
- * @param subClass
- * @param baseClass
- */
-function inherit(subClass, baseClass) {
-
-  function clazz() {
-  }
-
-  clazz.prototype = baseClass.prototype;
-  subClass.prototype = new clazz();
-
-  subClass.prototype.constructor = subClass;
-  subClass.superConstructor = baseClass;
-  subClass.superClass = baseClass.prototype;
-
-}
-
-/**
- * End of inheritance function
- */
-
-//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 
 /**
  * DEFINITIONS
