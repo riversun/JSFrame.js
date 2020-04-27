@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - styling: Font Awesome buttons</title>
+    <meta charset="utf-8">
+    <style>
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+
+    </style>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>styling: Font Awesome buttons</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+
+    const jsFrame = new JSFrame();
+
+    const originalStyleForWindow1 = getOriginalStyle(jsFrame.createFrameAppearance());
+    const originalStyleForWindow2 = getOriginalStyle(jsFrame.createFrameAppearance());
+    originalStyleForWindow2.titleBarColorDefault = '#009999';
+    originalStyleForWindow2.titleBarColorFocused = '#009999';
+
+    const frame2 = jsFrame.create({
+      title: 'Window2',
+      left: 500, top: 80, width: 450, height: 300,
+      style: {
+        backgroundColor: 'white',
+        overflow: 'hidden'
+      },
+      appearance: originalStyleForWindow2,
+      html: `<div style="height:40px;background:#00cccc;padding:10px;font-size:20px;color:white;line-height:40px;">Application 2</div>
+<div style="padding:10px;font-size:20px;color:black;">Font Awesome example</div>`
+    }).show();
+
+    const frame1 = jsFrame.create({
+      title: 'Window1',
+      left: 20, top: 80, width: 450, height: 300,
+      style: {
+        backgroundColor: 'white',
+        overflow: 'hidden'
+      },
+      appearance: originalStyleForWindow1,
+      html: `<div style="height:40px;background:#5f7a85;padding:10px;font-size:20px;color:white;line-height:40px;">Application 1</div>
+<div style="padding:10px;font-size:20px;color:black;">Font Awesome example</div>`
+    }).show();
+
+
+  }
+
+  /**
+   * Generate(populate values to object) the original look
+   * @param frameAppearance
+   * @returns {*}
+   */
+  function getOriginalStyle(frameAppearance) {
+
+    // [whole title bar]
+    frameAppearance.titleBarHeight = '36px';
+    // Disable default title bar class
+    frameAppearance.titleBarClassNameDefault = ' ';
+    frameAppearance.titleBarClassNameFocused = ' ';
+    frameAppearance.titleBarColorDefault = '#4e646f';
+    frameAppearance.titleBarColorFocused = '#4e646f';
+    // [title bar caption]
+    frameAppearance.titleBarCaptionFontSize = '14px';
+    frameAppearance.titleBarCaptionFontWeight = 'bold';
+
+    //To place the icon on the left, the title caption is also moved to the right
+    frameAppearance.titleBarCaptionLeftMargin = '10px';
+
+    frameAppearance.titleBarCaptionColorDefault = 'white';
+    frameAppearance.titleBarCaptionColorFocused = 'white';
+    frameAppearance.titleBarCaptionTextShadow = null;
+    frameAppearance.titleBarBorderBottomDefault = null;
+    frameAppearance.titleBarBorderBottomFocused = null;
+    frameAppearance.titleBarCaptionTextShadow = null;
+
+    // [frame border]
+    frameAppearance.frameBorderRadius = '0px';
+    frameAppearance.frameBorderWidthDefault = '0px';
+    frameAppearance.frameBorderWidthFocused = '0px';
+    frameAppearance.frameBorderColorDefault = null;
+    frameAppearance.frameBorderColorFocused = null;
+    frameAppearance.frameBorderStyle = 'solid';
+    frameAppearance.frameBoxShadow = '0px 4px 4px rgba(0, 0, 0, 0.5)';
+
+    frameAppearance.onInitialize = function() {
+
+      const partsBuilder = frameAppearance.getPartsBuilder();
+
+      const faIconWidth = 16;
+      const faIconHeight = 16;
+
+      //[close button]
+      const faCloseApr = partsBuilder.buildTextButtonAppearance();
+
+      // Specify Font Awesome class
+      faCloseApr.fa = 'fas fa-times';
+
+      faCloseApr.width = faIconWidth;
+      faCloseApr.height = faIconHeight;
+      faCloseApr.borderRadius = 0;
+      faCloseApr.borderWidth = 0;
+      faCloseApr.captionColorDefault = 'white';
+      faCloseApr.captionColorFocused = 'white';
+      faCloseApr.captionColorHovered = 'darkgray';
+      faCloseApr.captionColorPressed = 'gray';
+
+      const faCloseEle = partsBuilder.buildTextButton(faCloseApr);
+      const faCloseAnchor = 'RIGHT_TOP';
+      const faCloseX = -10;
+      const faCloseY = -faIconWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      frameAppearance.addFrameComponent('closeButton', faCloseEle, faCloseX, faCloseY, faCloseAnchor);
+
+      // [maximize button]
+      const faMaximizeApr = partsBuilder.buildTextButtonAppearance(faCloseApr);
+      faMaximizeApr.fa = 'far fa-window-maximize';
+      const faMaximizeEle = partsBuilder.buildTextButton(faMaximizeApr);
+      const faMaximizeAnchor = 'RIGHT_TOP';
+      const faMaximizeX = -40;
+      const faMaximizeY = -faIconWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      frameAppearance.addFrameComponent('maxButton', faMaximizeEle, faMaximizeX, faMaximizeY, faMaximizeAnchor);
+
+      // [minimize button]
+      const faMinimizeApr = partsBuilder.buildTextButtonAppearance(faCloseApr);
+      faMinimizeApr.fa = 'far fa-window-minimize';
+      const faMinimizeEle = partsBuilder.buildTextButton(faMinimizeApr);
+      const faMinimizeAnchor = 'RIGHT_TOP';
+      const faMinimizeX = -70;
+      const faMinimizeY = -faIconWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      frameAppearance.addFrameComponent('minButton', faMinimizeEle, faMinimizeX, faMinimizeY, faMinimizeAnchor);
+
+
+    };
+    return frameAppearance;
+  }
+
+  start();
+</script>
+</body>
+</html>

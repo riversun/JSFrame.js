@@ -63,7 +63,7 @@
 
     const jsFrame = new JSFrame();
 
-    jsFrame.create({
+    const frame2 = jsFrame.create({
       title: 'Window2',
       left: 360, top: 80, width: 320, height: 220,
       style: {
@@ -74,7 +74,7 @@
       html: '<div id="my_element" style="padding:10px;font-size:20px;color:black;">Window contents here</div>'
     }).show();
 
-    jsFrame.create({
+    const frame1 = jsFrame.create({
       title: 'Window1',
       left: 20, top: 80, width: 320, height: 220,
       style: {
@@ -84,6 +84,19 @@
       appearance: getOriginalStyle(jsFrame.createFrameAppearance()),
       html: '<div id="my_element" style="padding:10px;font-size:20px;color:black;">Window contents here</div>'
     }).show();
+
+    frame1.on('minButton', 'click', (_frame, evt) => {
+      jsFrame.showToast({
+        html: `minimize button clicked`,
+        align: 'top'
+      });
+    });
+    frame1.on('maxButton', 'click', (_frame, evt) => {
+      jsFrame.showToast({
+        html: `maximize button clicked`,
+        align: 'top'
+      });
+    });
 
   }
 
@@ -186,7 +199,6 @@
       const minimizeButtonX = -48;
       const minimizeButtonY = -imgWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
       frameAppearance.addFrameComponent('minButton', minimizeButtonEle, minimizeButtonX, minimizeButtonY, minimizeButtonAnchor);
-
 
       // [Create app icon with image src]
       const appIconApr = partsBuilder.buildTextButtonAppearance(closeButtonApr);
