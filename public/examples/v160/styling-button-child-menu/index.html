@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - style: Child menu for buttons on title bar</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            padding: 10px;
+        }
+
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.8em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .menu-caption {
+            font-size: 16px;
+        }
+
+    </style>
+    <!--    I'm using bootstrap css for the UI of window contents in this example by chance,
+    but jsframe doesn't depend on bootstrap, so you can freely layout it without bootstrap.-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>style: Child menu for buttons on title bar</span>
+</h2>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  function start() {
+
+    const jsFrame = new JSFrame();
+
+    const originalAppearance = getOriginalStyle(jsFrame.createFrameAppearance());
+    const originalAppearance2 = getOriginalStyle(jsFrame.createFrameAppearance());
+    originalAppearance2.titleBarColorDefault = '#f88901';
+    originalAppearance2.titleBarColorFocused = '#f88901';
+
+    const frame1 = jsFrame.create({
+      title: 'Window1',
+      left: 20, top: 80, width: 450, height: 300,
+      style: {
+        backgroundColor: 'white',
+        overflow: 'hidden'
+      },
+      appearance: originalAppearance,
+      html: `<div style="height:40px;background:#00cccd;padding:10px;font-size:20px;"></div>
+<div style="padding:10px;font-size:20px;color:black;">
+</div>`
+    }).show();
+
+    const frame2 = jsFrame.create({
+      title: 'Window2',
+      left: 500, top: 80, width: 450, height: 300,
+      style: {
+        backgroundColor: 'white',
+        overflow: 'hidden'
+      },
+      appearance: originalAppearance2,
+      html: `<div style="height:40px;background:#ffa301;padding:10px;font-size:20px;"></div>
+<div style="padding:10px;font-size:20px;color:black;">
+</div>`
+    }).show();
+    const fnShowToast = (_frame, evt) => {
+      jsFrame.showToast({
+        html: `${_frame.title} ${evt.target.id} clicked`,
+        align: 'top'
+      });
+    };
+
+    frame1.on('#my-menu1', 'click', fnShowToast);
+    frame1.on('#my-menu2', 'click', fnShowToast);
+    frame1.on('#my-menu3', 'click', fnShowToast);
+    frame1.on('#my-setting1', 'click', fnShowToast);
+    frame1.on('#my-setting2', 'click', fnShowToast);
+    frame1.on('#my-setting3', 'click', fnShowToast);
+    frame1.on('#my-app-menu1', 'click', (_frame, evt) => {
+      _frame.closeFrame();
+    });
+
+    frame1.setOnExternalAreaClickedListener(() => {
+      // If the outside of this window is clicked, it will make the childMenu disappear.
+      frame1.hideFrameComponentChildMenus();
+    });
+
+    frame2.on('#my-menu1', 'click', fnShowToast);
+    frame2.on('#my-menu2', 'click', fnShowToast);
+    frame2.on('#my-menu3', 'click', fnShowToast);
+    frame2.on('#my-setting1', 'click', fnShowToast);
+    frame2.on('#my-setting2', 'click', fnShowToast);
+    frame2.on('#my-setting3', 'click', fnShowToast);
+    frame2.on('#my-app-menu1', 'click', (_frame, evt) => {
+      _frame.closeFrame();
+    });
+
+    frame2.setOnExternalAreaClickedListener(() => {
+      // If the outside of this window is clicked, it will make the childMenu disappear.
+      frame2.hideFrameComponentChildMenus();
+    });
+
+  }
+
+  /**
+   * Generate(populate values to object) the original look
+   * @param frameAppearance
+   * @returns {*}
+   */
+  function getOriginalStyle(frameAppearance) {
+
+    // [whole title bar]
+    frameAppearance.titleBarHeight = '36px';
+    // Disable default title bar class
+    frameAppearance.titleBarClassNameDefault = ' ';
+    frameAppearance.titleBarClassNameFocused = ' ';
+    frameAppearance.titleBarColorDefault = '#009998';
+    frameAppearance.titleBarColorFocused = '#009998';
+
+    // [title bar caption]
+    frameAppearance.titleBarCaptionFontSize = '14px';
+    frameAppearance.titleBarCaptionFontWeight = 'bold';
+
+    //To place the icon on the left, the title caption is also moved to the right
+    frameAppearance.titleBarCaptionLeftMargin = '40px';
+
+    frameAppearance.titleBarCaptionColorDefault = 'white';
+    frameAppearance.titleBarCaptionColorFocused = 'white';
+    frameAppearance.titleBarCaptionTextShadow = null;
+    frameAppearance.titleBarBorderBottomDefault = null;
+    frameAppearance.titleBarBorderBottomFocused = null;
+    frameAppearance.titleBarCaptionTextShadow = null;
+
+    // [frame border]
+    frameAppearance.frameBorderRadius = '0px';
+    frameAppearance.frameBorderWidthDefault = '0px';
+    frameAppearance.frameBorderWidthFocused = '0px';
+    frameAppearance.frameBorderColorDefault = null;
+    frameAppearance.frameBorderColorFocused = null;
+    frameAppearance.frameBorderStyle = 'solid';
+    frameAppearance.frameBoxShadow = '0px 4px 4px rgba(0, 0, 0, 0.5)';
+
+    frameAppearance.onInitialize = function() {
+
+      const partsBuilder = frameAppearance.getPartsBuilder();
+
+      const componentWidth = 16;
+      const componentHeight = 16;
+
+      // prepare [menu button]
+      const faMenuApr = partsBuilder.buildTextButtonAppearance();
+      faMenuApr.fa = 'fas fa-bars';
+      faMenuApr.width = componentWidth;
+      faMenuApr.height = componentHeight;
+      faMenuApr.borderRadius = 0;
+      faMenuApr.borderWidth = 0;
+      faMenuApr.captionColorDefault = 'white';
+      faMenuApr.captionColorFocused = 'white';
+      faMenuApr.captionColorHovered = 'white';
+      faMenuApr.captionColorPressed = 'gray';
+
+      // prepare [menu button's child menu]
+      const childMenuApr = partsBuilder.buildChildMenuAppearance();
+
+      // Set the width of the childMenu
+      childMenuApr.childMenuWidth = 200;
+
+      //Specify the alignment of childMenu to the parent
+      // frame component (button on the title bar) from "LEFT", "CENTER", and "RIGHT".
+      childMenuApr.childMenuAlign = 'RIGHT';
+
+      // You can adjust the childmenu display position in pixel units by xOffset,yOffset.
+      childMenuApr.xOffset = 0;
+      childMenuApr.yOffset = 0;
+
+      childMenuApr.childMenuHTML = '<div class="list-group menu-caption">' +
+        '  <div id="my-menu1" class="list-group-item list-group-item-action list-group-item-light py-2">Menu Item 01</div>' +
+        '  <div id="my-menu2" class="list-group-item list-group-item-action list-group-item-light py-2">Menu Item 02</div>' +
+        '  <div id="my-menu3" class="list-group-item list-group-item-action list-group-item-light py-2">Menu Item 03</div>' +
+        '</div>';
+
+      const faCloseAnchor = 'RIGHT_TOP';
+      const faCloseX = -10;
+      const faCloseY = -componentWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      const faMenuEle = partsBuilder.buildTextButton(faMenuApr);
+      partsBuilder.appendChildMenuTo(childMenuApr, faMenuEle);
+
+      frameAppearance.addFrameComponent('menuButton', faMenuEle, faCloseX, faCloseY, faCloseAnchor);
+
+      // prepare [settings button]
+      const faSettingApr = partsBuilder.buildTextButtonAppearance();
+      faSettingApr.fa = 'fas fa-cog';
+      faSettingApr.width = componentWidth;
+      faSettingApr.height = componentHeight;
+      faSettingApr.borderRadius = 0;
+      faSettingApr.borderWidth = 0;
+      faSettingApr.captionColorDefault = 'white';
+      faSettingApr.captionColorFocused = 'white';
+      faSettingApr.captionColorHovered = 'white';
+      faSettingApr.captionColorPressed = 'gray';
+
+      // prepare [settings button's child menu]
+      const settingChildMenuApr = partsBuilder.buildChildMenuAppearance();
+      settingChildMenuApr.childMenuWidth = 200;
+      settingChildMenuApr.childMenuAlign = 'CENTER';
+      settingChildMenuApr.xOffset = 0;
+      settingChildMenuApr.yOffset = 0;
+      settingChildMenuApr.childMenuHTML = '<div class="list-group menu-caption" >' +
+        '  <div id="my-setting1" class="list-group-item list-group-item-action list-group-item-light py-2">Setting Item 01</div>' +
+        '  <div id="my-setting2" class="list-group-item list-group-item-action list-group-item-light py-2">Setting Item 02</div>' +
+        '  <div id="my-setting3" class="list-group-item list-group-item-action list-group-item-light py-2">Setting Item 03</div>' +
+        '</div>';
+
+      // create and place DOM element
+      const faSettingAnchor = 'RIGHT_TOP';
+      const faSettingX = -40;
+      const faSettingY = -componentWidth / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      const faSettingEle = partsBuilder.buildTextButton(faSettingApr);
+      partsBuilder.appendChildMenuTo(settingChildMenuApr, faSettingEle);
+      frameAppearance.addFrameComponent('settingButton', faSettingEle, faSettingX, faSettingY, faSettingAnchor);
+
+
+      //  prepare [app icon]
+      const appIconApr = partsBuilder.buildImageButtonAppearance();
+      appIconApr.width = 20;
+      appIconApr.height = 20;
+      appIconApr.borderRadius = 0;
+      appIconApr.borderWidth = 0;
+      appIconApr.backgroundBoxShadow = '';
+      appIconApr.setSrc({
+        default: './icon_riversun_20.png',
+        focused: './icon_riversun_20.png',
+        hovered: './icon_riversun_20.png',
+        pressed: './icon_riversun_20.png',
+      });
+
+      // prepare [app icon's child menu]
+      const appIconChildMenuApr = partsBuilder.buildChildMenuAppearance();
+      appIconChildMenuApr.childMenuWidth = 200;
+      appIconChildMenuApr.childMenuAlign = 'LEFT';
+      appIconChildMenuApr.xOffset = 0;
+      appIconChildMenuApr.yOffset = 0;
+      appIconChildMenuApr.childMenuHTML = '<div class="list-group menu-caption">' +
+        '  <div id="my-app-menu1" class="list-group-item list-group-item-action list-group-item-light py-2">Close window</div>' +
+        '</div>';
+
+      // create and place DOM element
+      const appIconAnchor = 'LEFT_TOP';
+      const appIconX = 10;
+      const appIconY = -20 / 2 - parseInt(frameAppearance.titleBarHeight) / 2;
+      const appIconEle = partsBuilder.buildButton(appIconApr);
+      partsBuilder.appendChildMenuTo(appIconChildMenuApr, appIconEle);
+      frameAppearance.addFrameComponent('appIcon', appIconEle, appIconX, appIconY, appIconAnchor);
+
+
+    };
+    return frameAppearance;
+  }
+
+  start();
+</script>
+</body>
+</html>
