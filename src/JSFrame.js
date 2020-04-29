@@ -8,6 +8,7 @@ var inherit = require('./utils/Inherit.js');
 var CFrameAppearance = require('./appearance/CFrameAppearance.js');
 var CDomPartsBuilder = require('./appearance/CDomPartsBuilder.js');
 var CSimpleLayoutAnimator = require('./utils/CSimpleLayoutAnimator.js');
+var EventListenerHelper = require('event-listener-helper');
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
 var presetStyles = {
@@ -899,16 +900,46 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
     // me.canvas.removeBean(markerRR.id);
   };
 
-  //add frameComponents[begin]
   for (var idx in appearance.frameComponents) {
 
     var frameComponent = appearance.frameComponents[idx];
-
     frameComponent.setFrame(me);
 
     //if frameComponent has special name 'closeButton', it will act as a close button.
     if ('closeButton' == frameComponent.id) {
       frameComponent.htmlElement.onclick = me.close;
+    }
+
+    // Handle child menu open/close
+    var frameComponentHasChildMenu = frameComponent.htmlElement.querySelector('.jsframe-child-menu');
+    if (frameComponentHasChildMenu) {
+      me.eventListenerHelper.addEventListener(frameComponent.htmlElement, 'click', function(e) {
+
+          var frameComponentId = e.target.getAttribute('component-id');
+
+          // Close all frame component's childmenu once because other frame component's childmenu may be open.
+          // If {exceptFrameComponentId:[frameComponentId]} is specified for the argument,
+          // the child menu will not be closed.
+          me.hideFrameComponentChildMenus({ exceptFrameComponentId: frameComponentId });
+
+          if (frameComponentId) {
+            var frameComponentHtmlElement = me.getFrameComponentElement(frameComponentId);
+            var frameComponentChildMenu = frameComponentHtmlElement.querySelector('.jsframe-child-menu');
+            if (frameComponentChildMenu) {
+              // By making the display a table,
+              // the width of the childMenu can be accurately reflected.
+              // (flex does not set the width correctly.)
+              if (frameComponentChildMenu.style.display == 'table') {
+                frameComponentChildMenu.style.display = 'none';
+              } else {
+                frameComponentChildMenu.style.display = 'table';
+              }
+            } else {
+              console.error('frameComponent child menu isnt found. frameComponentId=' + frameComponentId);
+            }
+          }
+        },
+        { listenerName: 'frame-component_child-menu-listener' });
     }
 
     me.addFrameComponent(frameComponent);
@@ -1057,14 +1088,25 @@ CFrame.prototype.showAllVisibleFrameComponents = function() {
   }
 };
 
+/**
+ * Close all childMenu
+ If {exceptFrameComponentId:[frameComponentId]} is specified for the argument,
+ the child menu will not be closed.
 
-CFrame.prototype.hideFrameComponentChildMenus = function() {
+ * @param opt
+ */
+CFrame.prototype.hideFrameComponentChildMenus = function(opt) {
   var me = this;
 
   var compMap = me.frameComponentMap;
-  for (var key in compMap) {
-    if (compMap.hasOwnProperty(key)) {
-      var comp = compMap[key];
+  for (var frameComponentId in compMap) {
+    if (compMap.hasOwnProperty(frameComponentId)) {
+      if (opt && opt.exceptFrameComponentId) {
+        if (frameComponentId === opt.exceptFrameComponentId) {
+          continue;
+        }
+      }
+      var comp = compMap[frameComponentId];
       if (comp.childMenu) {
         comp.childMenu.style.display = 'none';
       }
@@ -1427,6 +1469,7 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
   this.minFrameWidth = 128;
   this.minWindowHeight = 32;
 
+  this.eventListenerHelper = new EventListenerHelper();
 
   /**
    * If this value is true, the focus will move when tapping the iframe area,
@@ -1619,9 +1662,7 @@ CIfFrame.prototype.$ = function(q) {
     return docInIframe.querySelector(q);
 
   } else {
-
     return me.dframe.querySelector(q);
-
   }
 };
 
@@ -1661,31 +1702,21 @@ CIfFrame.prototype.$ = function(q) {
 CIfFrame.prototype.on = function(id, eventType, callbackFunc) {
   var me = this;
   var component = me.getFrameComponentElement(id);
+
+  // if id indicates frame component like CTextButton,CImageButton
   if (component) {
 
     //Since we want to specify only one handler for frame components at the same time,
-    // use an event handler instead of an event listener
-    component['on' + eventType] = function(e) {
-
-
-      var childMenuEle = document.getElementById(id + '_child_menu');
-      if (childMenuEle && eventType === 'click') {
-        if (childMenuEle.style.display == 'flex') {
-          childMenuEle.style.display = 'none';
-        } else {
-          childMenuEle.style.display = 'flex';
-        }
-      }
-
-
+    // use eventListenerHelper instead of an event listener
+    me.eventListenerHelper.addEventListener(component, eventType, function(e) {
       callbackFunc(me, e,
         {
           type: 'frameComponent',
           id: id,
           eventType: eventType,
-          child: childMenuEle
+          //child: childMenuEle
         });
-    };
+    }, { listenerName: 'frame-component-listener' });
   }
 
   if (id === 'frame' || id === 'window') {
@@ -1701,7 +1732,9 @@ CIfFrame.prototype.on = function(id, eventType, callbackFunc) {
     me.eventEmitter.on(eventType, callbackFunc);
   }
 
+  // DOM element in iframe or DOM element on dframe
   var domElement = me.$(id);
+
   if (domElement) {
     domElement.addEventListener(eventType, function(e) {
       callbackFunc(me, e, {
@@ -1712,6 +1745,20 @@ CIfFrame.prototype.on = function(id, eventType, callbackFunc) {
     });
   }
 
+  // Search DOM element on frameComponent
+  if (!domElement) {
+
+    var domElementOnCanvasElement = me.canvas.canvasElement.querySelector(id);
+    if (domElementOnCanvasElement) {
+      domElementOnCanvasElement.addEventListener(eventType, function(e) {
+        callbackFunc(me, e, {
+          type: 'dom',
+          id: id,
+          eventType: eventType
+        });
+      });
+    }
+  }
 };
 
 
@@ -2475,7 +2522,6 @@ CWindowManager.prototype.windowMouseMove = function(e) {
       if (eventData.targetTypeName == 'cmarkerwindow') {
 
         var targetObject = eventData.targetObject;
-
 
         //Enable transparent window only when moving.
         //This will work smoothly even with iframe content

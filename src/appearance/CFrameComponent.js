@@ -1,4 +1,3 @@
-
 /**
  * CFrameComponent class
  * <p>
@@ -30,12 +29,14 @@ function CFrameComponent(id, htmlElement, x, y, align, extra) {
   } else {
     me.frameComponentAlign = CALIGN.LEFT_TOP;
   }
-
   me.htmlElement = htmlElement;
   me.htmlElement.style.zIndex = 50;
+  me.htmlElement.setAttribute('component-id', id);
 
   if (extra && extra.childMenu) {
     me.childMenu = extra.childMenu;
+  } else if (htmlElement.querySelector('.jsframe-child-menu')) {
+    me.childMenu = htmlElement.querySelector('.jsframe-child-menu');
   }
 
 }

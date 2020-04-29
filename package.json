@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@riversun/event-emitter": "^1.2.1",
+    "event-listener-helper": "^1.0.2",
     "merge-deeply": "^2.0.1"
   }
 }

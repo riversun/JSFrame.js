@@ -1,6 +1,7 @@
 var mergeDeeply = require('merge-deeply');
 var CTextButtonAppearance = require('./CButtonAppearance.js');
 var CImageButtonAppearance = require('./CImageButtonAppearance.js');
+var CChildMenuAppearance = require('./CChildMenuAppearance.js');
 
 /**
  * CDomPartsBuilder class
@@ -10,6 +11,9 @@ var CImageButtonAppearance = require('./CImageButtonAppearance.js');
 function CDomPartsBuilder() {
 }
 
+CDomPartsBuilder.prototype.buildChildMenuAppearance = function(frameAppearance) {
+  return new CChildMenuAppearance(frameAppearance);
+};
 CDomPartsBuilder.prototype.buildTextButtonAppearance = function(src) {
   if (src) {
     var result = mergeDeeply({ op: 'clone', object1: src, concatArray: true });
@@ -30,6 +34,39 @@ CDomPartsBuilder.prototype.buildImageButtonAppearance = function(src) {
 CDomPartsBuilder.prototype.buildButton = function(btnAppearance) {
   var me = this;
   return me.buildTextButton(btnAppearance);
+};
+
+CDomPartsBuilder.prototype.appendChildMenuTo = function(childMenuAppearance, parentEle) {
+  var me = this;
+  var ndiv = document.createElement('div');
+  ndiv.classList.add('jsframe-child-menu');
+  ndiv.innerHTML = childMenuAppearance.childMenuHTML;
+  ndiv.style.position = 'absolute';
+  ndiv.style.pointerEvents = 'none';
+  ndiv.style.width = childMenuAppearance.childMenuWidth + 'px';
+  // ndiv.style.top = childMenuAppearance.childMenuTop + 'px';
+  // ndiv.style.left = childMenuAppearance.childMenuLeft + 'px';
+  ndiv.style.display = 'none';
+
+  var posX = childMenuAppearance.xOffset;
+  var posY = parseInt(parentEle.style.height, 10) + childMenuAppearance.yOffset + 2;
+
+  if (childMenuAppearance.childMenuAlign === 'LEFT') {
+    ndiv.style.left = posX + 'px';
+  } else if (childMenuAppearance.childMenuAlign === 'RIGHT') {
+    ndiv.style.right = posX + 'px';
+  } else if (childMenuAppearance.childMenuAlign === 'CENTER') {
+    posX = -childMenuAppearance.childMenuWidth / 2 + parseInt(parentEle.style.height, 10) / 2;
+    ndiv.style.left = posX + 'px';
+  }
+  ndiv.style.top = posY + 'px';
+
+  // ndiv.style.pointerEvents is none to avoid referring clicks to extra areas.
+  // But we want its children to be responsive, so we set pointerEvents to auto
+  ndiv.firstChild.style.pointerEvents = 'auto';
+
+  parentEle.appendChild(ndiv);
+  //return ndiv;
 };
 
 
@@ -174,8 +211,6 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
    *  (_hasFrameFocus true/false x _isMouseDown true/false)
    */
   divElement._handleFocusDrawing = function(evtName) {
-
-
     if (divElement._hasFrameFocus) {
       //When this element has focus
 
@@ -190,12 +225,11 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
         //caption
         divElement.style.color = captionColorPressed;
 
-
         if (btnImagePressed) {
-          divElement.innerHTML = '';
-          divElement.appendChild(btnImagePressed);
+          // divElement.innerHTML = '';
+          // divElement.appendChild(btnImagePressed);
+          updateImage(btnImagePressed, divElement);
         }
-
       } else {
         //border
         divElement.style.borderColor = borderColorFocused;
@@ -208,8 +242,9 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
         divElement.style.color = captionColorFocused;
 
         if (btnImageFocused) {
-          divElement.innerHTML = '';
-          divElement.appendChild(btnImageFocused);
+          // divElement.innerHTML = '';
+          // divElement.appendChild(btnImageFocused);
+          updateImage(btnImageFocused, divElement);
         }
       }
 
@@ -227,10 +262,9 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
         divElement.style.color = captionColorPressed;
 
         if (btnImagePressed) {
-          divElement.innerHTML = '';
-          divElement.appendChild(btnImagePressed);
-
-
+          // divElement.innerHTML = '';
+          // divElement.appendChild(btnImagePressed);
+          updateImage(btnImagePressed, divElement);
         }
 
       } else {
@@ -246,9 +280,9 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
         divElement.style.color = _captionColorDefault;
 
         if (btnImageDefault) {
-          divElement.innerHTML = '';
-          divElement.appendChild(btnImageDefault);
-
+          // divElement.innerHTML = '';
+          // divElement.appendChild(btnImageDefault);
+          updateImage(btnImageDefault, divElement);
         }
       }
     }
@@ -279,8 +313,9 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
       divElement.style.color = captionColorHovered;
     }
     if (btnImageHovered) {
-      divElement.innerHTML = '';
-      divElement.appendChild(btnImageHovered);
+      // divElement.innerHTML = '';
+      // divElement.appendChild(btnImageHovered);
+      updateImage(btnImageHovered, divElement);
     }
   };
   divElement.style.padding = '0px';
@@ -305,8 +340,9 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
   var childMode = true;
 
   if (childMode && btnImageDefault) {
-    divElement.innerHTML = '';
-    divElement.appendChild(btnImageDefault);
+    // divElement.innerHTML = '';
+    // divElement.appendChild(btnImageDefault);
+    updateImage(btnImageDefault, divElement);
   } else if (childMode && caption) {
 
     var span = document.createElement('span');
@@ -322,6 +358,7 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
   } else if (childMode && fa) {
 
     var span = document.createElement('span');
+    span.style.pointerEvents = 'none';
     span.style.width = '100%';
     span.style.marginTop = captionShiftYpx + 'px';
     span.style.display = 'inline-block';
@@ -338,6 +375,23 @@ CDomPartsBuilder.prototype.buildTextButton = function(btnAppearance) {
   return divElement;
 
 };
+
+// Don't use innerHTML='' because there may be a child below this 'img' element.
+// A child that may be a child is a childMenu.
+function updateImage(image, parentElement) {
+  var imgs = parentElement.querySelectorAll('img');
+  if (parentElement.firstChild) {
+    parentElement.insertBefore(image, parentElement.firstChild);
+  } else {
+    parentElement.appendChild(image);
+  }
+  for (var i = 0; i < imgs.length; i++) {
+    var img = imgs[i];
+    if (image !== img) {
+      parentElement.removeChild(img);
+    }
+  }
+}
 
 //+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 
