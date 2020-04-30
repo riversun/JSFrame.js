@@ -76,11 +76,10 @@ function getStyle(fApr, userParam) {
 
     var img_data_close_hovered = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAWElEQVQoU2NkIBIwEqmOAa6wgZWlH6Sp4fefQjCNxkdRyMjAUPCf4f8CkEJGBsaE/wwME2AaUaxuYGWeD1IAUgjS0PD7byLMaaQrBLmJKKuJ9gyhYCI6HAGlFDALf9s7eQAAAABJRU5ErkJggg==';
     var img_data_maximize_hovered = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVElEQVQoU2NkIBIwoqvjixFoAIl9WvIBTMMAhkLeGP79IMnPSz46kq8QZN1/hv/2IBMYGRgMQPR/BoYLED7jQZAzwFYTrRDZLdRxI7KJRAcPrvAHAATYKgvLH0fAAAAAAElFTkSuQmCC';
-
     if (param.titleBar.greenButton === 'fullscreen') {
       img_data_maximize_hovered = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAZElEQVQoU2NkIBIwEqmOAUWhQIKAwL8///czMDAYwAz4tOQjWA1cIUjRhwUfPqArxlDIF8N/nomF0RFdMTaF/xkYGC6gK/605KMhitV8MfwghSCAohhkAy6FKIphniIvePCFKQDzGzsLS+7n2AAAAABJRU5ErkJggg==';
     }
-
+    var img_data_demaximize_hovered = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAiUlEQVQoU2NkwAIEogQMPiz7cAFZihGbQt4Y/v0MjIwLPy/+sAAmj1MhIwODw39GxkSYYrwKQabBFGNVyBfL1///P6MBzFrmf4yFjCCH/2X63w93C+P/C58WfypEdzvYRN5YgQTG///ng61iYDjweclHR6wKkRUTVAhTzPD/fzxeE2FWYQtskBwAKwQ7tVjAL4MAAAAASUVORK5CYII=';
     var img_data_minimize_hovered = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAMUlEQVQoU2NkIBIwEqmOgUYKa7w4Ghj+M9hjdQYjw8GWbT8awFYTrZAYD9HIM8RYDQBsEAwLkq4IAgAAAABJRU5ErkJggg==';
     var img_data_1dot_transparent = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABBJREFUeNpi+P//PwNAgAEACPwC/tuiTRYAAAAASUVORK5CYII=';
     var img_width = 10;
@@ -91,9 +90,13 @@ function getStyle(fApr, userParam) {
     imageMaximize.src = img_data_maximize_hovered;
     imageMaximize.setAttribute('style', img_style);
 
-    var imageMaximize2 = document.createElement('img');
-    imageMaximize2.src = img_data_maximize_hovered;
-    imageMaximize2.setAttribute('style', img_style);
+    var imageDemaximize = document.createElement('img');
+    imageDemaximize.src = img_data_demaximize_hovered;
+    imageDemaximize.setAttribute('style', img_style);
+
+    // var imageFullScreen = document.createElement('img');
+    // imageFullScreen.src = img_data_maximize_hovered;
+    // imageFullScreen.setAttribute('style', img_style);
 
     var imageMinimize = document.createElement('img');
     imageMinimize.src = img_data_minimize_hovered;
@@ -112,8 +115,11 @@ function getStyle(fApr, userParam) {
       //configure close button appearance[begin]//////////////
 
 
-      var cbApr = partsBuilder.buildTextButtonAppearance();
-
+      var cbApr = partsBuilder.buildImageButtonAppearance();
+      cbApr.imageDefault = imgTransparent;
+      cbApr.imageHovered = imageClose;
+      cbApr.imagePressed = imageClose;
+      cbApr.imageFocused = imgTransparent;
       cbApr.size = 10;
 
       cbApr.borderRadius = 5;
@@ -134,11 +140,12 @@ function getStyle(fApr, userParam) {
       cbApr.backgroundColorFocused = '#fc615c';
       cbApr.backgroundColorHovered = cbApr.backgroundColorFocused;
       cbApr.backgroundColorPressed = cbApr.backgroundColorDefault;
-
-      cbApr.imageDefault = imgTransparent;
-      cbApr.imageHovered = imageClose;
-      cbApr.imagePressed = imageClose;
-      cbApr.imageFocused = imgTransparent;
+      cbApr.setSrc({
+        default: img_data_1dot_transparent,
+        focused: img_data_1dot_transparent,
+        hovered: img_data_close_hovered,
+        pressed: img_data_close_hovered,
+      });
 
       var closeBtnEle = partsBuilder.buildButton(cbApr);
       var eleLeft = 8;
@@ -148,102 +155,73 @@ function getStyle(fApr, userParam) {
       // 'closeButton' is a special name
       fApr.addFrameComponent('closeButton', closeBtnEle, eleLeft, eleTop, eleAlign);
 
-      //configure close button appearance[end]//////////////
-    }
+      //prepare [minimize button]
+      var minBtnApr = partsBuilder.buildImageButtonAppearance(cbApr);
+      minBtnApr.borderColorDefault = '#c6c6c6';
+      minBtnApr.borderColorFocused = '#e6b347';
+      minBtnApr.borderColorHovered = minBtnApr.borderColorFocused;
+      minBtnApr.borderColorPressed = '#e1a12d';
+      minBtnApr.backgroundColorDefault = '#d0d0d0';
+      minBtnApr.backgroundColorFocused = '#fdbe40';
+      minBtnApr.backgroundColorHovered = minBtnApr.backgroundColorFocused;
+      minBtnApr.backgroundColorPressed = minBtnApr.backgroundColorDefault;
+      minBtnApr.imageDefault = imgTransparent;
+      minBtnApr.imageHovered = imageMinimize;
+      minBtnApr.imagePressed = imageMinimize;
+      minBtnApr.imageFocused = imgTransparent;
 
-    {
-      //configure minimize button appearance[begin]//////////////
-      //const HYPHEN = '\u2013';
-
-      var mbApr = partsBuilder.buildTextButtonAppearance();
-
-
-      mbApr.size = 10;
-
-      mbApr.borderRadius = 5;
-      mbApr.borderWidth = 1;
-
-      mbApr.borderColorDefault = '#c6c6c6';
-      mbApr.borderColorFocused = '#e6b347';
-      mbApr.borderColorHovered = mbApr.borderColorFocused;
-      mbApr.borderColorPressed = '#e1a12d';
-
-      mbApr.borderStyleDefault = 'solid';
-      mbApr.borderStyleFocused = mbApr.borderStyleDefault;
-      mbApr.borderStyleHovered = mbApr.borderStyleDefault;
-      mbApr.borderStylePressed = mbApr.borderStyleDefault;
-
-      //background
-      mbApr.backgroundColorDefault = '#d0d0d0';
-      mbApr.backgroundColorFocused = '#fdbe40';
-      mbApr.backgroundColorHovered = mbApr.backgroundColorFocused;
-      mbApr.backgroundColorPressed = mbApr.backgroundColorDefault;
-
-      mbApr.imageDefault = imgTransparent;
-      mbApr.imageHovered = imageMinimize;
-      mbApr.imagePressed = imageMinimize;
-      mbApr.imageFocused = imgTransparent;
-
-      var minimizeBtnEle = partsBuilder.buildButton(mbApr);
-      var deminimizeBtnEle = partsBuilder.buildButton(mbApr);
+      var minBtnEle = partsBuilder.buildButton(minBtnApr);
+      var deminimizeBtnEle = partsBuilder.buildButton(minBtnApr);
       deminimizeBtnEle.style.display = 'none';
       var eleLeft = 28;
       var eleTop = -19;
       var eleAlign = 'LEFT_TOP';
-
-
-      fApr.addFrameComponent('minimizeButton', minimizeBtnEle, eleLeft, eleTop, eleAlign);
+      fApr.addFrameComponent('minimizeButton', minBtnEle, eleLeft, eleTop, eleAlign);
       fApr.addFrameComponent('deminimizeButton', deminimizeBtnEle, eleLeft, eleTop, eleAlign);
 
-      //configure minimize button appearance[end]//////////////
-    }
 
-    {
+      // prepare [maximize button]
       //configure zoom button appearance[begin]//////////////
-      var zbApr = partsBuilder.buildTextButtonAppearance();
+      var maxBtnApr = partsBuilder.buildImageButtonAppearance(cbApr);
+      maxBtnApr.borderColorDefault = '#c6c6c6';
+      maxBtnApr.borderColorFocused = '#67b657';
+      maxBtnApr.borderColorHovered = maxBtnApr.borderColorFocused;
+      maxBtnApr.borderColorPressed = '#00af38';
+      maxBtnApr.backgroundColorDefault = '#d0d0d0';
+      maxBtnApr.backgroundColorFocused = '#34ca49';
+      maxBtnApr.backgroundColorHovered = maxBtnApr.backgroundColorFocused;
+      maxBtnApr.backgroundColorPressed = maxBtnApr.backgroundColorDefault;
+      maxBtnApr.imageDefault = imgTransparent;
+      maxBtnApr.imageHovered = imageMaximize;
+      maxBtnApr.imagePressed = imageMaximize;
+      maxBtnApr.imageFocused = imgTransparent;
 
-      zbApr.size = 10;
+      var zoomBtnEle = partsBuilder.buildButton(maxBtnApr);
 
-      zbApr.borderRadius = 5;
-      zbApr.borderWidth = 1;
 
-      zbApr.borderColorDefault = '#c6c6c6';
-      zbApr.borderColorFocused = '#67b657';
-      zbApr.borderColorHovered = zbApr.borderColorFocused;
-      zbApr.borderColorPressed = '#00af38';
-
-      zbApr.borderStyleDefault = 'solid';
-      zbApr.borderStyleFocused = zbApr.borderStyleDefault;
-      zbApr.borderStyleHovered = zbApr.borderStyleDefault;
-      zbApr.borderStylePressed = zbApr.borderStyleDefault;
-
-      //background
-      zbApr.backgroundColorDefault = '#d0d0d0';
-      zbApr.backgroundColorFocused = '#34ca49';
-      zbApr.backgroundColorHovered = zbApr.backgroundColorFocused;
-      zbApr.backgroundColorPressed = zbApr.backgroundColorDefault;
-
-      //caption
-      zbApr.caption = null;
-
-      zbApr.imageDefault = imgTransparent;
-      zbApr.imageHovered = imageMaximize;
-      zbApr.imagePressed = imageMaximize;
-      zbApr.imageFocused = imgTransparent;
-
-      var zoomBtnEle = partsBuilder.buildButton(zbApr);
-      var dezoomBtnEle = partsBuilder.buildButton(zbApr);
-      dezoomBtnEle.style.display = 'none';
-
+      var demaxBtnApr = partsBuilder.buildImageButtonAppearance(cbApr);
+      demaxBtnApr.borderColorDefault = '#c6c6c6';
+      demaxBtnApr.borderColorFocused = '#67b657';
+      demaxBtnApr.borderColorHovered = demaxBtnApr.borderColorFocused;
+      demaxBtnApr.borderColorPressed = '#00af38';
+      demaxBtnApr.backgroundColorDefault = '#d0d0d0';
+      demaxBtnApr.backgroundColorFocused = '#34ca49';
+      demaxBtnApr.backgroundColorHovered = demaxBtnApr.backgroundColorFocused;
+      demaxBtnApr.backgroundColorPressed = demaxBtnApr.backgroundColorDefault;
+      demaxBtnApr.imageDefault = imgTransparent;
+      demaxBtnApr.imageHovered = imageDemaximize;
+      demaxBtnApr.imagePressed = imageDemaximize;
+      demaxBtnApr.imageFocused = imgTransparent;
+      var demaxBtnEle = partsBuilder.buildButton(demaxBtnApr);
+      demaxBtnEle.style.display = 'none';
 
       var eleLeft = 48;
       var eleTop = -19;
       var eleAlign = 'LEFT_TOP';
 
 
+      fApr.addFrameComponent('dezoomButton', demaxBtnEle, eleLeft, eleTop, eleAlign);
       fApr.addFrameComponent('zoomButton', zoomBtnEle, eleLeft, eleTop, eleAlign);
-      fApr.addFrameComponent('dezoomButton', dezoomBtnEle, eleLeft, eleTop, eleAlign);
-
 
       //configure zoom button appearance[end]//////////////
     }

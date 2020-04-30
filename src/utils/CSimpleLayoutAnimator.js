@@ -333,11 +333,13 @@ CSimpleLayoutAnimator.prototype.start = function(waitMillis, requestFocusEnabled
 
           //check window existence
           var wmgr = me.targetFrame.parentCanvas;
-          var _targetFrame = wmgr.getWindow(me.targetFrame.id);
-          if (_targetFrame) {
-            me.targetFrame.show({ requestFocus: requestFocusEnabled });
-          } else {
-            //the target window must be deleted.
+          if (wmgr) {
+            var _targetFrame = wmgr.getWindow(me.targetFrame.id);
+            if (_targetFrame) {
+              me.targetFrame.show({ requestFocus: requestFocusEnabled });
+            } else {
+              //the target window must be deleted.
+            }
           }
         }
 

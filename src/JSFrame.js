@@ -1243,6 +1243,10 @@ CFrame.prototype.closeFrame = function(e) {
 CFrame.prototype.closeInternally = function(e, parentCanvas, windowId) {
   var me = this;
 
+  if(!parentCanvas){
+    console.error('Window('+windowId+') may have been closed');
+    return;
+  }
   parentCanvas.removeBean(windowId);
 
 
