@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>JsFrame.js example - xxxxxxx</title>
-    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
     <style>
+        body {
+            margin: 0px;
+        }
+
         h2 {
             border-bottom: 1px solid #bbb;
             font-weight: 100;
-            margin: 0 0 0.8em 0;
+            margin: 0 0 0.1em 0;
             padding: 0 0 0.2em 0;
         }
 
@@ -34,8 +40,29 @@
     </style>
 </head>
 <body>
+
 <h2><a href="../../../index.html">JSFrame.js examples</a><span>xxxxxx</span>
 </h2>
+
+<!--Window Control panel-->
+<!--The window can be controlled from the code as well as from the buttons on the title bar-->
+<div style="position:relative;z-index:1">
+    <div class="card-deck">
+        <div class="card" style="margin:20px;background:rgba(255,255,255,0.4);">
+            <div class="card-body">
+                <h4 class="font-weight-normal">Window contorl</h4>
+                <div class="d-flex justify-content-around" style="opacity: 1.0;">
+                    <button id="btn0" class="btn btn-primary m-1 w-100">Fullscreen</button>
+                    <button id="btn1" class="btn btn-primary m-1 w-100">Restore from fullscreen</button>
+                    <button id="btn2" class="btn btn-primary m-1 w-100">Hide</button>
+                    <button id="btn3" class="btn btn-primary m-1 w-100">Restore from hid</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Window Control panel-->
+
 <div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
     <a href="" title="View source for this page on GitHub">View source on GitHub</a>
 </div>
@@ -43,68 +70,84 @@
 <script>
   const jsFrame = new JSFrame();
 
-  const frames = [];
-  for (let i = 0; i < 3; i++) {
 
-    const frame = jsFrame.create({
-      name: `Win${i}`,
-      title: `Win${i} - Yosemite style`,
-      left: 20 + (320 + 20) * i, top: 50, width: 320, height: 220, minWidth: 200, minHeight: 110,
-      appearanceName: 'yosemite',
-      appearanceParam: {
-        titleBar: {
-          greenButton: 'fullscreen',//'maximize' or 'fullscreen'
-        }
+  const html1 = '<div id="bg" style="padding:10px;width:100%;height:100%;user-select:none">Double click here or press "Escape" to restore.</div>';
+
+  const frame = jsFrame.create({
+    name: `Win0`,
+    title: `Win0 - Yosemite style`,
+    left: 20 + (320 + 20) * 0, top: 240, width: 320, height: 220, minWidth: 200, minHeight: 110,
+    appearanceName: 'yosemite',
+    appearanceParam: {
+      titleBar: {
+        greenButton: 'fullscreen',//'maximize' icon or 'fullscreen' icon
+      }
+    },
+    style: {
+      backgroundColor: 'rgba(255,255,255,1.0)',
+      overflow: 'hidden'
+    },
+    html: html1,
+  }).show();
+
+  //
+  frame.on('#bg', 'dblclick', function(_frame, e) {
+    _frame.control.doCommand('restore');
+  });
+
+  document.querySelector('#btn0').addEventListener('click', (e) => {
+    frame.control.doCommand('maximize');
+  });
+  document.querySelector('#btn1').addEventListener('click', (e) => {
+    frame.control.doCommand('restore');
+  });
+  document.querySelector('#btn2').addEventListener('click', (e) => {
+    frame.control.doCommand('hide');
+  });
+  document.querySelector('#btn3').addEventListener('click', (e) => {
+    frame.control.doCommand('dehide');
+  });
+
+  //You can automatically set the actions that are typically expected
+  // when you press a button like maximize or minimize or something on title bar
+  frame.setControl({
+    maximizeButton: 'zoomButton',
+    maximizeParam: {
+      fullScreen: true,// true:maximized without title bar,false:maximized with title bar
+      restoreKey: 'Escape',//Set key code from https://www.w3.org/TR/uievents-code/#keyboard-key-codes
+    },
+    demaximizeButton: 'dezoomButton',
+    deminimizeButton: 'deminimizeButton',
+    hideButton: 'minimizeButton',
+    hideParam: {
+      align: 'ABSOLUTE',//ABSOLUTE:If you want the window to disappear after transitioning to the position you specified
+      offset: {
+        x: 100, y: 500,// specify window vanishing point
       },
-      style: {
-        backgroundColor: 'rgba(255,255,255,1.0)',
-        overflow: 'hidden'
-      },
-      html: '<div id="bg" style="padding:10px;width:100%;height:100%;user-select:none">Double click here or press "Escape" to restore.</div>'
-    }).show();
+      duration: 300
+    },
+    dehideParam: {
+      duration: 300
+    },
+    styleDisplay: 'inline',
+    animation: true,
+    animationDuration: 100,//The whole animation duration(millisec)
+  });
 
-    frame.on('#bg', 'dblclick', function(_frame, e) {
-      _frame.control.doCommand('restore');
-    });
+  frame.control.on('hid', (frame, info) => {
+    console.log("'hid' event fired.The window was hidden.");
+  });
+  frame.control.on('dehided', (frame, info) => {
+    console.log("'dehided' event fired.A hidden window has appeared.");
+  });
+  frame.control.on('maximized', (frame, info) => {
+    console.log("'maximized' event fired.The window was maximized.");
+  });
+  frame.control.on('demaximized', (frame, info) => {
+    console.log("'demaximized' event fired.The window is now back to its original size from its maximized state.");
+  });
 
-    frame.setControl({
-      maximizeButton: 'zoomButton',
-      maximizeWithoutTitleBar: true,
-      demaximizeButton: 'dezoomButton',
-      //minimizeButton: 'minimizeButton',
-      deminimizeButton: 'deminimizeButton',
-      hideButton: 'minimizeButton',
-      hideButtonParam: {
-        align:'ABSOLUTE',
-        offset:{
-          x:100,y:500
-        },
-        duration:1000
-      },
-      //https://www.w3.org/TR/uievents-code/#keyboard-key-codes
-      restoreKey: 'Escape',
-      restoreCallback: function(e) {
-        console.log("event restored")
-      },
-      animation: true,
 
-      styleDisplay: 'inline',
-      animationDuration: 300,
-
-    });
-    frame.control.on('hid', (frame, info) => {
-
-    });
-    frame.control.on('maximized', (frame, info) => {
-      console.log("event maximized")
-    });
-    frame.control.on('demaximized', (frame, info) => {
-      console.log("event demaximized")
-    });
-
-    frames.push(frame);
-  }
-  frames[0].requestFocus();
 </script>
 </body>
 </html>
