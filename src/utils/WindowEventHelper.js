@@ -2,9 +2,12 @@
 
 var CSimpleLayoutAnimator = require('./CSimpleLayoutAnimator.js');
 var CALIGN = require('../CCommon.js');
+var mergeDeeply = require('merge-deeply');
+var EventListenerHelper = require('event-listener-helper');
 
 function WindowEventHelper(model) {
 
+  this.eventListenerHelper = new EventListenerHelper();
   this.windowMode = 'default';
   this.styleDisplay = 'flex';
   this.horizontalAlign = 'left';
@@ -39,11 +42,12 @@ function WindowEventHelper(model) {
     this.hideButton = model.hideButton;
   }
 
-  this.maximizeButtonParam = model.maximizeButtonParam;
-  this.demaximizeButtonParam = model.demaximizeButtonParam;
-  this.minimizeButtonParam = model.minimizeButtonParam;
-  this.deminimizeButtonParam = model.deminimizeButtonParam;
-  this.hideButtonParam = model.hideButtonParam;
+  this.maximizeParam = model.maximizeParam;
+  this.demaximizeParam = model.demaximizeParam;
+  this.minimizeParam = model.minimizeParam;
+  this.deminimizeParam = model.deminimizeParam;
+  this.hideParam = model.hideParam;
+  this.dehideParam = model.dehideParam;
 
 
   if (model.horizontalAlign) {
@@ -72,13 +76,12 @@ function WindowEventHelper(model) {
   if (model.animationDuration) {
     this.animationDuration = model.animationDuration;
   }
-
+  this.eventListeners = {};
 
   //If the user changes the window size when the window is maximized state,
   // adjust the size so that window looks maximized.
   this.resizeListener = this.handleOnResize.bind(this);
 
-  this.eventListeners = {};
 }
 
 WindowEventHelper.prototype.on = function(eventType, callback) {
@@ -89,15 +92,34 @@ WindowEventHelper.prototype.on = function(eventType, callback) {
 //---------------------------------------------------------------------------------------------------------------------
 WindowEventHelper.prototype.doMaximize = function(model) {
   var me = this;
+
+  if (me.windowMode === 'hid') {
+    throw Error('[JSrame] It is not possible to change directly from the hid state to the maximized state');
+    return;
+  }
+
+
+  if (me.windowMode === 'maximized' || me.windowMode === 'maximizing') {
+    // If it's already 'maximized' status, it doesn't do anything.
+    return;
+  }
+
+  me.windowMode = 'maximizing';
+
   var frame = me.frame;
 
+
   //set onresize listener
-  window.addEventListener('resize', me.resizeListener);
+  //window.addEventListener('resize', me.resizeListener);
+  if (!me.eventListenerHelper.hasEventListener(window, 'resize', 'window-resize-listener')) {
+    me.eventListenerHelper.addEventListener(window, 'resize', me.resizeListener,
+      { listenerName: 'window-resize-listener' });
+  }
 
   //Remember the status of the window before maximizing the window size
   me.saveCurrentWindowStats('maximize_mode');
 
-  me.hideTitleBar = model ? model.hideTitleBar : false;
+  me.hideTitleBar = model ? model.fullScreen : false;
 
   if (me.hideTitleBar) {
 
@@ -262,6 +284,12 @@ WindowEventHelper.prototype.doDemaximize = function(model) {
   var me = this;
   var frame = me.frame;
 
+  if (me.windowMode === 'hid') {
+    //console.error('demaximize(=recovery from maximized) cannot be performed in hid state.');
+    throw Error('[JSFrame] demaximize(=recovery from maximized) cannot be performed in hid state.');
+    return;
+  }
+
   if (!me.hasWindowStats('maximize_mode')) {
     return;
   }
@@ -305,8 +333,16 @@ WindowEventHelper.prototype.handleOnResize = function() {
  * Make window minimized mode
  */
 WindowEventHelper.prototype.doMinimize = function(model) {
-
   var me = this;
+
+  if (me.windowMode === 'minimized' || me.windowMode === 'minimizing') {
+    // If it's already 'minimized' status, it doesn't do anything.
+    return;
+  }
+
+  me.windowMode = 'minimizing';
+
+
   var frame = me.frame;
 
   //Remember the stats of the window before maximizing the window
@@ -380,6 +416,7 @@ WindowEventHelper.prototype.renderMinimizedMode = function(model) {
  */
 WindowEventHelper.prototype.doDeminimize = function(model) {
   var me = this;
+
   var frame = me.frame;
 
   if (!me.hasWindowStats('minimize_mode')) {
@@ -411,6 +448,14 @@ WindowEventHelper.prototype.doDeminimize = function(model) {
 WindowEventHelper.prototype.doHide = function(model) {
 
   var me = this;
+
+  if (me.windowMode === 'hid' || me.windowMode === 'hiding') {
+    // If it's already 'hid' status, it doesn't do anything.
+    return;
+  }
+
+  me.windowMode = 'hiding';
+
   var frame = me.frame;
 
   //Remember the stats of the window before maximizing the window
@@ -558,12 +603,46 @@ WindowEventHelper.prototype.loadWindowStats = function(storeKeyName) {
   return me.statsStore[storeKeyName];
 };
 
+
 /**
  * Remember the status of the window before maximizing or minimizing the window size
+ * @param storeKeyName
+ * @returns {boolean} Returns true if the status of the window has been updated or is a new status.
+ * Returns false if the status has not been updated.
  */
 WindowEventHelper.prototype.saveCurrentWindowStats = function(storeKeyName) {
   var me = this;
-  me.statsStore[storeKeyName] = me.getCurrentWindowStats();
+
+  var crrWindowStats = me.getCurrentWindowStats();
+
+  if (me.hasWindowStats(storeKeyName)) {
+
+    var storedStats = me.loadWindowStats(storeKeyName);
+    var isWindowStatsUpdated = !me.windowStatsEquals(crrWindowStats, storedStats);
+
+    if (isWindowStatsUpdated) {
+      me.statsStore[storeKeyName] = crrWindowStats;
+    }
+
+    return isWindowStatsUpdated;
+
+  } else {
+    me.statsStore[storeKeyName] = crrWindowStats;
+    return true;
+  }
+
+
+};
+
+WindowEventHelper.prototype.windowStatsEquals = function(windowStats1, windowStats2) {
+
+  if (windowStats1 && windowStats2) {
+    var result = JSON.stringify(windowStats1) === JSON.stringify(windowStats2);
+    return result;
+  } else {
+    return false;
+  }
+
 };
 
 WindowEventHelper.prototype.clearWindowStats = function(storeKeyName) {
@@ -643,7 +722,6 @@ WindowEventHelper.prototype.restoreWindow = function(model) {
     frame.setResizable(to.resizable);
     frame.setMovable(to.movable);
 
-    //リストアしたらデータはクリアする
     me.clearWindowStats(model.restoreMode);
 
     if (me.keyListener) {
@@ -693,8 +771,8 @@ WindowEventHelper.prototype.restoreWindow = function(model) {
     funcDoRender();
   }
 
-
-  window.removeEventListener('resize', me.resizeListener);
+  me.eventListenerHelper.removeEventListener(window, 'resize', me.resizeListener);
+  //window.removeEventListener('resize', me.resizeListener);
 };
 
 
@@ -734,8 +812,27 @@ WindowEventHelper.prototype.animateFrame = function(model) {
 WindowEventHelper.prototype.doCommand = function(cmd, opt) {
   var me = this;
 
+
+  if (cmd === 'maximize') {
+    me._defaultFunctionMaximize(me.frame);
+  }
+  if (cmd === 'demaximize') {
+    me._defaultFunctionDemaximize(me.frame);
+  }
   if (cmd === 'restore') {
     me._defaultFunctionRestoreFromFullscreen(me.frame)
+  }
+  if (cmd === 'minimize') {
+    me._defaultFunctionMinimize(me.frame);
+  }
+  if (cmd === 'deminimize') {
+    me._defaultFunctionDeminimize(me.frame);
+  }
+  if (cmd === 'hide') {
+    me._defaultFunctionHide(me.frame);
+  }
+  if (cmd === 'dehide') {
+    me._defaultFunctionDehide(me.frame);
   }
 }
 
@@ -743,44 +840,36 @@ WindowEventHelper.prototype._defaultFunctionMaximize = function(_frame, evt) {
   var me = this;
   var model = me.opts;
 
-  //ウィンドウを最大化する
-  _frame.control.doMaximize({
-    //true:最大化したときにタイトルバーを隠す
-    hideTitleBar: (model.maximizeWithoutTitleBar === true) ? true : false,
+  var param = {
+    // DEPRECATED: maximizeWithoutTitleBar is deprecated
+    // USE maximizeParam.fullScreen
+    fullScreen: (model.maximizeWithoutTitleBar === true) ? true : false,
 
-    //最大化するときのアニメーション時間
-    //duration: 100,
+    // DEPRECATED: model.restoreKey is deprecated
+    // USE maximizeParam.restoreKey
 
-    //タイトルバーを隠すときはボタンで復帰できないので変わりにキー入力を使いたい場合はキーを指定できる
+    // If you want to use the key input instead of the title bar,
+    // you can specify the key because it is not possible
+    // to recover with the button when hiding the title bar.
     restoreKey: model.restoreKey ? model.restoreKey : 'Escape',
 
-    //最大化から復帰するまでのアニメーション時間（タイトルバーを隠すときはここで指定可能)
-    //restoreDuration: 100,
-    // duration: me.restoreDuration ? me.restoreDuration : null,
-    // callback: me.restoreCallback ? me.restoreCallback : null
-
-    //ウィンドウを最大化終了を受け取るコールバック関数
-    // callback: function(frame, info) {
-    // },
+    // DEPRECATED: model.restoreDuration is deprecated
+    // USE maximizeParam.restoreDuration
     restoreDuration: model.restoreDuration,
+  };
 
-    //最大化から戻ったときに呼び出されるコールバック(タイトルバーが無い場合)
-    restoreCallback: model.restoreCallback,
-    // restoreCallback: function(frame, info) {
-    //   jsFrame.showToast({
-    //     text: frame.getName() + ' ' + info.eventType
-    //   });
-    // },
-  });
+  if (this.maximizeParam) {
+    // write maximizeParam into param
+    mergeDeeply({ op: 'overwrite-merge', object1: param, object2: this.maximizeParam });
+  }
+
+  //ウィンドウを最大化する
+  _frame.control.doMaximize(param);
 };
 
 WindowEventHelper.prototype._defaultFunctionDemaximize = function(_frame, evt) {
   _frame.control.doDemaximize(
-    {
-      // duration: 100,
-      // callback: (frame, info) => {}
-    });
-
+    {});
 };
 
 WindowEventHelper.prototype._defaultFunctionRestoreFromFullscreen = function(_frame, evt) {
@@ -794,30 +883,34 @@ WindowEventHelper.prototype._defaultFunctionRestoreFromFullscreen = function(_fr
 WindowEventHelper.prototype._defaultFunctionMinimize = function(_frame, evt) {
 
   //'minimizeButton'が押されたときに、最小化したい場合
-  _frame.control.doMinimize(this.minimizeButtonParam);
+  _frame.control.doMinimize(this.minimizeParam);
 
 };
 
 WindowEventHelper.prototype._defaultFunctionDeminimize = function(_frame, evt) {
-  _frame.control.doDeminimize(this.deminimizeButtonParam);
+  _frame.control.doDeminimize(this.deminimizeParam);
 };
 
 WindowEventHelper.prototype._defaultFunctionHide = function(_frame, evt) {
 
-  if (this.hideButtonParam) {
-    _frame.control.doHide(this.hideButtonParam);
-  } else {
-    _frame.control.doHide({
-      align: 'CENTER_BOTTOM'
-    });
+  var param = {
+    align: 'CENTER_BOTTOM'
+  };
+  if (this.hideParam) {
+    param = this.hideParam;
   }
+  _frame.control.doHide(param);
+
 };
 
 WindowEventHelper.prototype._defaultFunctionDehide = function(_frame, evt) {
-  _frame.control.doDehide({});
+  var me = this;
+  _frame.control.doDehide(me.dehideParam);
 };
+
 WindowEventHelper.prototype.setupDefaultEvents = function() {
   var me = this;
+
   if (me.maximizeButton) {
     //イベントはオーバーライドされる
     me.frame.on(me.maximizeButton, 'click', me._defaultFunctionMaximize.bind(me));

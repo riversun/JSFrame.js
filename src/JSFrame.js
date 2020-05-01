@@ -1243,8 +1243,8 @@ CFrame.prototype.closeFrame = function(e) {
 CFrame.prototype.closeInternally = function(e, parentCanvas, windowId) {
   var me = this;
 
-  if(!parentCanvas){
-    console.error('Window('+windowId+') may have been closed');
+  if (!parentCanvas) {
+    console.error('Window(' + windowId + ') may have been closed');
     return;
   }
   parentCanvas.removeBean(windowId);
@@ -2415,7 +2415,7 @@ CIfFrame.prototype.setControl = function(model) {
   if (model) {
     model.frame = me;
     me.control = me.jsFrame.createWindowEventHelper(model);
-    me.control.setupDefaultEvents(model);
+    me.control.setupDefaultEvents();
   }
 
 };
@@ -2722,23 +2722,37 @@ function JSFrame(model) {
     me.touchActionManipulation = model.touchActionManipulation;
   }
 
-  if (!parentElement && isWindowManagerFixed) {
-    var topParentDiv = document.createElement('div');
-    topParentDiv.id = 'jsFrame_fixed_' + me.generateUUID();
-    topParentDiv.setAttribute('style',
-      'position:fixed;' + me.hAlign + ':0px;' + me.vAlign + ':0px;margin:0px;padding:0px;'
-    );
-
-    document.body.appendChild(topParentDiv);
-    parentElement = topParentDiv;
+  if (!parentElement) {
+    if (isWindowManagerFixed) {
+      var topParentDiv = document.createElement('div');
+      topParentDiv.id = 'jsFrame_fixed_' + me.generateUUID();
+      topParentDiv.setAttribute('style',
+        'position:fixed;' + me.hAlign + ':0px;' + me.vAlign + ':0px;margin:0px;padding:0px;'
+      );
+      document.body.appendChild(topParentDiv);
+      parentElement = topParentDiv;
+    } else {
+      parentElement = document.body;
+    }
   } else {
-    parentElement = document.body;
+    if (isWindowManagerFixed) {
+      //parentElement set
+      var topParentDiv = document.createElement('div');
+      topParentDiv.id = 'jsFrame_fixed_' + me.generateUUID();
+      topParentDiv.setAttribute('style',
+        'position:fixed;' + me.hAlign + ':0px;' + me.vAlign + ':0px;margin:0px;padding:0px;'
+      );
+      parentElement.appendChild(topParentDiv);
+    } else {
+      parentElement = document.body;
+    }
   }
 
   if (MOUSE_ENABLED) {
     document.addEventListener('mouseup', mouseUp);
     document.addEventListener('mousemove', mouseMove);
   }
+
   if (TOUCH_ENABLED) {
     if ('ontouchend' in window) {
       var funcOnTouchEnd = function(evt) {
