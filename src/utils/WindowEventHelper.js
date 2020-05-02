@@ -22,6 +22,8 @@ function WindowEventHelper(model) {
 
   this.opts = model;
 
+  this.isWindowManagerFixed = model.frame.jsFrame.isWindowManagerFixed;
+
   if (model.styleDisplay) {
     this.styleDisplay = model.styleDisplay;
   }
@@ -354,7 +356,8 @@ WindowEventHelper.prototype.doMinimize = function(model) {
   me.renderMinimizedMode({
     animation: me.animationEnabled,
     callback: (model && model.callback) ? model.callback : null,
-    duration: (model && model.duration) ? model.duration : null
+    duration: (model && model.duration) ? model.duration : null,
+    toWidth: (model && model.toWidth) ? model.toWidth : null,
   });
 };
 
@@ -371,6 +374,9 @@ WindowEventHelper.prototype.renderMinimizedMode = function(model) {
   var to = me.getCurrentWindowStats();
 
   to.height = ri.titleBarHeight;
+  if (model && model.toWidth) {
+    to.width = model.toWidth
+  }
 
   var funcDoRender = function() {
     var forceSetSize = true;
@@ -464,14 +470,19 @@ WindowEventHelper.prototype.doHide = function(model) {
 
   frame.setResizable(false);
 
-  me.renderHideMode({
-    silent: model.silent,
+
+  var arg = {
+//    silent: model.silent,
     animation: me.animationEnabled,
-    duration: (model && model.duration) ? model.duration : null,
-    callback: (model && model.callback) ? model.callback : null,
-    align: (model && model.align) ? model.align : null,
-    offset: model.offset
-  });
+    // duration: (model && model.duration) ? model.duration : null,
+    // callback: (model && model.callback) ? model.callback : null,
+    // align: (model && model.align) ? model.align : null,
+    // offset: (model && model.align) ? model.offset : null,
+  };
+  if (model) {
+    mergeDeeply({ op: 'overwrite-merge', object1: arg, object2: model });
+  }
+  me.renderHideMode(arg);
 };
 
 
@@ -486,6 +497,8 @@ WindowEventHelper.prototype.renderHideMode = function(model) {
   var from = me.getCurrentWindowStats();
 
   var offset = { x: 0, y: 0 };
+  var toElement = model.toElement;
+
   if (model.offset) {
     offset = model.offset;
   }
@@ -525,8 +538,19 @@ WindowEventHelper.prototype.renderHideMode = function(model) {
       top = from.top + from.height;
 
     } else if ('ABSOLUTE' == align) {
-      left = offset.x;
-      top = offset.y;
+      if (toElement) {
+        var elementRect = toElement.getBoundingClientRect();
+        if (me.isWindowManagerFixed) {
+          left = elementRect.left;
+          top = elementRect.top;
+        } else {
+          left = elementRect.left + window.pageXOffset;
+          top = elementRect.top + window.pageYOffset;
+        }
+      } else {
+        left = offset.x;
+        top = offset.y;
+      }
     }
 
   }

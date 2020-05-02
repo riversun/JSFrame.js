@@ -12,13 +12,16 @@ var EventListenerHelper = require('event-listener-helper');
 
 //If you don't want to bundle preset styles in JsFrame.js ,comment out below.
 var presetStyles = {
-  'yosemite': require('./presets/PresetStyleYosemite.js'),
-  'redstone': require('./presets/PresetStyleRedstone.js'),
-  'popup': require('./presets/PresetStylePopup.js'),
-  'toast': require('./presets/PresetStyleToast.js'),
-  'material': require('./presets/PresetStyleMaterial.js'),
+  'yosemite': require('./presets/appearance/PresetStyleYosemite.js'),
+  'redstone': require('./presets/appearance/PresetStyleRedstone.js'),
+  'popup': require('./presets/appearance/PresetStylePopup.js'),
+  'toast': require('./presets/appearance/PresetStyleToast.js'),
+  'material': require('./presets/appearance/PresetStyleMaterial.js'),
 };
 
+var presetWindows = {
+  'yosemite': require('./presets/window/PresetWindowYosemite.js'),
+};
 
 var DEF = {};
 
@@ -943,8 +946,7 @@ function CFrame(windowId, w_left, w_top, w_width, w_height, zindex, w_border_wid
     }
 
     me.addFrameComponent(frameComponent);
-  }
-  //add frameComponents[end]
+  }  // /add frameComponents[end]
 
   //override the field
   me.htmlElement.style.backgroundColor = 'transparent';
@@ -2689,12 +2691,12 @@ function JSFrame(model) {
   var parentElement = null;
 
   // Frames will be fixed(Frames keep staying in the same place) even if the user scrolls the browser.
-  var isWindowManagerFixed = true;//default is true.
+  me.isWindowManagerFixed = true;//default is true.
 
   //Initialization parameter check
 
   if (model && model.fixed == false) {
-    isWindowManagerFixed = false;
+    me.isWindowManagerFixed = false;
   }
 
   if (model && model.parentElement) {
@@ -2723,7 +2725,7 @@ function JSFrame(model) {
   }
 
   if (!parentElement) {
-    if (isWindowManagerFixed) {
+    if (me.isWindowManagerFixed) {
       var topParentDiv = document.createElement('div');
       topParentDiv.id = 'jsFrame_fixed_' + me.generateUUID();
       topParentDiv.setAttribute('style',
@@ -2732,10 +2734,16 @@ function JSFrame(model) {
       document.body.appendChild(topParentDiv);
       parentElement = topParentDiv;
     } else {
-      parentElement = document.body;
+      var topParentDiv = document.createElement('div');
+      topParentDiv.id = 'jsFrame_absolute_' + me.generateUUID();
+      topParentDiv.setAttribute('style',
+        'position:absolute;' + me.hAlign + ':0px;' + me.vAlign + ':0px;margin:0px;padding:0px;'
+      );
+      document.body.appendChild(topParentDiv);
+      parentElement = topParentDiv;
     }
   } else {
-    if (isWindowManagerFixed) {
+    if (me.isWindowManagerFixed) {
       //parentElement set
       var topParentDiv = document.createElement('div');
       topParentDiv.id = 'jsFrame_fixed_' + me.generateUUID();
@@ -2744,7 +2752,14 @@ function JSFrame(model) {
       );
       parentElement.appendChild(topParentDiv);
     } else {
-      parentElement = document.body;
+
+      var topParentDiv = document.createElement('div');
+      topParentDiv.id = 'jsFrame_absolute_' + me.generateUUID();
+      topParentDiv.setAttribute('style',
+        'position:absolute;' + me.hAlign + ':0px;' + me.vAlign + ':0px;margin:0px;padding:0px;'
+      );
+      parentElement.appendChild(topParentDiv);
+
     }
   }
 
@@ -2852,6 +2867,8 @@ JSFrame.prototype.create = function(model) {
   var width = model.width;
   var height = model.height;
   var appearance = model.appearance;
+  var presetWindowName = model.preset;
+  var presetWindowParam = model.presetParam;
   var appearanceName = model.appearanceName;
   var appearanceParam = model.appearanceParam;
   var style = model.style;
@@ -2865,7 +2882,17 @@ JSFrame.prototype.create = function(model) {
   var url = model.url;
   var urlLoaded = model.urlLoaded;
 
-  if (appearanceName) {
+  var presetParam = model.presetParam;
+  var presetWindow;
+
+  if (presetWindowName) {
+
+    var presetWindowObj = this.getPresetWindow(presetWindowName);
+    presetWindow = presetWindowObj.getPresetWindow(presetParam);
+    appearance = this.createPresetStyle(presetWindow.appearanceName,
+      { appearanceParam: presetWindow.appearanceParam });
+
+  } else if (appearanceName) {
     appearance = this.createPresetStyle(appearanceName,
       { appearanceParam: appearanceParam });
   }
@@ -2910,6 +2937,9 @@ JSFrame.prototype.create = function(model) {
     }
   }
 
+  if (presetWindow) {
+    presetWindow.setupPresetWindow(frame);
+  }
 
   return frame;
 };
@@ -3026,6 +3056,15 @@ JSFrame.prototype.createWindowEventHelper = function(model) {
   return wndEventHelper;
 };
 
+JSFrame.prototype.getPresetWindow = function(presetName, param) {
+
+  if (presetWindows[presetName]) {
+    var presetObj = presetWindows[presetName];
+    return presetObj;
+  } else {
+    return null;
+  }
+}
 JSFrame.prototype.createPresetStyle = function(presetName, param) {
 
   var me = this;
@@ -3045,7 +3084,7 @@ JSFrame.prototype.createPresetStyle = function(presetName, param) {
     return styleObj.getStyle(apr, appearanceParam);
   }
 
-  console.error('Preset appearance "' + presetName + '" not found.');
+  console.error('[JSFrame] Preset appearance "' + presetName + '" not found.');
   return apr;
 };
 
