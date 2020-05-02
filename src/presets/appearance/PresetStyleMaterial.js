@@ -1,5 +1,5 @@
 require('./PresetStyleMaterial.css');
-var ObjectAssigner = require('../utils/ObjectAssigner.js');
+var ObjectAssigner = require('../../utils/ObjectAssigner.js');
 
 
 function getStyle(fApr, userParam) {

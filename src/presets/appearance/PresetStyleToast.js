@@ -1,7 +1,6 @@
 function getStyle(fApr) {
 
 
-
   fApr.showTitleBar = false;
   fApr.showCloseButton = true;
 
