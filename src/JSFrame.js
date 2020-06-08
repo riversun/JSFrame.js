@@ -1742,13 +1742,16 @@ CIfFrame.prototype.on = function(id, eventType, callbackFunc) {
   var domElement = me.$(id);
 
   if (domElement) {
-    domElement.addEventListener(eventType, function(e) {
+    if (me.eventListenerHelper.hasEventListener(domElement, eventType, 'frame-dom-listener')) {
+      me.eventListenerHelper.removeEventListener(domElement, eventType, null, { listenerName: 'frame-dom-listener' });
+    }
+    me.eventListenerHelper.addEventListener(domElement, eventType, function(e) {
       callbackFunc(me, e, {
         type: 'dom',
         id: id,
         eventType: eventType
       });
-    });
+    }, { listenerName: 'frame-dom-listener' });
   }
 
   // Search DOM element on frameComponent
