@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - "Preset"s with typical window-system behavior</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <style>
+
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.1em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body style="padding:10px">
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>"Preset"s with typical window-system behavior</span>
+</h2>
+<div style="position:absolute;left:10px;top:100px;z-index:0">
+    <img src="icon_riversun_64.png" id="icon1">
+
+</div>
+
+Tap to minimize at the position of the icon
+
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="" title="View source for this page on GitHub">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  const jsFrame = new JSFrame();
+
+  const frame = jsFrame.create({
+    name: `Win0`,
+    title: `Win0 - Yosemite style`,
+    left: 100, top: 200, width: 400, height: 320, minWidth: 200, minHeight: 110,
+
+    // Whereas the presets of "appearance" mainly show the "look and feel" presets.
+    //  The "preset" are a collection of "look and feel" + "standard behavior" presets,
+    //  allowing you to achieve common window behavior with less coding.
+    preset: 'yosemite',
+    presetParam: {
+      // Set the window control command to be executed when the maximize button is pressed
+      maximizeButtonBehavior: 'fullscreen',// Possible commands are 'fullscreen' or 'maximize'
+      // Set the window control command to be executed when the maximize button is pressed
+      minimizeButtonBehavior: 'hide',// Possible commands are 'minimize' or 'hide'
+      control: {
+        // Parameters to use when 'minimize' command is executed
+        minimizeParam: {
+          toWidth: 250,
+          duration: 200
+        },
+        // Parameters to use when the 'hide' command is executed
+        hideParam: {
+          //ABSOLUTE:If you want the window to disappear after transitioning to the position you specified
+          align: 'ABSOLUTE',
+          //A DOM Element can be used to specify the point at which the window disappears when it is hidden
+          toElement: document.querySelector('#icon1'),
+          //Time to hide(milliseconds)
+          duration: 200
+        },
+      }
+    },
+    style: {
+      backgroundColor: 'rgba(255,255,255,1.0)',
+      overflow: 'hidden'
+    },
+    html: '<div id="window_content" style="padding:10px;width:100%;height:100%;user-select:none;font-size:16px"></div>',
+  }).show();
+
+  // You can double-click it back to its original size as below.
+  frame.$('#window_content').innerText = 'Double click here or click "maximize" button to fullscreen.';
+  frame.on('#window_content', 'dblclick', (_frame, e) => {
+    // You can use frame.control#doCommand to execute the window control command directly.
+    _frame.control.doCommand('maximize');
+  });
+
+  // receive events
+  document.querySelector('#icon1').addEventListener('click', (e) => {
+    frame.control.doCommand('dehide');
+  });
+
+  frame.control.on('hid', (frame, info) => {
+    console.log("'hid' event fired.The window was hidden.");
+  });
+
+  frame.control.on('dehided', (frame, info) => {
+    console.log("'dehided' event fired.A hidden window has appeared.");
+  });
+
+  frame.control.on('maximized', (frame, info) => {
+    frame.$('#window_content').innerText = 'Double click here or press Escape to restore.';
+    frame.on('#window_content', 'dblclick', (_frame, e) => {
+      _frame.control.doCommand('restore');
+    });
+  });
+
+  frame.control.on('demaximized', (frame, info) => {
+    frame.$('#bg').innerText = 'Double click here or click "maximize" button to fullscreen.';
+    frame.on('#bg', 'dblclick', (_frame, e) => {
+      _frame.control.doCommand('maximize');
+    });
+  });
+
+
+</script>
+</body>
+</html>
