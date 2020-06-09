@@ -7,19 +7,24 @@
 It is an independent and lightweight multi-window library for javascript.
 
 - You can create various floating windows (called **frame**) and popup windows.
-- You can create [multi-window](https://riversun.github.io/jsframe/examples/v150/preset_win10.html) apps.
 - You can create a [modal window](https://riversun.github.io/jsframe/examples/v150/modal.html).
+- You can create [multi-window](https://riversun.github.io/jsframe/examples/v150/preset_win10.html) apps.
 - You can create a [toast](https://riversun.github.io/jsframe/examples/v150/toast.html).
 
-[![image](https://user-images.githubusercontent.com/11747460/84118038-62904280-aa6d-11ea-841b-060315c5710c.png)](https://riversun.github.io/JSFrame.js/public/examples/v160/preset-window-yosemite-desktop/)
+
+# DEMO
+https://riversun.github.io/jsframe/examples/v150/preset_yosemite_auto.html
+https://riversun.github.io/jsframe/examples/v150/preset_material.html
+https://riversun.github.io/jsframe/examples/v150/preset_win10.html
+https://riversun.github.io/jsframe/examples/v150/chatbot_ui.html
+
+
+[![ex00](https://riversun.github.io/jsframe/capture/img_01_yosemite.png)](https://riversun.github.io/jsframe/examples/ex00/index.html)
+
 
 It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
 
-# Resources
-
-- [Examples](https://riversun.github.io/JSFrame.js/public/)
-
-# Installing
+# install
 
 ## using npm
 
@@ -30,11 +35,10 @@ npm install jsframe.js --save
 ## using with script tag
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/jsframe.js/lib/jsframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsframe.js@1.5.16/lib/jsframe.min.js"></script>
 ```
 
 # Quick Start
-
 ## Create window
 
 Here's is basic example of JSFrame.js to show a simple window.
