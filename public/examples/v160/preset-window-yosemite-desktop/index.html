@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Desktop on the web with 'yosemite' preset</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <style>
+
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.1em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .icon {
+            width: 72px;
+            height: 72px;
+        }
+    </style>
+</head>
+<body style="padding:10px;background: url('http://upload.wikimedia.org/wikipedia/commons/d/d6/Half_Dome_from_Glacier_Point%2C_Yosemite_NP_-_Diliff.jpg') 50% no-repeat fixed; background-size: cover;">
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Desktop on the web with 'yosemite' preset</span>
+</h2>
+
+<div id="icons" class="d-flex justify-content-around"
+     style="position:absolute;left:0px;bottom:0px;width:100%;height:80px;z-index:0;background:rgba(0,0,0,0.5);">
+</div>
+
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 110px">
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/preset-window-yosemite"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+</div>
+<div style="font-size: 12px; color: white; position: fixed; right: 10px; bottom: 90px">
+    Icons from http://flat-icon-design.com , Photo by Tiago Fioreze License: CC-BY-SA 3.0
+</div>
+
+<script src="../../../jsframe.js"></script>
+<script>
+  const jsFrame = new JSFrame();
+
+  const pad = (n) => {
+    const numStr = '0' + n;
+    return numStr.substring(numStr.length - 2, numStr.length)
+  };
+  let windowStartLeft = 20;
+  let windowStartTop = 60;
+  const createWindow = ({ iconId, iconUrl }, visible) => {
+    const frame = jsFrame.create({
+      name: iconId,
+      title: `${iconId} - Yosemite style`,
+      left: windowStartLeft, top: windowStartTop, width: 400, height: 320, minWidth: 200, minHeight: 110,
+
+      // Whereas the presets of "appearance" mainly show the "look and feel" presets.
+      //  The "preset" are a collection of "look and feel" + "standard behavior" presets,
+      //  allowing you to achieve common window behavior with less coding.
+      preset: 'yosemite',
+      presetParam: {
+        // Set the window control command to be executed when the maximize button is pressed
+        maximizeButtonBehavior: 'fullscreen',// Possible commands are 'fullscreen' or 'maximize'
+        // Set the window control command to be executed when the maximize button is pressed
+        minimizeButtonBehavior: 'hide',// Possible commands are 'minimize' or 'hide'
+        closeButtonBehavior: 'hide',
+        control: {
+
+          // Parameters to use when the 'hide' command is executed
+          hideParam: {
+            //ABSOLUTE:If you want the window to disappear after transitioning to the position you specified
+            align: 'ABSOLUTE',
+            //A DOM Element can be used to specify the point at which the window disappears when it is hidden
+            toElement: document.querySelector(iconId),
+            //Time to hide(milliseconds)
+            duration: 200
+          },
+        }
+      },
+      style: {
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        overflow: 'hidden'
+      },
+      html: `<div id="window_content" style="padding:10px;width:100%;height:100%;user-select:none;font-size:16px">
+</div>`,
+    });
+
+
+    const iconTag = `<img src="${iconUrl}" class="icon">`;
+
+    // You can double-click it back to its original size as below.
+    frame.$('#window_content').innerHTML = `${iconTag}<br>Double click here or click "maximize" button to fullscreen.`;
+    frame.on('#window_content', 'dblclick', (_frame, e) => {
+      // You can use frame.control#doCommand to execute the window control command directly.
+      _frame.control.doCommand('maximize');
+    });
+
+    if (!visible) {
+      frame.control.doHide({
+        silent: true,//means invisible action
+        duration: 0,
+        align: 'ABSOLUTE',//need to set the offset point where window is minimized
+        toElement: document.querySelector(iconId),
+      });
+    } else {
+      frame.show();
+    }
+
+
+    frame.control.on('maximized', (frame, info) => {
+      frame.$('#window_content').innerHTML = `${iconTag}<br>Double click here or press Escape to restore.`;
+      frame.on('#window_content', 'dblclick', (_frame, e) => {
+        _frame.control.doCommand('restore');
+      });
+    });
+
+    frame.control.on('demaximized', (frame, info) => {
+      frame.$('#window_content').innerHTML = `${iconTag}<br>Double click here or click "maximize" button to fullscreen.`;
+      frame.on('#window_content', 'dblclick', (_frame, e) => {
+        _frame.control.doCommand('maximize');
+      });
+    });
+
+    // receive events
+    document.querySelector(iconId).addEventListener('click', (e) => {
+      if (jsFrame.containsWindowName(iconId)) {
+        const windowMode = frame.control.getWindowMode();
+        if (windowMode === 'hid') {
+          frame.control.doCommand('dehide');
+        } else if (windowMode === 'default') {
+          frame.control.doCommand('hide');
+        }
+      } else {
+        // Note:This situation doesn't occur in this example.
+        createWindow(iconId, true);
+      }
+    });
+
+    windowStartLeft += 20;
+    windowStartTop += 20;
+  }
+
+  const iconHolder = document.querySelector('#icons');
+  const windowModels = [];
+  for (let i = 0; i < 16; i += 1) {
+    const strIndex = pad(i + 1);
+    const iconId = `win${strIndex}`;
+    const iconUrl = `https://riversun.github.io/img/icons/${strIndex}.png`;
+    const iconTag = `<img src="${iconUrl}" class="icon" id="${iconId}">`;
+    windowModels.push({ iconId: `#${iconId}`, iconUrl: iconUrl });
+    iconHolder.innerHTML += iconTag;
+  }
+  for (let i = 0; i < windowModels.length; i += 1) {
+    createWindow(windowModels[i], i === 0);
+  }
+
+</script>
+</body>
+</html>
