@@ -153,7 +153,7 @@ function getStyle(fApr, userParam) {
       var eleAlign = 'LEFT_TOP';
 
       // 'closeButton' is a special name
-      fApr.addFrameComponent('closeButton', closeBtnEle, eleLeft, eleTop, eleAlign);
+      fApr.addFrameComponent(param.closeButtonName || 'closeButton', closeBtnEle, eleLeft, eleTop, eleAlign);
 
       //prepare [minimize button]
       var minBtnApr = partsBuilder.buildImageButtonAppearance(cbApr);

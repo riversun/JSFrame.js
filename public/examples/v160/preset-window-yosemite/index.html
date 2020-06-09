@@ -48,7 +48,8 @@
 Tap to minimize at the position of the icon
 
 <div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
-    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/preset-window-yosemite" title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/preset-window-yosemite"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
 </div>
 <script src="../../../jsframe.js"></script>
 <script>
@@ -68,6 +69,9 @@ Tap to minimize at the position of the icon
       maximizeButtonBehavior: 'fullscreen',// Possible commands are 'fullscreen' or 'maximize'
       // Set the window control command to be executed when the maximize button is pressed
       minimizeButtonBehavior: 'hide',// Possible commands are 'minimize' or 'hide'
+      // If you want to intercept the close button,
+      // specify your own name for the closeButton and set an event listener for that name.
+      closeButtonName: 'my-custom-close-button',
       control: {
         // Parameters to use when 'minimize' command is executed
         minimizeParam: {
@@ -99,6 +103,12 @@ Tap to minimize at the position of the icon
     _frame.control.doCommand('maximize');
   });
 
+  frame.on('my-custom-close-button', 'click', (_frame, e) => {
+    // If you want to intercept the close button,
+    // specify your own name for the closeButton and set an event listener for that name.
+    _frame.closeFrame();
+  });
+
   // receive events
   document.querySelector('#icon1').addEventListener('click', (e) => {
     frame.control.doCommand('dehide');
@@ -120,8 +130,8 @@ Tap to minimize at the position of the icon
   });
 
   frame.control.on('demaximized', (frame, info) => {
-    frame.$('#bg').innerText = 'Double click here or click "maximize" button to fullscreen.';
-    frame.on('#bg', 'dblclick', (_frame, e) => {
+    frame.$('#window_content').innerText = 'Double click here or click "maximize" button to fullscreen.';
+    frame.on('#window_content', 'dblclick', (_frame, e) => {
       _frame.control.doCommand('maximize');
     });
   });

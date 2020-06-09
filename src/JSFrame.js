@@ -2487,6 +2487,7 @@ CWindowManager.prototype.containsWindowName = function(name) {
   if (windowId) {
     return true;
   }
+  return false;
 };
 
 CWindowManager.prototype.getWindowByName = function(name) {

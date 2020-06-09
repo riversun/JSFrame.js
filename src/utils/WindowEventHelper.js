@@ -43,6 +43,9 @@ function WindowEventHelper(model) {
   if (model.hideButton) {
     this.hideButton = model.hideButton;
   }
+  if (model.hideButtons) {
+    this.hideButtons = model.hideButtons;
+  }
 
   this.maximizeParam = model.maximizeParam;
   this.demaximizeParam = model.demaximizeParam;
@@ -585,6 +588,7 @@ WindowEventHelper.prototype.renderHideMode = function(model) {
     me.animateFrame({
       fromAlpha: model.silent ? 0 : 1.0,
       toAlpha: 0,
+      ease: true,
       duration: model.duration ? model.duration : me.animationDuration,
       frame: frame,
       from: from,
@@ -786,6 +790,8 @@ WindowEventHelper.prototype.restoreWindow = function(model) {
     me.animateFrame({
       duration: model.duration ? model.duration : me.animationDuration,
       frame: frame,
+      fromAlpha: 0,
+      toAlpha: 1,
       from: crr,
       to: to,
       callback: funcDoRender
@@ -822,6 +828,7 @@ WindowEventHelper.prototype.animateFrame = function(model) {
     .toHeight(to.height)
     .fromAlpha(fromAlpha)
     .toAlpha((model.toAlpha == 0) ? 0 : 1.0)
+    .ease(model.ease)
     .start(0, needRequestFocusAfterAnimation)
     .then(function(animatorObj) {
       model['callback']();
@@ -954,6 +961,15 @@ WindowEventHelper.prototype.setupDefaultEvents = function() {
 
   if (me.hideButton) {
     me.frame.on(me.hideButton, 'click', me._defaultFunctionHide.bind(me));
+  }
+
+  if (me.hideButtons) {
+    for (var key in me.hideButtons) {
+      var hideButton = me.hideButtons[key];
+      if (hideButton) {
+        me.frame.on(hideButton, 'click', me._defaultFunctionHide.bind(me));
+      }
+    }
   }
 
 };

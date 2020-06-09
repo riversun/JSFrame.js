@@ -14,15 +14,20 @@ function getPreset(param) {
 
   var isFullScreen = presetParam.maximizeButtonBehavior === 'fullscreen';
   var minimizeButton = presetParam.minimizeButtonBehavior === 'minimize' ? 'minimizeButton' : null;
-  var hideButton = presetParam.minimizeButtonBehavior === 'hide' ? 'minimizeButton' : null;
+  var hideButton1 = presetParam.minimizeButtonBehavior === 'hide' ? 'minimizeButton' : null;
+  var hideButton2 = presetParam.closeButtonBehavior === 'hide' ? 'custom-close-button' : null;
   var windowControlParam = presetParam.control;
+
+  var closeButtonNameByCloseButtonBehavior = hideButton2;
+  var closeButtonName = presetParam.closeButtonName;
 
   if (isFullScreen) {
     result.appearanceParam.titleBar = {
       greenButton: 'fullscreen',//'maximize' icon or 'fullscreen' icon
     };
   }
-
+  // Set this to 'closeButton' to automatically close when clicking
+  result.appearanceParam.closeButtonName = closeButtonNameByCloseButtonBehavior || closeButtonName || 'closeButton';
 
   result.setupPresetWindow = function(frame) {
     var defaultWindowControlParam = {
@@ -31,15 +36,14 @@ function getPreset(param) {
         fullScreen: isFullScreen,// true:maximized without title bar,false:maximized with title bar
         restoreKey: 'Escape',//Set key code from https://www.w3.org/TR/uievents-code/#keyboard-key-codes
       },
+
       demaximizeButton: 'dezoomButton',
       deminimizeButton: 'deminimizeButton',
       minimizeButton: minimizeButton,
-      hideButton: hideButton,
+      hideButtons: [hideButton1, hideButton2],
       hideParam: {
         align: 'CENTER_CENTER',//ABSOLUTE:If you want the window to disappear after transitioning to the position you specified
-        // offset: {
-        //   x: 100, y: 500,// specify window vanishing point
-        // },
+
         duration: 300
       },
       dehideParam: {
