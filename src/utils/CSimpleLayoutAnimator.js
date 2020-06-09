@@ -68,6 +68,7 @@ CSimpleLayoutAnimator.prototype.get = function() {
   var me = this;
   return me.targetFrame;
 };
+
 /**
  * Set animation duration time millis
  * @param durationMillis
@@ -193,6 +194,16 @@ CSimpleLayoutAnimator.prototype.toAlpha = function(toAlpha) {
 };
 
 /**
+ * Get CIFrame object
+ * @returns {*}
+ */
+CSimpleLayoutAnimator.prototype.ease = function(ease) {
+  var me = this;
+  me._ease=ease;
+  return me;
+};
+
+/**
  * Set move to position
  * @param x
  * @param y
@@ -257,6 +268,9 @@ CSimpleLayoutAnimator.prototype.start = function(waitMillis, requestFocusEnabled
     var deltaY = (me._toY - fromY) / numOfSteps;
 
     var deltaAlpha = (me._toAlpha - fromAlpha) / numOfSteps;
+    if(me._ease){
+      deltaAlpha=deltaAlpha/1.24;
+    }
 
     var unitMillis = me.durationMillis / numOfSteps;
 
@@ -304,6 +318,10 @@ CSimpleLayoutAnimator.prototype.start = function(waitMillis, requestFocusEnabled
         if (idx == (numOfSteps + 1)) {
           //Stop timer after last draw update.
           timer.stopTimer();
+
+          if (me.targetFrame.htmlElement.style) {
+            me.targetFrame.htmlElement.style.opacity = me._toAlpha;
+          }
           resolve(me);
           return;
         }
