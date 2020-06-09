@@ -281,7 +281,9 @@ WindowEventHelper.prototype.renderMaximizedMode = function(model) {
   //render position and size[end]
 };
 
-
+WindowEventHelper.prototype.getWindowMode = function() {
+  return this.windowMode;
+};
 /**
  * Restore window from maximized mode
  */
