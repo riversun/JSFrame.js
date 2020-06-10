@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Window display order</title>
+
+    <style>
+
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.1em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .window-content {
+            font-size: 14px;
+            padding: 10px;
+            color: #666666;
+            user-select: none;
+        }
+
+        code {
+            background: #dddddd;
+            margin: 5px;
+        }
+
+        span {
+            color: gray;
+        }
+
+        .bar {
+            position: relative;
+            left: 30px;
+
+            width: 360px;
+            height: 30px;
+            background: deepskyblue;
+        }
+
+    </style>
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span> Window display order</span>
+</h2>
+<span>To adjust the order of the window and other elements, specify <code>parentElement</code> in the initialization.
+    The idea is to specify the z-index of <code>parentElement</code>.<br>
+    (The order in which the window's <code>parentElement</code> and other elements are displayed follows
+    <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context">
+        stack context</a> rendering order.)
+</span>
+<br><br>
+
+
+<div id="my-parent" style="position:relative;z-index:1"></div>
+<div class="bar" style="z-index:2; top: 60px;"></div>
+<div class="bar" style="z-index:0; top: 90px;"></div>
+<div class="bar" style="z-index:2; top: 120px;"></div>
+<div class="bar" style="z-index:0; top: 150px;"></div>
+<div class="bar" style="z-index:2; top: 180px;"></div>
+<div class="bar" style="z-index:0; top: 210px;"></div>
+
+
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/window-order"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  const jsFrame = new JSFrame({ parentElement: document.querySelector('#my-parent') });
+  jsFrame.create({
+    name: `Win0`,
+    title: `I live in parentElement.`,
+    left: 60,
+    top: 0,
+    width: 300,
+    height: 450,
+    appearanceName: 'yosemite',
+    html: `<div class="window-content"></div>`,
+  }).show();
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Make the window live inside a specific element</title>
+
+    <style>
+
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.1em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .window-content {
+            font-size: 14px;
+            padding: 10px;
+            color: #666666;
+            user-select: none;
+        }
+
+        code {
+            background: #dddddd;
+            margin: 5px;
+        }
+
+        span {
+            color: gray;
+        }
+
+        .parent-element {
+            color: gray;
+            padding: 5px;
+            position: relative;
+            left: 20px;
+            top: 20px;
+            width: 320px;
+            height: 240px;
+            background: #dddddd;
+            overflow: hidden;
+        }
+
+    </style>
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span> Make the window live inside a specific element</span>
+</h2>
+<span>By specifying parentElement, the window becomes a child of that element.<br>You can also use this when you want to specify a window's movement range.</span>
+
+<div id="my-parent" class="parent-element">Parent Element</div>
+
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/live-inside-element"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+
+  // You can specify your own parent element to create a window with {parentElement:[specific element]}.
+  // To make a window "live" inside an element,
+  // you can set the parent element's style to 'overflow:hidden'.
+  const jsFrame = new JSFrame({ parentElement: document.querySelector('#my-parent') });
+
+  jsFrame.create({
+    name: `Win0`,
+    title: `I live in parentElement.`,
+    left: 100,
+    top: 30,
+    width: 320,
+    height: 200,
+    appearanceName: 'yosemite',
+    html: `<div class="window-content">You can specify your own parent element to create a window.
+ <br><code>new JSFrame({ parentElement: document.querySelector('#my-parent') });</code><br>
+  To make a window "live" inside an element,you can set the parent element's style to <code>"overflow:hidden"</code>.</div>`,
+  }).show();
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Anchor of the window position</title>
+
+    <style>
+
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.1em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .window-content {
+            font-size: 16px;
+            padding: 10px;
+            color: #666666;
+            user-select: none;
+        }
+
+        code {
+            background: #dddddd;
+            margin: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Anchor of the window position</span></h2>
+<span>Try resizing BROWSER to make sure window is anchored in the bottom-right corner
+</span>
+
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/alignment"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  const jsFrame = new JSFrame(
+    {
+      horizontalAlign: 'right',//You can specify 'left' and 'right' for horizontalAlign.
+      verticalAlign: 'bottom',//You can also specify 'top' and 'bottom' for the verticalAlign
+    });
+
+  const width = 400;
+  const height = 320;
+  const margin = 10;
+
+
+  jsFrame.create({
+    name: `Win0`,
+    title: `Anchor is right-bottom`,
+    // Note:
+    // If you specify anchor as right or bottom,
+    // the window position will still be specified by (left,top)
+    left: -width - margin,
+    top: -height - margin,
+    width, height,
+    appearanceName: 'yosemite',
+    html: `<div class="window-content">If you specify like this
+ <br><code>new JSFrame({ horizontalAlign: 'right', verticalAlign: 'bottom', });</code><br>
+  The anchor of the window is in the lower right corner.
+So if you pull the bottom right corner of the browser to resize it, the window will stick to the bottom right</div>`,
+  }).show();
+</script>
+</body>
+</html>

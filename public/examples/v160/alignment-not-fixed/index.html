@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Fixed and Not-fixed window</title>
+
+    <style>
+
+        h2 {
+            border-bottom: 1px solid #bbb;
+            font-weight: 100;
+            margin: 0 0 0.1em 0;
+            padding: 0 0 0.2em 0;
+        }
+
+        h2 span {
+            color: #666666;
+            white-space: nowrap;
+        }
+
+        a {
+            color: #6aa0d0;
+            text-decoration: none;
+        }
+
+        h2 a {
+            font-weight: 300;
+            margin: 0 10px 0 0;
+            white-space: nowrap;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+        .window-content{
+            font-size:16px;padding:10px;color:#666666;user-select:none;
+        }
+    </style>
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Fixed and Not-fixed window</span></h2>
+<span>Try scrolling the screen:The JsFrame initialization options allow you to set the window to be fixed or unfixed
+</span>
+
+<div id="lipsum" style="padding:20px;color:#eeeeee"></div>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/alignment-not-fixed"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+  fetch('./lipsum.txt')
+    .then(function(response) {
+      return response.text();
+    })
+    .then(function(text) {
+      document.querySelector('#lipsum').innerHTML = text;
+    });
+</script>
+<script>
+  const jsFrameNotFixed = new JSFrame({ fixed: false });
+  jsFrameNotFixed.create({
+    name: `Win0`,
+    title: `Not fixed window`,
+    left: 20, top: 100, width: 400, height: 320,
+    appearanceName: 'yosemite',
+    html: `<div class="window-content">
+If the jsFrame initialization parameter is set to new JSFrame(<b>{fixed:false}</b>), then
+The window will be affected by scrolling.Default is <b>fixed:true</b></div>`,
+  }).show();
+
+  const jsFrameFixed = new JSFrame({ fixed: true });
+  jsFrameFixed.create({
+    name: `Win0`,
+    title: `Fixed window`,
+    left: 500, top: 100, width: 400, height: 320,
+    appearanceName: 'yosemite',
+    html: `<div class="window-content">
+<b>{fixed:true}</b> can be used to create a "floating" window that stays in the same position regardless of scrolling.
+</div>`,
+  }).show();
+
+
+</script>
+</body>
+</html>
