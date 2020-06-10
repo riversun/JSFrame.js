@@ -4,43 +4,7 @@
     <meta charset="UTF-8">
     <title>JsFrame.js example - style: Show and hide buttons on title bar</title>
     <meta charset="utf-8">
-    <style>
-        body {
-            padding: 10px;
-        }
-
-        h2 {
-            border-bottom: 1px solid #bbb;
-            font-weight: 100;
-            margin: 0 0 0.8em 0;
-            padding: 0 0 0.2em 0;
-        }
-
-        h2 span {
-            color: #666666;
-            white-space: nowrap;
-        }
-
-        a {
-            color: #6aa0d0;
-            text-decoration: none;
-        }
-
-        h2 a {
-            font-weight: 300;
-            margin: 0 10px 0 0;
-            white-space: nowrap;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-
-    </style>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-          crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
           integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 </head>
@@ -56,8 +20,6 @@
   function start() {
 
     const jsFrame = new JSFrame();
-
-
     const originalStyleForWindow2 = getOriginalStyle(jsFrame.createFrameAppearance());
 
     const frame = jsFrame.create({
@@ -70,11 +32,11 @@
       appearance: originalStyleForWindow2,
       html: `<div style="height:40px;background:#00cccc;padding:10px;font-size:20px;"></div>
 <div style="padding:10px;font-size:20px;color:black;">
-    <div style="margin-top:60px" class="d-flex justify-content-around">
-        <button id="btn0" class="btn btn-secondary m-1 w-100">Hide close button</button>
-        <button id="btn2" class="btn btn-secondary m-1 w-100">Hide maximize button</button>
-        <button id="btn1" class="btn btn-primary m-1 w-100">Show close button</button>
-        <button id="btn3" class="btn btn-primary m-1 w-100">Show maximize button</button>
+    <div>
+        <button id="btn0" class="btn-secondary m-1 w-100">Hide close button</button>
+        <button id="btn2" class="btn-secondary m-1 w-100">Hide maximize button</button>
+        <button id="btn1" class="btn-primary m-1 w-100">Show close button</button>
+        <button id="btn3" class="btn-primary m-1 w-100">Show maximize button</button>
     </div>
 </div>`
     }).show();
