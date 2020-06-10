@@ -2,32 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JsFrame.js example - 'Yosemite' appearance </title>
+    <title>JsFrame.js example - Appearance Preset 'Yosemite' </title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link rel="stylesheet" href="../../../index.css">
     <style>
         #bg {
-            color:red;
+            color: red;
             padding: 10px;
             width: 100%;
             height: 100%;
             user-select: none;
         }
+
+        .btn-primary {
+            width: 180px;
+            font-weight:bolder;
+        }
     </style>
 </head>
 <body>
-<h2><a href="../../../index.html">JSFrame.js examples</a><span>'Yosemite' appearance </span></h2>
-
-<!--Window Control panel-->
-<!--The window can be controlled from the code as well as from the buttons on the title bar-->
-<button id="btn0" class="btn-primary">Fullscreen</button>
-<button id="btn1" class="btn-primary">Restore from fullscreen</button>
-<button id="btn2" class="btn-primary">Hide</button>
-<button id="btn3" class="btn-primary">Restore from hid</button>
-
-<!-- /Window Control panel-->
-
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Appearance Preset 'Yosemite'</span></h2>
+<span><b>Apearance Preset</b> is a predefined window appearance.</span>
 <div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
-    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/preset-apr-yosemite" title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/preset-apr-yosemite"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
 </div>
 <script src="../../../jsframe.js"></script>
 <script>
@@ -37,7 +35,7 @@
   const frame = jsFrame.create({
     name: `Win0`,
     title: `Win0 - Yosemite style`,
-    left: 20, top: 140, width: 400, height: 320, minWidth: 200, minHeight: 110,
+    left: 20, top: 100, width: 400, height: 320, minWidth: 200, minHeight: 110,
     appearanceName: 'yosemite',
     appearanceParam: {
       titleBar: {
@@ -50,19 +48,6 @@
     },
   }).show();
 
-
-  document.querySelector('#btn0').addEventListener('click', (e) => {
-    frame.control.doCommand('maximize');
-  });
-  document.querySelector('#btn1').addEventListener('click', (e) => {
-    frame.control.doCommand('restore');
-  });
-  document.querySelector('#btn2').addEventListener('click', (e) => {
-    frame.control.doCommand('hide');
-  });
-  document.querySelector('#btn3').addEventListener('click', (e) => {
-    frame.control.doCommand('dehide');
-  });
 
   //You can automatically set the actions that are typically expected
   // when you press a button like maximize or minimize or something on title bar

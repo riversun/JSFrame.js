@@ -4,41 +4,16 @@
     <title>JsFrame.js example - Using an iframe for window content</title>
     <meta charset="utf-8">
     <meta name="description" content="A javascript popup/floating window library.">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="../../../index.css">
 </head>
-<style>
-    h2 {
-        border-bottom: 1px solid #bbb;
-        font-weight: 100;
-        margin: 0 0 0.8em 0;
-        padding: 0 0 0.2em 0;
-    }
-
-    h2 span {
-        color: #666666;
-        white-space: nowrap;
-    }
-
-    a {
-        color: #6aa0d0;
-        text-decoration: none;
-    }
-
-    h2 a {
-        font-weight: 300;
-        margin: 0 10px 0 0;
-        white-space: nowrap;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-</style>
 <body>
 
 <h2><a href="../../../index.html">JSFrame.js examples</a><span>Using an iframe for window content</span>
 </h2>
 <div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
-    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/iframe" title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/iframe"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
 </div>
 <script src="../../../jsframe.js"></script>
 <script>
@@ -66,6 +41,10 @@
           _frame.closeFrame();
           showToast(`${_frame.getName()} closed by clicking ${evt.target.id}`);
         });
+
+        frame.on('#my_button_03', 'click', (_frame, evt) => {
+          showToast(`Clicked ${_frame.getName()}'s ${evt.target.id}`);
+        });
       }
     });
     frame01.show();
@@ -73,7 +52,7 @@
     const frame02 = jsFrame.create({
       title: 'Window2',
       name: 'window02',
-      left: 360, top: 60, width: 320, height: 160,
+      left: 380, top: 60, width: 320, height: 160,
     });
 
     // You can also call #setUrl to show page specified by 'url' in iframe.

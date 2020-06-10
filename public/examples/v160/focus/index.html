@@ -4,55 +4,25 @@
     <meta charset="UTF-8">
     <title>JsFrame.js example - Focus and blur(lost focus) event handling</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-          crossorigin="anonymous">
-    <style>
-        body {
-            padding: 10px
-        }
-
-        h2 {
-            border-bottom: 1px solid #bbb;
-            font-weight: 100;
-            margin: 0 0 0.8em 0;
-            padding: 0 0 0.2em 0;
-        }
-
-        h2 span {
-            color: #666666;
-            white-space: nowrap;
-        }
-
-        a {
-            color: #6aa0d0;
-            text-decoration: none;
-        }
-
-        h2 a {
-            font-weight: 300;
-            margin: 0 10px 0 0;
-            white-space: nowrap;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="../../../index.css">
 </head>
 <body>
 <h2><a href="../../../index.html">JSFrame.js examples</a><span>Focus and blur(lost focus) event handling</span>
 </h2>
-<div id="message" style="z-index: 1000;pointer-events: none;font-size:16px;color:#666666;position: fixed; left: 10px; top: 60px;width:640px;padding:10px;border: 1px solid #666666;border-radius:10px">
+<div id="message"
+     style="z-index: 1000;pointer-events: none;font-size:16px;color:#666666;position: fixed; left: 10px; top: 60px;width:640px;padding:10px;border: 1px solid #666666;border-radius:10px">
     Click buttons below to focus on window.
 </div>
 
-<div style="margin-top:60px" class="d-flex justify-content-around">
-    <button id="btnFocusW0" class="btn btn-primary m-1 w-100">Focus on Window-0</button>
-    <button id="btnFocusW1" class="btn btn-primary m-1 w-100">Focus on Window-1</button>
-    <button id="btnFocusW2" class="btn btn-primary m-1 w-100">Focus on Window-2</button>
+<div style="margin-top:60px">
+    <button id="btnFocusW0" class="btn-primary">Focus on Window-0</button>
+    <button id="btnFocusW1" class="btn-primary">Focus on Window-1</button>
+    <button id="btnFocusW2" class="btn-primary">Focus on Window-2</button>
 </div>
 <div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
-    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/focus" title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/focus"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
 </div>
 <script src="../../../jsframe.js"></script>
 <script>
@@ -106,6 +76,7 @@
       frame.show();
     }
   }
+
   start();
 </script>
 </body>

@@ -2,129 +2,60 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JsFrame.js example - xxxxxxx</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-          crossorigin="anonymous">
+    <title>JsFrame.js example - Window Control Command </title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="../../../index.css">
     <style>
-
-        h2 {
-            border-bottom: 1px solid #bbb;
-            font-weight: 100;
-            margin: 0 0 0.1em 0;
-            padding: 0 0 0.2em 0;
+        #bg {
+            color: red;
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            user-select: none;
         }
 
-        h2 span {
-            color: #666666;
-            white-space: nowrap;
-        }
-
-        a {
-            color: #6aa0d0;
-            text-decoration: none;
-        }
-
-        h2 a {
-            font-weight: 300;
-            margin: 0 10px 0 0;
-            white-space: nowrap;
-        }
-
-        a:hover {
-            text-decoration: underline;
+        .btn-primary {
+            width: 180px;
+            font-weight:bolder;
         }
     </style>
 </head>
 <body>
+<h2><a href="../../../index.html">JSFrame.js examples</a><span>Window Control Command </span></h2>
 
-<h2><a href="../../../index.html">JSFrame.js examples</a><span>xxxxxx</span>
-</h2>
-<div id="pr" style="position:absolute;left:0px;top:0px;z-index:0"></div>
 <!--Window Control panel-->
 <!--The window can be controlled from the code as well as from the buttons on the title bar-->
-<div style="position:relative;z-index:1">
-    <div class="card" style="margin:10px;background:rgba(100,100,100,0.2);">
-        <div class="card-body">
-            <h4 class="font-weight-normal">Window contorl</h4>
-            <div class="d-flex justify-content-around" style="opacity: 1.0;">
-                <button id="btn0" class="btn btn-primary m-1 w-100">Fullscreen</button>
-                <button id="btn1" class="btn btn-primary m-1 w-100">Restore from fullscreen</button>
-                <button id="btn2" class="btn btn-primary m-1 w-100">Hide</button>
-                <button id="btn3" class="btn btn-primary m-1 w-100">Restore from hid</button>
-            </div>
-        </div>
-    </div>
-</div>
+<button id="btn0" class="btn-primary">Fullscreen</button>
+<button id="btn1" class="btn-primary">Restore from fullscreen</button>
+<button id="btn2" class="btn-primary">Hide</button>
+<button id="btn3" class="btn-primary">Restore from hid</button>
+
 <!-- /Window Control panel-->
-<br><br>
-<div style="padding:200px;margin-top:600px">
-    <div id="icon1" style="width:40px;height:40px;background:red"></div>
-</div>
 <div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
-    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/preset-window-control-cmd" title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/preset-apr-yosemite"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
 </div>
 <script src="../../../jsframe.js"></script>
 <script>
-  const jsFrame = new JSFrame({ fixed: false, parentElement: document.querySelector('#pr') });
+  const jsFrame = new JSFrame();
 
 
   const frame = jsFrame.create({
     name: `Win0`,
     title: `Win0 - Yosemite style`,
-    left: 300 + 20 + (320 + 20) * 0, top: 240, width: 400, height: 320, minWidth: 200, minHeight: 110,
-    preset: 'yosemite',
-    presetParam: {
-      maximizeButtonBehavior: 'fullscreen',// 'fullscreen' or 'maximize'
-      minimizeButtonBehavior: 'hide',// 'minimize' or 'hide'
-      control: {
-        minimizeParam: {
-          toWidth: 250,
-          duration: 200
-        },
-        hideParam: {
-          align: 'ABSOLUTE',//ABSOLUTE:If you want the window to disappear after transitioning to the position you specified
-          offset: {
-            x: 0, y: 0,// specify window vanishing point
-          },
-          toElement: document.querySelector('#icon1'),
-          duration: 5000
-        },
+    left: 20, top: 140, width: 400, height: 320, minWidth: 200, minHeight: 110,
+    appearanceName: 'yosemite',
+    appearanceParam: {
+      titleBar: {
+        greenButton: 'fullscreen',//'maximize' icon or 'fullscreen' icon
       }
     },
     style: {
       backgroundColor: 'rgba(255,255,255,1.0)',
       overflow: 'hidden'
     },
-    html: '<div id="window_content" style="padding:10px;width:100%;height:100%;user-select:none;font-size:16px"></div>',
   }).show();
 
-
-  frame.$('#window_content').innerText = 'Double click here or click "maximize" button to fullscreen.';
-  frame.on('#window_content', 'dblclick', (_frame, e) => {
-    _frame.control.doCommand('maximize');
-  });
-
-  frame.control.on('hid', (frame, info) => {
-    console.log("'hid' event fired.The window was hidden.");
-  });
-
-  frame.control.on('dehided', (frame, info) => {
-    console.log("'dehided' event fired.A hidden window has appeared.");
-  });
-
-  frame.control.on('maximized', (frame, info) => {
-    frame.$('#window_content').innerText = 'Double click here or press Escape to restore.';
-    frame.on('#window_content', 'dblclick', (_frame, e) => {
-      _frame.control.doCommand('restore');
-    });
-  });
-  frame.control.on('demaximized', (frame, info) => {
-    frame.$('#bg').innerText = 'Double click here or click "maximize" button to fullscreen.';
-    frame.on('#bg', 'dblclick', (_frame, e) => {
-      _frame.control.doCommand('maximize');
-    });
-  });
 
   document.querySelector('#btn0').addEventListener('click', (e) => {
     frame.control.doCommand('maximize');
@@ -137,6 +68,51 @@
   });
   document.querySelector('#btn3').addEventListener('click', (e) => {
     frame.control.doCommand('dehide');
+  });
+
+  //You can automatically set the actions that are typically expected
+  // when you press a button like maximize or minimize or something on title bar
+  frame.setControl({
+    maximizeButton: 'zoomButton',
+    maximizeParam: {
+      fullScreen: true,// true:maximized without title bar,false:maximized with title bar
+      restoreKey: 'Escape',//Set key code from https://www.w3.org/TR/uievents-code/#keyboard-key-codes
+    },
+    demaximizeButton: 'dezoomButton',
+    deminimizeButton: 'deminimizeButton',
+    hideButton: 'minimizeButton',
+    hideParam: {
+      align: 'ABSOLUTE',//ABSOLUTE:If you want the window to disappear after transitioning to the position you specified
+      offset: {
+        x: 100, y: 500,// specify window vanishing point
+      },
+      duration: 300
+    },
+    dehideParam: {
+      duration: 300
+    },
+    styleDisplay: 'inline',
+    animation: true,
+    animationDuration: 100,//The whole animation duration(millisec)
+  });
+  frame.control.on('maximized', (frame, info) => {
+    console.log("'maximized' event fired.The window was maximized.");
+    const HTML = '<div id="bg" style="">Double click here or press "Escape" to restore.</div>';
+    frame.setHTML(HTML);
+    frame.on('#bg', 'dblclick', function(_frame, e) {
+      _frame.control.doCommand('restore');
+    });
+
+  });
+  frame.control.on('demaximized', (frame, info) => {
+    console.log("'demaximized' event fired.The window is now back to its original size from its maximized state.");
+    frame.setHTML(null);
+  });
+  frame.control.on('hid', (frame, info) => {
+    console.log("'hid' event fired.The window was hidden.");
+  });
+  frame.control.on('dehided', (frame, info) => {
+    console.log("'dehided' event fired.A hidden window has appeared.");
   });
 
 

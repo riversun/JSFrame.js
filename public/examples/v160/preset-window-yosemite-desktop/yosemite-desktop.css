@@ -1,34 +1,6 @@
 body {
-    padding: 10px;
     background: url('https://riversun.github.io/img/yosemite.jpg?') 100% repeat fixed;
     background-size: cover;
-}
-
-h2 {
-    border-bottom: 1px solid #bbb;
-    font-weight: 100;
-    margin: 0 0 0.1em 0;
-    padding: 0 0 0.2em 0;
-}
-
-h2 span {
-    color: #666666;
-    white-space: nowrap;
-}
-
-a {
-    color: #6aa0d0;
-    text-decoration: none;
-}
-
-h2 a {
-    font-weight: 300;
-    margin: 0 10px 0 0;
-    white-space: nowrap;
-}
-
-a:hover {
-    text-decoration: underline;
 }
 
 .icon {

@@ -3,49 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>JsFrame.js example - style: Child menu for buttons on title bar</title>
-    <meta charset="utf-8">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="../../../index.css">
     <style>
-        body {
-            padding: 10px;
-        }
-
-        h2 {
-            border-bottom: 1px solid #bbb;
-            font-weight: 100;
-            margin: 0 0 0.8em 0;
-            padding: 0 0 0.2em 0;
-        }
-
-        h2 span {
-            color: #666666;
-            white-space: nowrap;
-        }
-
-        a {
-            color: #6aa0d0;
-            text-decoration: none;
-        }
-
-        h2 a {
-            font-weight: 300;
-            margin: 0 10px 0 0;
-            white-space: nowrap;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
         .menu-caption {
             font-size: 16px;
         }
 
+        .list-group-item {
+            position: relative;
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: -1px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            color: black;
+        }
+
+        .list-group-item:hover {
+            color: #555;
+            text-decoration: none;
+            background-color: #dddddd;
+        }
     </style>
-    <!--    I'm using bootstrap css for the UI of window contents in this example by chance,
-    but jsframe doesn't depend on bootstrap, so you can freely layout it without bootstrap.-->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-          crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
           integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 </head>
@@ -54,7 +34,8 @@
 <h2><a href="../../../index.html">JSFrame.js examples</a><span>style: Child menu for buttons on title bar</span>
 </h2>
 <div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
-    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/styling-button-child-menu" title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/styling-button-child-menu"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
 </div>
 <script src="../../../jsframe.js"></script>
 <script>
@@ -202,10 +183,10 @@
       childMenuApr.xOffset = 0;
       childMenuApr.yOffset = 0;
 
-      childMenuApr.childMenuHTML = '<div class="list-group menu-caption">' +
-        '  <div id="my-menu1" class="list-group-item list-group-item-action list-group-item-light py-2">Menu Item 01</div>' +
-        '  <div id="my-menu2" class="list-group-item list-group-item-action list-group-item-light py-2">Menu Item 02</div>' +
-        '  <div id="my-menu3" class="list-group-item list-group-item-action list-group-item-light py-2">Menu Item 03</div>' +
+      childMenuApr.childMenuHTML = '<div>' +
+        '  <div id="my-menu1" class="list-group-item">Menu Item 01</div>' +
+        '  <div id="my-menu2" class="list-group-item">Menu Item 02</div>' +
+        '  <div id="my-menu3" class="list-group-item">Menu Item 03</div>' +
         '</div>';
 
       const faCloseAnchor = 'RIGHT_TOP';
