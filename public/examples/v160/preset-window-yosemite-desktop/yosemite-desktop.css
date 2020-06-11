@@ -46,6 +46,8 @@ img.icon:active {
 
 .task-bar {
     position: absolute;
+    display: flex;
+    justify-content: space-between;
     left: 0px;
     bottom: 0px;
     margin-left: 40px;
