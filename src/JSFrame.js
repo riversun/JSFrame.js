@@ -564,6 +564,12 @@ CCanvas.prototype.addBean = function(bean) {
 
   this.canvasElement.appendChild(bean.htmlElement);
 };
+
+CCanvas.prototype.getParentElement = function() {
+  var me = this;
+  return me.parentElement;
+};
+
 /**
  * End of canvas class
  */
@@ -1635,6 +1641,8 @@ function CIfFrame(windowId, left, top, width, height, appearance) {
 
   me.eventEmitter = new EventEmitter();
 
+  me.appearance = appearance;
+
 }
 
 
@@ -1643,6 +1651,10 @@ CIfFrame.prototype.getFrameView = function() {
   return me.dframe;
 };
 
+CIfFrame.prototype.getFrameAppearance = function() {
+  var me = this;
+  return me.appearance;
+};
 
 CIfFrame.prototype.setHTML = function(html) {
   var me = this;
@@ -1998,6 +2010,10 @@ CFrame.prototype.showModal = function(onCloseListener) {
     me.setOnCloseFrameListener(onCloseListener);
   }
 };
+CFrame.prototype.getWindowManager = function() {
+  var me = this;
+  return me.parentCanvas;
+}
 
 
 CIfFrame.prototype.hide = function() {
@@ -2880,6 +2896,7 @@ JSFrame.prototype.create = function(model) {
   var minWidth = model.minWidth;
   var minHeight = model.minHeight;
 
+
   var html = model.html;
   var resizable = model.resizable;
   var movable = model.movable;
@@ -2899,6 +2916,11 @@ JSFrame.prototype.create = function(model) {
   } else if (appearanceName) {
     appearance = this.createPresetStyle(appearanceName,
       { appearanceParam: appearanceParam });
+  }
+
+  if (model.clientHeight) {
+    var windowTitleBarHeight = parseInt(appearance.titleBarHeight || 0) - appearance.frameHeightAdjust;
+    height = model.clientHeight + windowTitleBarHeight;
   }
 
 
@@ -2929,6 +2951,10 @@ JSFrame.prototype.create = function(model) {
   }
   if (minHeight) {
     frame.minWindowHeight = minHeight;
+
+    if (model.clientHeight) {
+      frame.minWindowHeight = minHeight + windowTitleBarHeight;
+    }
   }
 
   if (style) {

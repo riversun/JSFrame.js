@@ -167,6 +167,7 @@ WindowEventHelper.prototype.doMaximize = function(model) {
     animation: me.animationEnabled,
     callback: (model && model.callback) ? model.callback : null, //set maximized finished callback
     duration: (model && model.duration) ? model.duration : null,
+    matchParent: (model && model.matchParent) ? model.matchParent : false,
   });
 };
 
@@ -190,12 +191,26 @@ WindowEventHelper.prototype.renderMaximizedMode = function(model) {
     _toY = -from.titleBarHeight;
   }
 
+  var parentWidth = window.innerWidth;
+  var parentHeight = window.innerHeight;
+
+  if (model.matchParent) {
+    // If matchParent is specified
+    // When maximizing, use the size of parentElement specified at initialization
+    // ParentlElement is often used only for adjusting the display order.
+    // Therefore, only if matchParent is specified, match the size of parentElement
+    var windowManager = frame.getWindowManager();
+    var parentElement = windowManager.getParentElement();
+    parentWidth = parentElement.clientWidth;
+    parentHeight = parentElement.clientHeight;
+  }
+
   if (me.hideFrameBorder) {
-    _toWidth = window.innerWidth;
-    _toHeight = window.innerHeight + (me.hideTitleBar ? from.titleBarHeight : 0);
+    _toWidth = parentWidth;
+    _toHeight = parentHeight + (me.hideTitleBar ? from.titleBarHeight : 0);
   } else {
-    _toWidth = window.innerWidth - from.frameBorderWidthDefault * 2;
-    _toHeight = window.innerHeight - from.frameBorderWidthDefault * 2 + (me.hideTitleBar ? from.titleBarHeight : 0);
+    _toWidth = parentWidth - from.frameBorderWidthDefault * 2;
+    _toHeight = parentHeight - from.frameBorderWidthDefault * 2 + (me.hideTitleBar ? from.titleBarHeight : 0);
   }
   //compute position and size[end]
 
