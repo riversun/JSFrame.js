@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Create a window inside a window</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="../../../index.css">
+
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span> Create a window inside a window</span>
+</h2>
+<span></span>
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/live-inside-element-with-contorl"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+
+  const parentJsFrame = new JSFrame();
+
+  const HTML = '<img style="margin: auto;position: absolute;top: 0;left: 0;right: 0;bottom: 0;width:100%;height:auto;user-select: none" ' +
+    'src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Tokyo_tower_at_night.jpg/640px-Tokyo_tower_at_night.jpg">';
+
+  const parentFrame = parentJsFrame.create({
+    name: `Win0`,
+    title: `I'm a parent.`,
+    left: 20,
+    top: 100,
+    width: 640,
+    height: 400,
+    style: {
+      backgroundColor: 'rgba(255,255,255,0.9)',
+      overflow: 'hidden'
+    },
+    appearanceName: 'yosemite',
+    html: `<div id="parent-window-content" style="width:100%;height:100%;">${HTML}</div>`,
+  });
+
+  parentFrame.setControl({
+    maximizeButton: 'zoomButton',
+    maximizeParam: {
+      fullScreen: true,
+      restoreKey: 'Escape',
+    },
+    demaximizeButton: 'dezoomButton',
+    deminimizeButton: 'deminimizeButton',
+    hideButton: 'minimizeButton',
+    hideParam: {
+      align: 'ABSOLUTE',
+      offset: {
+        x: 0, y: 0,
+      },
+      duration: 300
+    },
+    dehideParam: {
+      duration: 300
+    },
+    styleDisplay: 'inline',
+    animation: true,
+    animationDuration: 100,//The whole animation duration(millisec)
+  });
+  parentFrame.on('frame', 'resize', (data)=>{
+    parentFrame.$('#parent-window-content').setAttribute('jsframe-resize-rnd',new Date().getTime());
+  });
+  parentFrame.control.on('maximized', (frame, info) => {
+    parentJsFrame.showToast({
+      html: `Double click ParentWindow to restore`,
+      align: 'top',
+      duration: 2000,
+    });
+    frame.on('#parent-window-content', 'dblclick', function(_frame, e) {
+      _frame.control.doCommand('restore');
+    });
+
+  });
+
+  parentFrame.show();
+
+  const childJsFrame = new JSFrame({ parentElement: document.querySelector('#parent-window-content') });
+  const CHILD_HTML = '<img id="my-image" style="margin: auto;position: absolute;top: 0;left: 0;right: 0;bottom: 0;width:100%;height:auto;user-select: none" ' +
+    'src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Rainbow_colored_Rainbow_Bridge_at_night.jpg">';
+  const childFrame = childJsFrame.create({
+    name: `Win0-1`,
+    title: `I'm a child`,
+    left: 20,
+    top: 20,
+    width: 320,
+    clientHeight: 240,
+    style: {
+      backgroundColor: 'rgba(255,255,255,0.9)',
+      overflow: 'hidden'
+    },
+    appearanceName: 'yosemite',
+    html: CHILD_HTML,
+  });
+
+  childFrame.setControl({
+    maximizeButton: 'zoomButton',
+    maximizeParam: {
+      fullScreen: true,
+      restoreKey: 'Escape',
+      matchParent: true
+    },
+    demaximizeButton: 'dezoomButton',
+    deminimizeButton: 'deminimizeButton',
+    hideButton: 'minimizeButton',
+    hideParam: {
+      align: 'ABSOLUTE',
+      offset: {
+        x: 0, y: 0,
+      },
+      duration: 300
+    },
+    dehideParam: {
+      duration: 300
+    },
+    styleDisplay: 'inline',
+    animation: true,
+    animationDuration: 100,//The whole animation duration(millisec)
+  });
+
+  childFrame.control.on('maximized', (frame, info) => {
+    parentJsFrame.showToast({
+      html: `Double click ChildWindow to restore`,
+      align: 'top',
+      duration: 2000,
+    });
+    frame.on('#my-image', 'dblclick', function(_frame, e) {
+      e.stopPropagation();
+      _frame.control.doCommand('restore');
+    });
+
+  });
+  childFrame.show();
+
+</script>
+</body>
+</html>
