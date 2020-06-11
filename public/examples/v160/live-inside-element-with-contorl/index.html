@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JsFrame.js example - Make maximized window size same as a specific parentElement</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="../../../index.css">
+    <style>
+        .parent-element {
+            color: gray;
+            padding: 5px;
+            position: relative;
+            left: 20px;
+            top: 20px;
+            width: 640px;
+            height: 480px;
+            background: #dddddd;
+            overflow: hidden;
+        }
+
+        .window-content {
+            line-height: 200%;
+        }
+    </style>
+</head>
+<body>
+
+<h2><a href="../../../index.html">JSFrame.js examples</a><span> Make maximized window size same as parentElement</span>
+</h2>
+<span>Set <code>matchParent:true</code>, create a window as a child of a particular <code>parentElement</code>, <br>
+    and make it the same size as <code>parentElement</code> when the window is maximized</span>
+
+<div id="my-parent" class="parent-element">Parent Element</div>
+
+<div style="font-size: 16px; color: white; position: fixed; right: 20px; bottom: 10px">
+    <a href="https://github.com/riversun/JSFrame.js/tree/master/public/examples/v160/live-inside-element-with-contorl"
+       title="View source for this page on GitHub" target="_blank">View source on GitHub</a>
+</div>
+<script src="../../../jsframe.js"></script>
+<script>
+
+  // You can specify your own parent element to create a window with {parentElement:[specific element]}.
+  // To make a window "live" inside an element,
+  // you can set the parent element's style to 'overflow:hidden'.
+  const jsFrame = new JSFrame({ parentElement: document.querySelector('#my-parent') });
+
+  //  const HTML=`<div class="window-content">You can specify your own parent element to create a window.
+  // <br><code>new JSFrame({ parentElement: document.querySelector('#my-parent') });</code><br>
+  //  To make a window "live" inside an element,you can set the parent element's style to <code>"overflow:hidden"</code>.</div>`;
+
+  const HTML = '<img id="my-image" style="margin: auto;position: absolute;top: 0;left: 0;right: 0;bottom: 0;width:100%;height:auto" ' +
+    'src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Rainbow_colored_Rainbow_Bridge_at_night.jpg">';
+
+  const frame = jsFrame.create({
+    name: `Win0`,
+    title: `I live in parentElement.`,
+    left: 100,
+    top: 30,
+    width: 320,
+    //height:240,// Height including title bar height
+    clientHeight: 240,// Height without title bar height
+    style: {
+      backgroundColor: 'rgba(255,255,255,0.9)',
+      overflow: 'hidden'
+    },
+    appearanceName: 'yosemite',
+    html: HTML,
+  });
+
+  //You can automatically set the actions that are typically expected
+  // when you press a button like maximize or minimize or something on title bar
+  frame.setControl({
+    maximizeButton: 'zoomButton',
+    maximizeParam: {
+      fullScreen: true,// true:maximized without title bar,false:maximized with title bar
+      restoreKey: 'Escape',//Set key code from https://www.w3.org/TR/uievents-code/#keyboard-key-codes
+      // If matchParent is specified
+      // When maximizing, use the size of parentElement specified at initialization
+      matchParent: true
+    },
+    demaximizeButton: 'dezoomButton',
+    deminimizeButton: 'deminimizeButton',
+    hideButton: 'minimizeButton',
+    hideParam: {
+      align: 'ABSOLUTE',//ABSOLUTE:If you want the window to disappear after transitioning to the position you specified
+      offset: {
+        x: 100, y: 500,// specify window vanishing point
+      },
+      duration: 300
+    },
+    dehideParam: {
+      duration: 300
+    },
+    styleDisplay: 'inline',
+    animation: true,
+    animationDuration: 100,//The whole animation duration(millisec)
+  });
+  frame.control.on('maximized', (frame, info) => {
+    console.log("'maximized' event fired.The window was maximized.");
+    frame.on('#my-image', 'dblclick', function(_frame, e) {
+      _frame.control.doCommand('restore');
+    });
+
+  });
+  frame.control.on('demaximized', (frame, info) => {
+    console.log("'demaximized' event fired.The window is now back to its original size from its maximized state.");
+  });
+  frame.show();
+
+</script>
+</body>
+</html>
