@@ -83,9 +83,14 @@ function WindowEventHelper(model) {
   }
   this.eventListeners = {};
 
+
   //If the user changes the window size when the window is maximized state,
   // adjust the size so that window looks maximized.
   this.resizeListener = this.handleOnResize.bind(this);
+
+  if (this.maximizeParam && this.maximizeParam.matchParent) {
+    this.resizeListener = this.handleOnVirtualResize.bind(this);
+  }
 
 }
 
@@ -111,12 +116,34 @@ WindowEventHelper.prototype.doMaximize = function(model) {
 
   me.windowMode = 'maximizing';
 
+
   var frame = me.frame;
 
+  if (model && model.matchParent) {
+    // The div element does not issue the resize event. Furthermore,
+    // div is specified as 100%, so style.width is always 100%.
+    // So I want to get the clientWidth but I can't get it with mutationObserver.
+    // Therefore, we adopt a mechanism to catch the parent window
+    // resize event and change the attribute of the parent window content
+    // by differentiation to catch it.
+    var windowManager = frame.getWindowManager();
+    var parentElement = windowManager.getParentElement();
 
-  //set onresize listener
+    if (!me.matchParentResizeObserver) {
+      const matchParentResizeObserver = new MutationObserver(() => {
+        // console.log("on virtual resize");
+        me.resizeListener();
+      });
+      matchParentResizeObserver.observe(parentElement, {
+        attributeFilter: ["jsframe-resize-rnd"],
+        attributes: true
+      });
+      me.matchParentResizeObserver = matchParentResizeObserver;
+    }
+  }
+    //set onresize listener
   //window.addEventListener('resize', me.resizeListener);
-  if (!me.eventListenerHelper.hasEventListener(window, 'resize', 'window-resize-listener')) {
+  else if (!me.eventListenerHelper.hasEventListener(window, 'resize', 'window-resize-listener')) {
     me.eventListenerHelper.addEventListener(window, 'resize', me.resizeListener,
       { listenerName: 'window-resize-listener' });
   }
@@ -346,6 +373,14 @@ WindowEventHelper.prototype.handleOnResize = function() {
   var me = this;
   me.renderMaximizedMode({
     caller: 'handleOnResize',
+    //matchParent: true
+  });
+};
+WindowEventHelper.prototype.handleOnVirtualResize = function() {
+  var me = this;
+  me.renderMaximizedMode({
+    caller: 'handleOnResize',
+    matchParent: true
   });
 };
 
@@ -818,8 +853,13 @@ WindowEventHelper.prototype.restoreWindow = function(model) {
     funcDoRender();
   }
 
-  me.eventListenerHelper.removeEventListener(window, 'resize', me.resizeListener);
   //window.removeEventListener('resize', me.resizeListener);
+  me.eventListenerHelper.removeEventListener(window, 'resize', me.resizeListener);
+  if (me.matchParentResizeObserver) {
+    me.matchParentResizeObserver.disconnect();
+    me.matchParentResizeObserver = null;
+  }
+
 };
 
 
