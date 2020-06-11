@@ -1660,7 +1660,39 @@ CIfFrame.prototype.setHTML = function(html) {
   var me = this;
   me.dframe.innerHTML = html;
 };
+CIfFrame.prototype.setFrameInFrame = function(enabled) {
 
+  // Why i had to (bother to:) ) make a setFrameInFrame
+  // The element specified at the top of the content of the parent window (for example, div element)
+  // may NOT be able to get the resize event using addEventListener.
+  // Therefore, when the resize event issued by jsFrame in the parent window occurs,
+  // its custom attribute (WindowEventHelper.MATCH_PARENT_CHANGE_MARKER_ATTR) is attached
+  // to the element at the top of the parent window content
+  // and it is captured by the mutationObserver on the child window side.
+
+  var me = this;
+
+  var contentsEle = me.dframe ? me.dframe.firstChild : null;
+
+  if (contentsEle) {
+    // polyfill for #now
+    if (!Date.now) {
+      Date.now = function now() {
+        return new Date().getTime();
+      };
+    }
+    if (enabled) {
+      me.eventEmitter.only('resize', 'fif-listener', function() {
+        contentsEle.setAttribute(WindowEventHelper.MATCH_PARENT_CHANGE_MARKER_ATTR, Date.now());
+      });
+    } else {
+      contentsEle.removeAttribute(WindowEventHelper.MATCH_PARENT_CHANGE_MARKER_ATTR);
+      me.eventEmitter.only('resize', 'fif-listener', function() {
+        // do nothing
+      });
+    }
+  }
+};
 /**
  * Find DOM Element in the frame by querySelector<br>
  *  Examples<br>

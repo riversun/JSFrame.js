@@ -92,7 +92,10 @@ function WindowEventHelper(model) {
     this.resizeListener = this.handleOnVirtualResize.bind(this);
   }
 
+
 }
+
+WindowEventHelper.MATCH_PARENT_CHANGE_MARKER_ATTR = '__jsframe-mp-marker';
 
 WindowEventHelper.prototype.on = function(eventType, callback) {
   var me = this;
@@ -130,12 +133,12 @@ WindowEventHelper.prototype.doMaximize = function(model) {
     var parentElement = windowManager.getParentElement();
 
     if (!me.matchParentResizeObserver) {
-      const matchParentResizeObserver = new MutationObserver(() => {
+      var matchParentResizeObserver = new MutationObserver(function() {
         // console.log("on virtual resize");
         me.resizeListener();
       });
       matchParentResizeObserver.observe(parentElement, {
-        attributeFilter: ["jsframe-resize-rnd"],
+        attributeFilter: [WindowEventHelper.MATCH_PARENT_CHANGE_MARKER_ATTR],
         attributes: true
       });
       me.matchParentResizeObserver = matchParentResizeObserver;
