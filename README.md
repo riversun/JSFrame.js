@@ -11,8 +11,6 @@ It is an independent and lightweight multi-window library for javascript.
 - You can create a [modal window](https://riversun.github.io/jsframe/examples/v150/modal.html).
 - You can create a [toast](https://riversun.github.io/jsframe/examples/v150/toast.html).
 
-[![image](https://user-images.githubusercontent.com/11747460/84118038-62904280-aa6d-11ea-841b-060315c5710c.png)](https://riversun.github.io/JSFrame.js/public/examples/v160/preset-window-yosemite-desktop/)
-
 It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
 
 # Resources
