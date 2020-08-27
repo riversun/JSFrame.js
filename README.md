@@ -25,6 +25,21 @@ It is licensed under [MIT](https://opensource.org/licenses/MIT) license.
 npm install jsframe.js --save
 ```
 
+
+### Import JSFrame on Node.js based environment.
+
+#### ES6
+
+```javascript
+import { JSFrame } from 'jsframe.js';
+```
+
+#### common-js
+
+```javascript
+const { JSFrame } = require('jsframe.js');
+```
+
 ## using with script tag
 
 ```html
@@ -59,7 +74,59 @@ https://riversun.github.io/jsframe/examples/v150/simple.html
 [![ex00](https://riversun.github.io/jsframe/capture/ex00.png)](https://riversun.github.io/jsframe/examples/v150/simple.html)
 
 **Tips**
-- You can also get DOM element from contents that you set as html.Call ```frame.$([selector])```.For example, you can get the element which id is 'my_element' by calling ```frame.$('#my_element')```
+- Get DOM element from contents:
+
+```
+frame.$([selector])
+```
+
+- Get the element which id is 'my_element' 
+
+```
+const ele = frame.$('#my_element')
+```
+
+- Set window position
+
+```
+frame.setPosition(x,y,[anchor]);
+```
+
+If you specify an anchor, the location of the anchor will be the specified x,y coordinate.
+
+Anchor values
+'LEFT_TOP','CENTER_TOP','RIGHT_TOP','LEFT_CENTER','CENTER_CENTER','RIGHT_CENTER','LEFT_BOTTOM','CENTER_BOTTOM','RIGHT_BOTTOM'
+
+- Set window content 
+
+```
+frame.setHTML(`<div>Your content</div>`);
+```
+
+- Want to specify individual windows
+You can give the window a unique window name.
+
+```javascript
+const windowName='my-example-window';
+frame.setName(windowName);
+```
+
+and you can get the window by windowName
+
+```javascript
+const windowName='my-example-window';
+const frame=jsFrame.getWindowByName(windowName);
+```
+
+- Want to check if a window already exists
+
+You can use it in the following cases.
+Show window if it exists, create new window if window is closed
+
+```javascript
+const windowName='my-example-window';
+const windowExists=jsFrame.containsWindowName(windowName);
+```
 
 ## Show specified URL as content of window
 
