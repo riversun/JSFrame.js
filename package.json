@@ -28,18 +28,18 @@
   ],
   "homepage": "https://github.com/riversun/JSFrame.js#readme",
   "devDependencies": {
-    "@babel/core": "^7.10.2",
-    "@babel/preset-env": "^7.10.2",
+    "@babel/core": "^7.11.4",
+    "@babel/preset-env": "^7.11.0",
     "babel-loader": "^8.1.0",
     "cross-env": "^7.0.2",
-    "css-loader": "^3.5.3",
+    "css-loader": "^3.6.0",
     "style-loader": "^1.2.1",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@riversun/event-emitter": "^1.2.1",
+    "@riversun/event-emitter": "^1.2.2",
     "event-listener-helper": "^1.0.2",
     "merge-deeply": "^2.1.0"
   }
