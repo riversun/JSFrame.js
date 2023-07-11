@@ -1,3 +1,4 @@
+var CALIGN = require('../CCommon.js');
 /**
  * CFrameComponent class
  * <p>
