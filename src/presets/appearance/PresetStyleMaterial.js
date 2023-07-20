@@ -178,7 +178,8 @@ function alignButtons(fApr, param, fromLeft) {
         rbt.backgroundColorHovered = 'transparent';
         rbt.backgroundColorPressed = 'transparent';
 
-        var colors = getSubColor(param.titleBar.buttonColor) || getSubColor2(param.titleBar.buttonColor);
+        var colors = getSubColor(param.titleBar.buttonColor);
+
         rbt.captionColorDefault = param.titleBar.buttonColor;
         rbt.captionColorFocused = param.titleBar.buttonColor;
         rbt.captionColorHovered = colors.hovered;
@@ -250,49 +251,30 @@ function getSubColor(color) {
     canvas.height = 1;
     canvas.width = 1;
 
-    var ctx = canvas.getContext('2d');
-    if (ctx) {
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, 1, 1);
-        var colorData = ctx.getImageData(0, 0, 1, 1).data;
+    try {
+        var ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, 1, 1);
+            var colorData = ctx.getImageData(0, 0, 1, 1).data;
 
-        var r = colorData[0];
-        var g = colorData[1];
-        var b = colorData[2];
-        var alpha = colorData[3] / 255;
-        var alpha2 = alpha * 0.85;
-        var alpha3 = alpha * 0.75;
+            var r = colorData[0];
+            var g = colorData[1];
+            var b = colorData[2];
+            var alpha = colorData[3] / 255;
+            var alpha2 = alpha * 0.85;
+            var alpha3 = alpha * 0.75;
 
-        var ret = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha2 + ')';
-        var ret2 = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha2 + ')';
-        var ret3 = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha3 + ')';
-        return {src: ret, hovered: ret2, pressed: ret3};
-    } else {
-        return null;
+            var ret = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha2 + ')';
+            var ret2 = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha2 + ')';
+            var ret3 = 'rgb(' + r + ',' + g + ',' + b + ',' + alpha3 + ')';
+            return {src: ret, hovered: ret2, pressed: ret3};
+        } else {
+            return {src: 'rgb(255,255,255,0.85)', hovered: 'rgb(255,255,255,0.85)', pressed: 'rgb(255,255,255,0.75)'};
+        }
+    } catch (e) {
+        return {src: 'rgb(255,255,255,0.85)', hovered: 'rgb(255,255,255,0.85)', pressed: 'rgb(255,255,255,0.75)'};
     }
-}
-
-function getSubColor2(color) {
-    // Remove "rgb" or "rgba" from the color string
-    var regex = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(1|0?.\d*))?\)$/;
-    var result = color.match(regex);
-
-    // Extract color values
-    var r = parseInt(result[1], 10);
-    var g = parseInt(result[2], 10);
-    var b = parseInt(result[3], 10);
-    var a = parseFloat(result[4]) || 1; // if alpha is not set, default to 1
-
-    // Calculate new alphas
-    var alpha2 = a * 0.85;
-    var alpha3 = a * 0.75;
-
-    // Create new colors
-    var ret = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha2 + ')';
-    var ret2 = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha2 + ')';
-    var ret3 = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha3 + ')';
-
-    return {src: ret, hovered: ret2, pressed: ret3};
 }
 
 
