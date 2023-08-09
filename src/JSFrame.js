@@ -25,11 +25,13 @@ var presetWindows = {
 
 var DEF = {};
 
+var touchEnabled = 'ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch;
+
 // true:Support mouse on mouse-enabled devices
-var MOUSE_ENABLED = true;
+var MOUSE_ENABLED = !touchEnabled;
 
 // true:Support touch on touch-enabled devices
-var TOUCH_ENABLED = true;
+var TOUCH_ENABLED = touchEnabled;
 
 //true:Allow the window to be moved only in the case of one finger
 // (the window cannot be moved in the case of two or more fingers)

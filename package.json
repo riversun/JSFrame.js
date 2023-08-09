@@ -1,6 +1,6 @@
 {
   "name": "jsframe.js",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "It is an independent lightweight multi-window library for javascript.\r - Create various popup windows.\r - Styling the appearance flexibly.",
   "main": "lib/jsframe.min.js",
   "scripts": {
